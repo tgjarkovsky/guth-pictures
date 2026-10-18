@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteUrl } from "@/lib/config";
+import { siteUrl, ogImage } from "@/lib/config";
 import { getContent, getImages } from "@/modules/admin/lib/content";
 import { EventsEditorial } from "@/modules/editorial/components/EventsEditorial";
 
@@ -12,6 +12,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: pages.events.metaTitle,
     description: pages.events.metaDescription,
     alternates: { canonical: `/${locale}${path}`, languages: { cs: `/cs${path}`, en: `/en${path}`, "x-default": `/cs${path}` } },
+    openGraph: {
+      title: pages.events.metaTitle,
+      description: pages.events.metaDescription,
+      url: `/${locale}${path}`,
+      locale: locale === "cs" ? "cs_CZ" : "en_US",
+      type: "website",
+      siteName: "Guth Pictures",
+      images: [ogImage],
+    },
+    twitter: { card: "summary_large_image", title: pages.events.metaTitle, description: pages.events.metaDescription, images: [ogImage.url] },
   };
 }
 

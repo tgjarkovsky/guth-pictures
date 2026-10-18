@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
+import { ogImage } from "@/lib/config";
 import { getContent } from "@/modules/admin/lib/content";
 import { ServiceCards, type ServiceItem } from "@/modules/homepage/components/ServiceCards";
 import { ServiceLinks } from "@/modules/homepage/components/ServiceLinks";
@@ -22,7 +23,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       url: `/${locale}/sluzby`,
       locale: locale === "cs" ? "cs_CZ" : "en_US",
       type: "website",
+      siteName: "Guth Pictures",
+      images: [ogImage],
     },
+    twitter: { card: "summary_large_image", title: t("title"), description: t("description"), images: [ogImage.url] },
   };
 }
 
