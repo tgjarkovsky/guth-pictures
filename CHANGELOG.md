@@ -1,3 +1,4 @@
+## [2026-10-18] - ROADMAP.md: vize, uživatelé, směry na 1–3 měsíce (víc poptávek) a co nedělat
 ## [2026-10-16] - Smazání klientské galerie maže i fotky v Cloudinary (client-galleries/<slug>/); při chybě 502 a KV zůstane
 ## [2026-10-15] - Sdílený helper signedUploadRequest pro podepsaný upload do Cloudinary (DraftCard, PhotoUploadSection)
 ## [2026-10-15] - Admin: po vytvoření galerie hotová zpráva pro klienta (odkaz, heslo, platnost, limit výběru) s tlačítkem Kopírovat zprávu
