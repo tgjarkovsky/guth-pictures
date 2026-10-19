@@ -45,11 +45,19 @@ export function mergeAiTexts(
   });
 }
 
+/** Nové drafty před existující, jen `max` nejnovějších. */
+export function mergeDrafts(newDrafts: StoryDraft[], existing: StoryDraft[], max = 12): StoryDraft[] {
+  return [...newDrafts, ...existing].slice(0, max);
+}
+
+const usedCutoff = (now: Date) => new Date(now.getTime() - USED_WEEKS * 7 * 24 * 3600 * 1000);
+
 export async function markPhotosUsed(publicIds: string[], now = new Date()): Promise<void> {
   const used = await read<UsedPhoto>(KEYS.used);
   const usedAt = now.toISOString();
+  const cutoff = usedCutoff(now);
   const merged = [
-    ...used.filter(u => !publicIds.includes(u.publicId)),
+    ...used.filter(u => !publicIds.includes(u.publicId) && new Date(u.usedAt) >= cutoff),
     ...publicIds.map(publicId => ({ publicId, usedAt })),
   ];
   await write(KEYS.used, merged);
@@ -57,7 +65,7 @@ export async function markPhotosUsed(publicIds: string[], now = new Date()): Pro
 
 /** publicIds fotek použitých v posledních 8 týdnech */
 export async function getUsedPhotoIds(now = new Date()): Promise<Set<string>> {
-  const cutoff = new Date(now.getTime() - USED_WEEKS * 7 * 24 * 3600 * 1000);
+  const cutoff = usedCutoff(now);
   const used = await read<UsedPhoto>(KEYS.used);
   return new Set(used.filter(u => new Date(u.usedAt) >= cutoff).map(u => u.publicId));
 }
