@@ -42,7 +42,8 @@ export function EditorialNav({ tone, active }: Props) {
     { key: "about" as const, href: hrefs.about, label: cs ? "O mně" : "About" },
     { key: "blog" as const, href: hrefs.blog, label: "Blog" },
   ];
-  const links = secondaryPages.has(active) ? secondaryLinks : serviceLinks;
+  const homeLink = { key: "home" as const, href: hrefs.home, label: cs ? "Domů" : "Home" };
+  const links = [homeLink, ...(secondaryPages.has(active) ? secondaryLinks : serviceLinks)];
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

@@ -27,6 +27,17 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
   });
 
+  it("offers an explicit home link on service and content pages", () => {
+    const { rerender } = render(<EditorialNav tone="light" active="business" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("href", "/");
+
+    rerender(<EditorialNav tone="light" active="home" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("aria-current", "page");
+
+    rerender(<EditorialNav tone="light" active="about" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("href", "/");
+  });
+
   it("keeps the current page when switching language on desktop and mobile", () => {
     render(<EditorialNav tone="light" active="blog" />);
 

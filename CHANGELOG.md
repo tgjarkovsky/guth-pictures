@@ -1,3 +1,4 @@
+## [2026-10-19] - Navigace: odkaz „Domů“ jako první položka na všech editorial stránkách (desktop i mobil)
 ## [2026-10-19] - Homepage: text v hero lícuje s obsahem sekcí; druhý řádek hlavního nadpisu jde v adminu posunout (desktop i mobil, v em), výchozí posun srovná nožičku n nad dřík h
 ## [2026-10-19] - Homepage: bordo sjednoceno do teplého oxbloodu (#8f2b24 na krému, #c4574a na tmavé); eventy pryč z navigace a hero; patička editorial stránek v Epilogue
 ## [2026-10-19] - Homepage: krémová stránka s tmavými paspartami, navigace v hero kartě, galerie fotek klientů s recenzí na hover, sekce „Jak to u mě probíhá“, bez nástrojů a palety z fotky; fotky v jednom kódování a galerie v q_auto:best; navigace verzálkami na všech stránkách
