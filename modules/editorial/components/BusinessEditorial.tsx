@@ -4,7 +4,8 @@ import type { Copy } from "@/modules/business-portraits/copy";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
 import { RevealPhone } from "./RevealPhone";
-import { reviewedWork, WorkGrid, type WorkItem } from "./WorkGrid";
+import { WorkGrid } from "./WorkGrid";
+import { reviewedWork, type WorkItem } from "./work-items";
 
 type Props = { locale: string; copy: Copy; business: ServiceContent; images: NormalizedSiteImages; testimonials: Testimonial[]; email: string };
 
@@ -24,7 +25,7 @@ export function BusinessEditorial({ locale, copy, business, images, testimonials
     <EditorialNav tone="dark" active="business" />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
     <header className="ed-business-hero"><div><p className="ed-kicker">{copy.eyebrow}</p><h1>{copy.heroTitle}</h1><p>{copy.heroSubtitle}</p><a className="ed-biz-button" href="#kontakt">{copy.heroCta}</a></div><figure><EditorialImageView image={images.editorial.business.hero} locale={locale} priority sizes="(max-width:760px) 100vw, 50vw" placeholderLabel={placeholder} /></figure></header>
-    {work.length > 0 && <section className="ed-business-headshots"><h2>{copy.headshotsTitle}</h2><p>{copy.headshotsDesc}</p><WorkGrid items={work} locale={locale} sizes={headshotSizes} placeholderLabel={placeholder} /></section>}
+    {work.length > 0 && <section className="ed-business-headshots"><h2>{copy.headshotsTitle}</h2><p>{copy.headshotsDesc}</p><WorkGrid items={work} locale={locale} sizes={work.map(headshotSizes)} placeholderLabel={placeholder} /></section>}
     <section className="ed-business-process"><h2>{copy.stepsTitle}</h2><ol>{copy.steps.map((step, i) => <li key={step.title}><span>0{i + 1}</span><h3>{step.title}</h3><p>{step.desc}</p></li>)}</ol></section>
     <section className="ed-business-pricing"><h2>{copy.pricingTitle}</h2><div>{business.packages.map((pkg) => <article key={pkg.id ?? pkg.name}><h3>{pkg.name}</h3><strong>{pkg.price}</strong><p>{pkg.duration}</p><ul>{pkg.includes.map((item) => <li key={item}>{item}</li>)}</ul><a className="ed-biz-button" href={`?package=${encodeURIComponent(pkg.name)}&service=${encodeURIComponent(business.title)}#kontakt`}>{copy.select}</a></article>)}</div>{business.note && <p>{business.note}</p>}</section>
     <section className="ed-business-faq"><h2>{copy.faqTitle}</h2><div>{copy.faq.map(({ q, a }) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></section>

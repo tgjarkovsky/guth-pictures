@@ -1,7 +1,8 @@
 import React from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import { reviewedWork, WorkGrid } from "../WorkGrid";
+import { WorkGrid } from "../WorkGrid";
+import { reviewedWork } from "../work-items";
 
 // jsdom lacks the modal dialog API.
 beforeAll(() => {
@@ -14,7 +15,7 @@ const items = reviewedWork([
   { id: "b", quote: "Druhá reference.", author: "Bára", photo: "portfolio/b" },
 ], "creative");
 
-const setup = () => render(<WorkGrid items={items} locale="cs" sizes={() => "50vw"} placeholderLabel="Foto" />);
+const setup = () => render(<WorkGrid items={items} locale="cs" sizes={["50vw", "50vw"]} placeholderLabel="Foto" />);
 const dialog = () => screen.getByRole("dialog");
 
 describe("WorkGrid lightbox", () => {
@@ -43,7 +44,7 @@ describe("WorkGrid lightbox", () => {
   });
 
   it("leaves photos without a review unclickable", () => {
-    render(<WorkGrid items={[{ image: items[0].image }]} locale="cs" sizes={() => "50vw"} placeholderLabel="Foto" />);
+    render(<WorkGrid items={[{ image: items[0].image }]} locale="cs" sizes={["50vw"]} placeholderLabel="Foto" />);
     expect(screen.queryByRole("button")).toBeNull();
   });
 });
