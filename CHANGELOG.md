@@ -1,3 +1,4 @@
+## [2026-10-19] - Nový favicon: hledáček s vínovým bodem místo „G.“, přibyla ikona pro plochu iPhonu (apple-icon)
 ## [2026-10-19] - Stories: cron drží max 12 draftů a markPhotosUsed maže záznamy starší 8 týdnů, KV už neroste donekonečna
 ## [2026-10-19] - Klientská galerie: doručená galerie jde stáhnout celá jedním ZIPem (odkaz „Stáhnout vše (ZIP)“ v hlavičce)
 ## [2026-10-19] - Oprava buildu: výběr referencí (reviewedWork) mimo klientský WorkGrid a velikosti obrázků jako pole místo funkce, prerender /firemni-portrety padal
