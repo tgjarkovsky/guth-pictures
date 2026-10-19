@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGalleryPhotos } from "@/lib/cloudinary";
 import { composeDrafts } from "@/modules/stories/lib/compose";
 import { suggestTexts } from "@/modules/stories/lib/claude";
-import { getTexts, saveTexts, mergeAiTexts, getDrafts, saveDrafts, getUsedPhotoIds, markPhotosUsed } from "@/modules/stories/lib/store";
+import { getTexts, saveTexts, mergeAiTexts, mergeDrafts, getDrafts, saveDrafts, getUsedPhotoIds, markPhotosUsed } from "@/modules/stories/lib/store";
 import type { StoryDraft } from "@/modules/stories/lib/types";
 import { siteUrl } from "@/lib/config";
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   }));
 
   await markPhotosUsed(usedNow);
-  await saveDrafts([...drafts, ...(await getDrafts())]);
+  await saveDrafts(mergeDrafts(drafts, await getDrafts()));
 
   if (process.env.RESEND_API_KEY && process.env.STORIES_NOTIFY_EMAIL && drafts.length > 0) {
     try {
