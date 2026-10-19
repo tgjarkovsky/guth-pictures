@@ -1,45 +1,43 @@
 "use client";
 
 import type { ContentData } from "@/modules/admin/lib/content";
-import type { PreviewPage } from "@/modules/admin/preview/protocol";
-import { Field, PackageEditor, Section, SHOW_UNUSED_SECTIONS } from "./FormParts";
+import { Field, PackageEditor, SHOW_UNUSED_SECTIONS } from "./FormParts";
 
 type ServiceKey = keyof ContentData["sluzby"];
 
-export function ServiceSection({
+export function ServiceFields({
   service,
-  title,
-  page,
   content,
   patch,
-  showExtras = false,
 }: {
   service: ServiceKey;
-  title: string;
-  page: PreviewPage;
   content: ContentData;
   patch: (updater: (d: ContentData) => void) => void;
-  showExtras?: boolean;
 }) {
   const s = content.sluzby[service];
+  const path = `sluzby.${service}`;
   return (
-    <Section title={title} page={page}>
+    <div className="space-y-4">
       <Field
-        label="Nadpis"
+        path={`${path}.title`}
+        label="Nadpis služby"
         value={s.title}
         onChange={(v) => patch((d) => { d.sluzby[service].title = v; })}
       />
       <Field
-        label="Popis"
+        path={`${path}.desc`}
+        label="Popis služby"
         value={s.desc}
         onChange={(v) => patch((d) => { d.sluzby[service].desc = v; })}
         textarea
       />
       <PackageEditor
+        path={`${path}.packages`}
         packages={s.packages ?? []}
         onChange={(pkgs) => patch((d) => { d.sluzby[service].packages = pkgs; })}
       />
-      {SHOW_UNUSED_SECTIONS && showExtras && <PackageEditor
+      {SHOW_UNUSED_SECTIONS && service === "business" && <PackageEditor
+        path={`${path}.extras`}
         label="Příplatky"
         addLabel="+ Přidat příplatek"
         simple
@@ -47,10 +45,11 @@ export function ServiceSection({
         onChange={(pkgs) => patch((d) => { d.sluzby[service].extras = pkgs; })}
       />}
       <Field
+        path={`${path}.note`}
         label="Poznámka pod ceníkem"
         value={s.note ?? ""}
         onChange={(v) => patch((d) => { d.sluzby[service].note = v; })}
       />
-    </Section>
+    </div>
   );
 }

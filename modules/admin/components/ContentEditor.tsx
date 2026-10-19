@@ -1,19 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cloudinaryUrl, type GalleryPhoto } from "@/lib/cloudinary-utils";
 import type { ContentData, Testimonial, TestimonialService } from "@/modules/admin/lib/content";
-import { defaultPageCopy, type PageCopy } from "@/modules/admin/lib/page-copy";
-import { AdminPreview, SPLIT_LAYOUT, type PreviewFocus } from "@/modules/admin/preview/AdminPreview";
-import { isPreviewPage, type PreviewPage } from "@/modules/admin/preview/protocol";
+import {
+  CONTENT_TREE, allSections, dirtySections, fieldLabel, findFieldByText, getAt, leaves, searchSections, setAt,
+} from "@/modules/admin/lib/content-tree";
+import { defaultPageCopy } from "@/modules/admin/lib/page-copy";
+import { AdminPreview, type PreviewFocus } from "@/modules/admin/preview/AdminPreview";
+import type { PreviewPage } from "@/modules/admin/preview/protocol";
 import { ContactEmailForm } from "./ContactEmailForm";
-import { Field, Section, SHOW_UNUSED_SECTIONS } from "./FormParts";
+import { Field } from "./FormParts";
 import { PageCopyEditor } from "./PageCopyEditor";
 import { ProfilePhotoUploader } from "./ProfilePhotoUploader";
-import { ServiceSection } from "./ServiceSection";
+import { ServiceFields } from "./ServiceFields";
+import { TreeLayout, focusField } from "./TreeLayout";
 
 type Locale = "cs" | "en";
+const LOCALES: Locale[] = ["cs", "en"];
+const LONG_FIELDS = new Set(["o-mne.bio", "lightTesterPromo.desc"]);
+const SECTIONS = allSections(CONTENT_TREE);
+const sectionById = (id: string) => SECTIONS.find(({ section }) => section.id === id) ?? SECTIONS[0];
 
 const emptyTestimonial = (): Testimonial => ({ id: crypto.randomUUID(), quote: "", author: "", role: "", photo: "" });
 
@@ -30,14 +38,18 @@ const emptyContent = (): ContentData => ({
   testimonials: [],
 });
 
+const emptyBoth = (): Record<Locale, ContentData> => ({ cs: emptyContent(), en: emptyContent() });
+
 export function ContentEditor({ photos = [] }: { photos?: GalleryPhoto[] }) {
   const router = useRouter();
+  const editorRef = useRef<HTMLDivElement>(null);
   const [locale, setLocale] = useState<Locale>("cs");
-  const [data, setData] = useState<Record<Locale, ContentData>>({
-    cs: emptyContent(),
-    en: emptyContent(),
-  });
+  const [data, setData] = useState(emptyBoth);
+  const [saved, setSaved] = useState(emptyBoth);
   const [status, setStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
+  const [selected, setSelected] = useState(SECTIONS[0].section.id);
+  const [query, setQuery] = useState("");
+  const [pendingFocus, setPendingFocus] = useState<string | null>(null);
   const [previewPage, setPreviewPage] = useState<PreviewPage>("home");
   const [previewFocus, setPreviewFocus] = useState<PreviewFocus | null>(null);
 
@@ -53,7 +65,10 @@ export function ContentEditor({ photos = [] }: { photos?: GalleryPhoto[] }) {
       load("/api/admin/content?locale=cs"),
       load("/api/admin/content?locale=en"),
     ]).then(([cs, en]) => {
-      if (cs) setData({ cs, en: en ?? emptyContent() });
+      if (!cs) return;
+      const loaded = { cs, en: en ?? emptyContent() };
+      setData(loaded);
+      setSaved(structuredClone(loaded));
     }).catch(() => {
       // fetch failed, state stays at empty defaults
     });
@@ -61,26 +76,57 @@ export function ContentEditor({ photos = [] }: { photos?: GalleryPhoto[] }) {
 
   const current = data[locale];
   const pageTemplate = useMemo(() => defaultPageCopy(locale), [locale]);
+  const dirty = useMemo(() => ({
+    cs: dirtySections(CONTENT_TREE, data.cs, saved.cs),
+    en: dirtySections(CONTENT_TREE, data.en, saved.en),
+  }), [data, saved]);
+  const dirtyCount = dirty.cs.size + dirty.en.size;
+  const hits = useMemo(() => searchSections(CONTENT_TREE, current, query), [current, query]);
+  const { page, section } = sectionById(selected);
 
-  function pageEditor<K extends keyof PageCopy>(key: K) {
-    const pages = current.pages;
-    if (!pages) return null;
-    return (
-      <PageCopyEditor
-        name={key}
-        value={pages[key]}
-        template={pageTemplate[key]}
-        onChange={(v) => patch((d) => { d.pages = { ...(d.pages ?? pageTemplate), [key]: v }; })}
-      />
-    );
+  useEffect(() => {
+    if (!dirtyCount) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirtyCount]);
+
+  useEffect(() => {
+    if (!pendingFocus) return;
+    focusField(editorRef.current, pendingFocus);
+    setPendingFocus(null);
+  }, [pendingFocus, selected]);
+
+  const groups = CONTENT_TREE.map((p) => ({
+    title: p.page,
+    items: p.sections.filter((s) => hits.has(s.id)).map((s) => ({
+      id: s.id,
+      label: s.title,
+      dirty: dirty.cs.has(s.id) || dirty.en.has(s.id),
+    })),
+  }));
+
+  function select(id: string) {
+    const target = sectionById(id);
+    setSelected(id);
+    if (target.page.preview) setPreviewPage(target.page.preview);
+    const text = target.section.paths.flatMap((path) => leaves(current, path)).find(([, value]) => value.trim())?.[1];
+    if (text) setPreviewFocus({ text });
   }
 
-  // Focusing a text field switches the preview to its page and scrolls to the field's text.
+  function pick({ text }: { text: string }) {
+    const hit = findFieldByText(CONTENT_TREE, current, text, previewPage);
+    if (!hit) return;
+    setQuery("");
+    setSelected(hit.sectionId);
+    setPendingFocus(hit.path);
+  }
+
+  // Focusing a text field scrolls the preview to the field's text.
   function focusPreview(event: React.FocusEvent<HTMLFormElement>) {
     const field = event.target;
     if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
-    const page = field.closest<HTMLElement>("[data-preview-page]")?.dataset.previewPage;
-    if (page && isPreviewPage(page)) setPreviewPage(page);
+    if (page.preview) setPreviewPage(page.preview);
     if (field.value.trim()) setPreviewFocus({ text: field.value });
   }
 
@@ -97,171 +143,133 @@ export function ContentEditor({ photos = [] }: { photos?: GalleryPhoto[] }) {
     });
   }
 
+  async function saveLocale(l: Locale) {
+    // Drop unfinished testimonial rows (e.g. a freshly-added empty one) so a
+    // blank row doesn't make the whole save fail server-side validation.
+    const payload: ContentData = {
+      ...data[l],
+      testimonials: (data[l].testimonials ?? []).filter(
+        (t) => t.quote.trim() !== "" && t.author.trim() !== "",
+      ),
+    };
+    const res = await fetch("/api/admin/content", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale: l, data: payload }),
+    });
+    if (res.ok) setSaved((prev) => ({ ...prev, [l]: structuredClone(data[l]) }));
+    return res.ok;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("saving");
     try {
-      // Drop unfinished testimonial rows (e.g. a freshly-added empty one) so a
-      // blank row doesn't make the whole save fail server-side validation.
-      const payload: ContentData = {
-        ...current,
-        testimonials: (current.testimonials ?? []).filter(
-          (t) => t.quote.trim() !== "" && t.author.trim() !== "",
-        ),
-      };
-      const res = await fetch("/api/admin/content", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale, data: payload }),
-      });
-      setStatus(res.ok ? "ok" : "error");
-      if (res.ok) setTimeout(() => setStatus("idle"), 3000);
+      const results = await Promise.all(LOCALES.filter((l) => dirty[l].size > 0).map(saveLocale));
+      const ok = results.every(Boolean);
+      setStatus(ok ? "ok" : "error");
+      if (ok) setTimeout(() => setStatus("idle"), 3000);
     } catch {
       setStatus("error");
     }
   }
 
-  return (
-    <div className="mt-12 space-y-16">
-
-      <ContactEmailForm />
-
-      <ProfilePhotoUploader />
-
-      {/* Texty webu */}
-      <div className={SPLIT_LAYOUT}>
-      <div>
-      <h2 className="text-xl font-semibold mb-6">Texty webu</h2>
-
-      <div className="flex gap-2 mb-6">
-        {(["cs", "en"] as Locale[]).map((l) => (
-          <button
-            key={l}
-            onClick={() => switchLocale(l)}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
-              locale === l ? "bg-white text-black" : "border border-white/20 hover:border-white"
-            }`}
-          >
-            {l.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
-      <form onSubmit={handleSubmit} onFocus={focusPreview} className="space-y-6">
-        <Section title="Patička">
-          <Field
-            label="Nadpis"
-            value={current.home.title}
-            onChange={(v) => patch((d) => { d.home.title = v; })}
-          />
-          <Field
-            label="Podnadpis"
-            value={current.home.subtitle}
-            onChange={(v) => patch((d) => { d.home.subtitle = v; })}
-          />
-        </Section>
-
-        <Section title="Eventy a svatby" page="eventy">
-          <Field
-            label="Hlavní nadpis"
-            value={current.editorial?.eventsTitle ?? ""}
-            onChange={(v) => patch((d) => { d.editorial = { eventsTitle: v }; })}
-          />
-          {pageEditor("events")}
-        </Section>
-
-        <Section title="Homepage" page="home">
-          {pageEditor("home")}
-        </Section>
-
-        <Section title="Light planner — karta na homepage" page="home">
-          {SHOW_UNUSED_SECTIONS && <Field
-            label="Nadpis"
-            value={current.lightTesterPromo.title}
-            onChange={(v) => patch((d) => { d.lightTesterPromo.title = v; })}
-          />}
-          <Field
-            label="Popis"
-            value={current.lightTesterPromo.desc}
-            onChange={(v) => patch((d) => { d.lightTesterPromo.desc = v; })}
-            textarea
-          />
-        </Section>
-
-        <Section title="O mně">
-          <Field
-            label="Nadpis"
-            value={current["o-mne"].title}
-            onChange={(v) => patch((d) => { d["o-mne"].title = v; })}
-          />
-          <Field
-            label="Podnadpis"
-            value={current["o-mne"].subtitle}
-            onChange={(v) => patch((d) => { d["o-mne"].subtitle = v; })}
-          />
-          <Field
-            label="Bio"
-            value={current["o-mne"].bio}
-            onChange={(v) => patch((d) => { d["o-mne"].bio = v; })}
-            textarea
-          />
-          {pageEditor("about")}
-        </Section>
-
-        <Section title="Kreativní portrét — texty stránky" page="portrety">
-          {pageEditor("portrait")}
-        </Section>
-
-        <Section title="Brandové focení — texty stránky">
-          {pageEditor("brand")}
-        </Section>
-
-        <Section title="Firemní portréty — texty stránky" page="business">
-          {pageEditor("business")}
-        </Section>
-
-        <Section title="Služby — texty stránky">
-          {pageEditor("services")}
-        </Section>
-
-        <ServiceSection service="portraits" title="Portréty" page="portrety" content={current} patch={patch} />
-
-        <ServiceSection service="weddings" title="Svatby" page="eventy" content={current} patch={patch} />
-
-        <ServiceSection service="business" title="Firemní portréty" page="business" content={current} patch={patch} showExtras />
-
-        <Section title="Reference (fotky klientů s citací)">
-          <TestimonialEditor
-            testimonials={current.testimonials ?? []}
-            onChange={(items) => patch((d) => { d.testimonials = items; })}
-            photos={photos}
-          />
-        </Section>
-
-        <div className="sticky bottom-0 z-10 flex items-center gap-4 bg-black/90 py-3 backdrop-blur">
-          <button
-            type="submit"
-            disabled={status === "saving"}
-            className="px-6 py-2 bg-white text-black font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
-          >
-            {status === "saving" ? "Ukládám…" : "Uložit"}
-          </button>
-          {status === "ok" && <span className="text-green-400 text-sm">Uloženo</span>}
-          {status === "error" && <span className="text-red-400 text-sm">Chyba při ukládání</span>}
-        </div>
-      </form>
-      </div>
-      <AdminPreview
-        page={previewPage}
-        onPageChange={setPreviewPage}
-        locale={locale}
-        onLocaleChange={switchLocale}
-        content={current.pages ? current : undefined}
-        focus={previewFocus}
+  function renderField(path: string) {
+    if (path.startsWith("pages.")) {
+      if (!current.pages) return null;
+      return (
+        <PageCopyEditor
+          key={path}
+          path={path}
+          label={fieldLabel(path)}
+          value={getAt(current, path)}
+          template={getAt({ pages: pageTemplate }, path)}
+          onChange={(v) => patch((d) => { d.pages ??= structuredClone(pageTemplate); setAt(d, path, v); })}
+        />
+      );
+    }
+    if (path.startsWith("sluzby.")) {
+      const service = path.split(".")[1] as keyof ContentData["sluzby"];
+      return <ServiceFields key={path} service={service} content={current} patch={patch} />;
+    }
+    if (path === "testimonials") {
+      return (
+        <TestimonialEditor
+          key={path}
+          testimonials={current.testimonials ?? []}
+          onChange={(items) => patch((d) => { d.testimonials = items; })}
+          photos={photos}
+        />
+      );
+    }
+    const value = getAt(current, path);
+    return (
+      <Field
+        key={path}
+        path={path}
+        label={fieldLabel(path)}
+        value={typeof value === "string" ? value : ""}
+        onChange={(v) => patch((d) => { setAt(d, path, v); })}
+        textarea={LONG_FIELDS.has(path)}
       />
-      </div>
+    );
+  }
 
-    </div>
+  const tab = (active: boolean) =>
+    `px-3 py-1 text-xs font-medium transition-colors ${active ? "bg-white text-black" : "border border-white/20 hover:border-white"}`;
+
+  return (
+    <TreeLayout
+      groups={groups}
+      selected={selected}
+      onSelect={select}
+      search={{ value: query, onChange: setQuery }}
+      preview={
+        <AdminPreview
+          page={previewPage}
+          onPageChange={setPreviewPage}
+          locale={locale}
+          content={current.pages ? current : undefined}
+          focus={previewFocus}
+          onPick={pick}
+        />
+      }
+    >
+      <div ref={editorRef}>
+        <div className="mb-5 flex items-center gap-3">
+          <h2 className="flex-1 text-lg font-semibold">
+            <span className="text-gray-500 font-normal">{page.page} › </span>{section.title}
+          </h2>
+          {!section.special && LOCALES.map((l) => (
+            <button key={l} type="button" onClick={() => switchLocale(l)} className={tab(locale === l)}>
+              {l.toUpperCase()}{dirty[l].size > 0 ? " •" : ""}
+            </button>
+          ))}
+        </div>
+
+        {section.special === "settings" ? (
+          <div className="space-y-10">
+            <ContactEmailForm />
+            <ProfilePhotoUploader />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} onFocus={focusPreview} className="space-y-5">
+            {section.paths.map(renderField)}
+            <div className="sticky bottom-0 z-10 flex items-center gap-4 bg-zinc-950/95 py-3 backdrop-blur">
+              <button
+                type="submit"
+                disabled={status === "saving" || dirtyCount === 0}
+                className="px-6 py-2 bg-white text-black font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
+              >
+                {status === "saving" ? "Ukládám…" : dirtyCount ? `Uložit · ${dirtyCount}` : "Vše uloženo"}
+              </button>
+              {status === "ok" && <span className="text-green-400 text-sm">Uloženo</span>}
+              {status === "error" && <span className="text-red-400 text-sm">Chyba při ukládání</span>}
+            </div>
+          </form>
+        )}
+      </div>
+    </TreeLayout>
   );
 }
 
@@ -277,6 +285,7 @@ function TestimonialEditor({
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
   const [pickerOpenId, setPickerOpenId] = useState<string | null>(null);
+  const [addedId, setAddedId] = useState<string | null>(null);
 
   function update(i: number, updater: (t: Testimonial) => void) {
     const next = testimonials.map((t, idx) => {
@@ -288,7 +297,11 @@ function TestimonialEditor({
     onChange(next);
   }
 
-  function add() { onChange([...testimonials, emptyTestimonial()]); }
+  function add() {
+    const item = emptyTestimonial();
+    setAddedId(item.id);
+    onChange([...testimonials, item]);
+  }
   function remove(i: number) { onChange(testimonials.filter((_, idx) => idx !== i)); }
 
   async function uploadPhoto(i: number, file: File, id: string) {
@@ -313,18 +326,16 @@ function TestimonialEditor({
     <div className="space-y-3">
       <p className="text-sm text-gray-400">Reference se na webu zobrazí jen pokud existuje alespoň jedna.</p>
       {testimonials.map((t, i) => (
-        <div key={t.id ?? String(i)} className="border border-white/10 p-4 space-y-2">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-gray-500 uppercase tracking-wider">Reference {i + 1}</span>
-            <button
-              type="button"
-              onClick={() => remove(i)}
-              disabled={uploadingId === (t.id ?? String(i))}
-              className="text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Odebrat
-            </button>
-          </div>
+        <details key={t.id ?? String(i)} data-path={`testimonials.${i}`} open={t.id === addedId} className="group border border-white/10">
+          <summary className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-white/5">
+            <span className="text-xs text-gray-500">{i + 1}.</span>
+            <span className="truncate flex-1">
+              {t.author || <em className="text-gray-500">nová reference</em>}
+              {t.quote && <span className="text-gray-500"> · {t.quote}</span>}
+            </span>
+            <span className="text-gray-500 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div className="space-y-2 border-t border-white/10 p-3">
           <textarea
             placeholder="Citace / co klient řekl"
             value={t.quote}
@@ -423,7 +434,16 @@ function TestimonialEditor({
               })}
             </div>
           )}
-        </div>
+          <button
+            type="button"
+            onClick={() => remove(i)}
+            disabled={uploadingId === (t.id ?? String(i))}
+            className="text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Odebrat referenci
+          </button>
+          </div>
+        </details>
       ))}
       <button
         type="button"
