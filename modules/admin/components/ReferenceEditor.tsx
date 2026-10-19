@@ -20,19 +20,26 @@ export function ReferenceEditor({ service, refs, onChange, photos }: {
   const [pickerId, setPickerId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
   const shown = refs.filter((r) => r.service === service);
 
   const update = (id: string, patch: Partial<Reference>) =>
     onChange(refs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
-  function move(index: number, offset: -1 | 1) {
-    const other = shown[index + offset];
-    if (!other) return;
-    const a = refs.indexOf(shown[index]);
-    const b = refs.indexOf(other);
-    const next = [...refs];
-    [next[a], next[b]] = [next[b], next[a]];
-    onChange(next);
+  // Puts shown[from] in shown[to]'s place; other pages' references keep their positions.
+  function moveTo(from: number, to: number) {
+    const target = shown[to];
+    if (from === to || !target) return;
+    const rest = refs.filter((r) => r !== shown[from]);
+    const at = rest.indexOf(target) + (to > from ? 1 : 0);
+    onChange([...rest.slice(0, at), shown[from], ...rest.slice(at)]);
+  }
+
+  function drop(to: number) {
+    if (dragIndex !== null) moveTo(dragIndex, to);
+    setDragIndex(null);
+    setOverIndex(null);
   }
 
   function add() {
@@ -62,11 +69,18 @@ export function ReferenceEditor({ service, refs, onChange, photos }: {
   return (
     <div className="space-y-2">
       <p className="text-xs text-gray-500">
-        Na webu se ukážou reference s fotkou, jménem a citací (citace zvlášť pro CS a EN). Fotka, jméno a pořadí platí pro oba jazyky.
+        Na webu se ukážou reference s fotkou, jménem a citací (citace zvlášť pro CS a EN). Fotka, jméno a pořadí platí pro oba jazyky. Pořadí změníš přetažením řádku nebo šipkami.
       </p>
       {shown.map((r, i) => (
-        <details key={r.id} open={r.id === openId} className="group border border-white/10">
-          <summary className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-white/5">
+        <details key={r.id} open={r.id === openId}
+          onDragOver={(e) => { if (dragIndex === null) return; e.preventDefault(); setOverIndex(i); }}
+          onDrop={(e) => { e.preventDefault(); drop(i); }}
+          className={`group border ${overIndex === i && dragIndex !== i ? "border-white/60" : "border-white/10"} ${dragIndex === i ? "opacity-40" : ""}`}>
+          <summary draggable
+            onDragStart={(e) => { e.dataTransfer?.setData("text/plain", r.id); setDragIndex(i); }}
+            onDragEnd={() => { setDragIndex(null); setOverIndex(null); }}
+            className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-white/5">
+            <span aria-hidden className="cursor-grab text-gray-500" title="Přetáhnout">⠿</span>
             {r.photo
               // eslint-disable-next-line @next/next/no-img-element
               ? <img src={cloudinaryUrl(r.photo, "w_64,h_64,c_fill,g_face,q_auto,f_auto")} alt="" className="h-8 w-8 flex-none object-cover" />
@@ -76,6 +90,13 @@ export function ReferenceEditor({ service, refs, onChange, photos }: {
               {r.quote.cs && <span className="text-gray-500"> · {r.quote.cs}</span>}
             </span>
             {!r.photo && <span className="text-xs text-amber-400">bez fotky</span>}
+            <span className="flex gap-1">
+              {([[-1, "Posunout nahoru", "↑", i === 0], [1, "Posunout dolů", "↓", i === shown.length - 1]] as const).map(([offset, label, arrow, disabled]) => (
+                <button key={offset} type="button" aria-label={`${label}: ${r.author || "nová reference"}`} disabled={disabled}
+                  onClick={(e) => { e.preventDefault(); moveTo(i, i + offset); }}
+                  className="px-1.5 text-gray-400 hover:text-white disabled:opacity-20">{arrow}</button>
+              ))}
+            </span>
             <span className="text-gray-500 group-open:rotate-90 transition-transform">›</span>
           </summary>
           <div className="space-y-3 border-t border-white/10 p-3">
@@ -117,8 +138,6 @@ export function ReferenceEditor({ service, refs, onChange, photos }: {
               ))}
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <button type="button" aria-label="Posunout nahoru" onClick={() => move(i, -1)} disabled={i === 0} className="disabled:opacity-30">↑</button>
-              <button type="button" aria-label="Posunout dolů" onClick={() => move(i, 1)} disabled={i === shown.length - 1} className="disabled:opacity-30">↓</button>
               <button type="button" onClick={() => onChange(refs.filter((x) => x.id !== r.id))} disabled={uploadingId === r.id}
                 className="ml-auto text-xs text-red-400 hover:text-red-300 disabled:opacity-40">
                 Odebrat referenci

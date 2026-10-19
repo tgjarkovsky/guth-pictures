@@ -1,3 +1,4 @@
+## [2026-10-19] - Admin › Fotky: pořadí referencí jde měnit přetažením řádku nebo šipkami přímo ve sbaleném seznamu
 ## [2026-10-19] - Reference s fotkou jdou rozkliknout: celá fotka bez ořezu vedle citace na tmavé kartě stránky, listování šipkami, klávesami i swipem, zavření ×, Esc nebo klikem vedle
 ## [2026-10-19] - Oprava buildu: seznam zamčených sekcí adminu mimo klientskou komponentu (prerender /admin/tema padal)
 ## [2026-10-19] - Admin odpovídá webu: reference (fotka, jméno, citace CS/EN) se upravují ve Fotkách u své stránky (Homepage › Vybrané příběhy, Business › Headshoty) a ukládají do obou jazyků; z Fotek pryč sloty, které web nevykresluje (příběhy, headshoty, Focení 101, plánovač; data v KV zůstávají); z Textů pryč Reference; Téma zatím zamčené
