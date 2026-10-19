@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LOCKED } from "@/modules/admin/lib/locked";
+
 
 const groups = [
   { title: "Web", tabs: [
@@ -29,6 +31,13 @@ export function AdminNav() {
           <span className="mr-1 text-[11px] uppercase tracking-wider text-gray-500">{title}</span>
           {tabs.map(({ href, label }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
+            if (LOCKED.has(href)) {
+              return (
+                <span key={href} aria-disabled="true" title="Zatím zamčeno" className="px-4 py-2 text-sm font-medium border border-white/5 text-gray-600 cursor-not-allowed">
+                  {label} 🔒
+                </span>
+              );
+            }
             return (
               <Link
                 key={href}

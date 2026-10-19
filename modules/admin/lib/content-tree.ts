@@ -16,7 +16,6 @@ export const CONTENT_TREE: TreePage[] = [
       { id: "home-about", title: "O mně", paths: p("home", ["aboutKicker", "about", "aboutLink"]) },
       { id: "home-steps", title: "Kroky", paths: p("home", ["steps"]) },
       { id: "home-contact", title: "Kontakt", paths: p("home", ["contact"]) },
-      { id: "home-planner", title: "Light planner karta", paths: ["lightTesterPromo.desc"] },
     ],
   },
   {
@@ -71,7 +70,6 @@ export const CONTENT_TREE: TreePage[] = [
     page: "Ostatní", sections: [
       { id: "about", title: "O mně", paths: ["o-mne.title", "o-mne.subtitle", "o-mne.bio", ...p("about", ["eyebrow", "portfolioLink", "servicesLink"])] },
       { id: "footer", title: "Patička", paths: ["home.title", "home.subtitle"] },
-      { id: "testimonials", title: "Reference", paths: ["testimonials"] },
       { id: "settings", title: "Nastavení", paths: [], special: "settings" },
     ],
   },
@@ -159,7 +157,6 @@ export const LABELS: Record<string, string> = {
   role: "Role",
   // Fields outside page copy (full path)
   "editorial.eventsTitle": "Hlavní nadpis",
-  "lightTesterPromo.desc": "Popis",
   "o-mne.title": "Nadpis",
   "o-mne.subtitle": "Podnadpis",
   "o-mne.bio": "Bio",
