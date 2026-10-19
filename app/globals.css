@@ -1860,7 +1860,7 @@ body:has(.editorial-home),
 .editorial-secondary {
   --editorial-ink: #191315;
   --editorial-paper: #f3efe7;
-  --editorial-accent: #7a1834;
+  --editorial-accent: #8f2b24;
   --color-bg: var(--editorial-paper);
   --color-bg-elevated: color-mix(in srgb, var(--editorial-ink) 4%, var(--editorial-paper));
   --color-text: var(--editorial-ink);
@@ -1897,6 +1897,8 @@ body:has(.editorial-home) {
 .editorial-business { --editorial-ink: #10201f; --editorial-paper: #f3f5f4; --editorial-accent: #536460; }
 .editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f5f2ec; --editorial-accent: #0b0b0a; }
 .editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f4f1ea; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
+/* Footer lives in the layout, outside the editorial scope. */
+body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editorial-events, .editorial-secondary)) footer { font-family: var(--font-editorial-sans), sans-serif; }
 
 .editorial-nav {
   position: absolute;
@@ -2009,7 +2011,7 @@ body:has(.editorial-home) {
 /* ── Home: cream page, dark only as passe-partout ──
    The hero is a dark card holding the nav, the headline and the photo, so header and hero read as
    one framed object; photos below sit on the same dark mats. The headline's baseline rests on the photo. */
-.editorial-home { --home-dark: #232120; --home-dark-ink: #f1eee9; --home-dark-accent: #c4425f; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; overflow-x: clip; }
+.editorial-home { --home-dark: #232120; --home-dark-ink: #f1eee9; --home-dark-accent: #c4574a; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; overflow-x: clip; }
 /* Cream nudged away from yellow; body scope so the footer follows. */
 body:has(.editorial-home), .editorial-home { --editorial-paper: #f4f2ee; }
 /* The site-wide fixed accent hairline would float over the cream gap above the card. */
@@ -2037,7 +2039,7 @@ body:has(.editorial-home)::before { display: none; }
 .ed-home-story__photo { position: absolute; inset: 0; }
 .ed-home-story figcaption { position: absolute; inset: 0; z-index: 1; padding: clamp(1.25rem, 2.5cqi, 2rem); display: flex; flex-direction: column; justify-content: end; gap: 1rem; color: #f4f1ea; background: linear-gradient(0deg, rgba(20,20,20,.55), transparent 35%); transition: background-color .35s ease-out; }
 .ed-home-story blockquote { max-width: 32ch; margin: 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.05rem, 1.6cqi, 1.5rem); font-weight: 600; line-height: 1.2; letter-spacing: -.01em; white-space: pre-line; opacity: 0; transform: translateY(.75rem); transition: opacity .35s ease-out, transform .35s ease-out; }
-.ed-home-story blockquote::before { content: "„"; margin-right: .05em; font-size: 1.6em; line-height: 0; color: var(--editorial-accent); }
+.ed-home-story blockquote::before { content: "„"; margin-right: .05em; font-size: 1.6em; line-height: 0; color: var(--home-dark-accent); }
 .ed-home-story blockquote::after { content: "“"; }
 .ed-home-story figcaption span { font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .ed-home-story:is(:hover, :focus-visible) figcaption { background-color: rgba(20,20,20,.62); }

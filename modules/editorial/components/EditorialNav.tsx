@@ -35,7 +35,6 @@ export function EditorialNav({ tone, active }: Props) {
   const serviceLinks = [
     { key: "portrait" as const, href: hrefs.portrait, label: cs ? "Portréty" : "Portraits" },
     { key: "business" as const, href: hrefs.business, label: "Business" },
-    { key: "events" as const, href: hrefs.events, label: cs ? "Eventy a svatby" : "Events & weddings" },
   ];
   const secondaryLinks = [
     { key: "services" as const, href: hrefs.services, label: cs ? "Služby" : "Services" },

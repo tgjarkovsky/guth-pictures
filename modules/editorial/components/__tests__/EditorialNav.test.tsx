@@ -14,7 +14,7 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Guth Pictures" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Portréty" })).toHaveAttribute("href", "/sluzby/portretni-foceni");
     expect(screen.getByRole("link", { name: "Business" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Eventy a svatby" })).toHaveAttribute("href", "/sluzby/eventy-a-svatby");
+    expect(screen.queryByRole("link", { name: "Eventy a svatby" })).toBeNull();
     expect(screen.getByRole("link", { name: "Kontakt" })).toHaveAttribute("href", "/#kontakt");
   });
 

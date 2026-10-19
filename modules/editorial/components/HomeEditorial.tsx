@@ -48,9 +48,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
           {copy.intro && <p>{copy.intro}</p>}
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
             <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
-            <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>
-            <Link href="/sluzby/eventy-a-svatby"><span>03</span>{copy.events}</Link>
-          </nav>
+            <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>          </nav>
         </div>
         <div className="ed-home-hero__image">
           <EditorialImageView image={images.editorial.home.hero} locale={locale} priority sizes="(max-width: 760px) 100vw, 70vw" placeholderLabel={cs ? "Úvodní fotografie bude doplněna" : "Hero photograph coming soon"} />

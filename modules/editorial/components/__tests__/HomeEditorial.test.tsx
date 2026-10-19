@@ -29,7 +29,7 @@ describe("HomeEditorial", () => {
     expect(document.querySelectorAll("h1")).toHaveLength(1);
     expect(document.querySelector('a[href="/sluzby/portretni-foceni"]')).not.toBeNull();
     expect(document.querySelector('a[href="/firemni-portrety"]')).not.toBeNull();
-    expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')).not.toBeNull();
+    expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')).toBeNull();
     expect(document.querySelector("#tvorba ~ #o-mne")).not.toBeNull();
     expect(document.querySelector("#tvorba blockquote")?.textContent).toBe("Focení působí spíš jako hra.");
     expect(document.querySelector("#tvorba figcaption span")?.textContent).toBe("Apolena");
