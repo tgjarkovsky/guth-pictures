@@ -164,6 +164,11 @@ function ClientPhotoGrid({
             {photos.length} fotek · {maxSelection !== null ? `${favorites.size} / ${maxSelection}` : favorites.size} vybráno
           </p>
         </div>
+        {delivered && (
+          <a href={`/api/gallery/${slug}/download-all`} className="text-sm underline text-gray-300 hover:text-white">
+            Stáhnout vše (ZIP)
+          </a>
+        )}
         <FavoritesToggle onlyFavorites={onlyFavorites} count={favorites.size} onChange={setOnlyFavorites} />
         {!locked && (
           <>
