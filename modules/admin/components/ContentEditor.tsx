@@ -19,7 +19,7 @@ import { TreeLayout, focusField } from "./TreeLayout";
 
 type Locale = "cs" | "en";
 const LOCALES: Locale[] = ["cs", "en"];
-const LONG_FIELDS = new Set(["o-mne.bio", "lightTesterPromo.desc"]);
+const LONG_FIELDS = new Set(["o-mne.bio"]);
 const SECTIONS = allSections(CONTENT_TREE);
 const sectionById = (id: string) => SECTIONS.find(({ section }) => section.id === id) ?? SECTIONS[0];
 

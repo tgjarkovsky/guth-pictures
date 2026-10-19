@@ -34,9 +34,13 @@ describe("CONTENT_TREE", () => {
   });
 
   it("covers every editable ContentData field", () => {
-    const fields = ["home.title", "home.subtitle", "o-mne.title", "o-mne.subtitle", "o-mne.bio", "lightTesterPromo.desc",
+    const fields = ["home.title", "home.subtitle", "o-mne.title", "o-mne.subtitle", "o-mne.bio",
       "editorial.eventsTitle", "sluzby.portraits", "sluzby.weddings", "sluzby.business", "testimonials"];
     expect(fields.filter((path) => !covered(path))).toEqual([]);
+  });
+
+  it("leaves out fields the site no longer renders", () => {
+    expect(allPaths.filter((path) => path.startsWith("lightTesterPromo"))).toEqual([]);
   });
 
   it("has unique section ids", () => {
