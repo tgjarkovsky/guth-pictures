@@ -38,6 +38,7 @@ export type PageCopy = {
     aboutKicker: string;
     about: string;
     aboutLink: string;
+    steps: { title: string; desc: string }[];
     tools: string;
     foceni101Desc: string;
     foceni101Cta: string;
@@ -115,6 +116,12 @@ const DEFAULTS: Record<Locale, PageCopy> = {
       aboutKicker: "Za fotoaparátem",
       about: "Zajímá mě člověk. Ne dokonalá póza.",
       aboutLink: "Více o mně",
+      steps: [
+        { title: "Domluva předem", desc: "Napíšeš mi, k čemu fotky potřebuješ a co se ti líbí. Místo, oblečení a nápady doladíme ještě před focením." },
+        { title: "Vedení při focení", desc: "Nemusíš umět pózovat. Během focení ti řeknu, jak se postavit, kam dát ruce a kam se dívat." },
+        { title: "Nápady z obou stran", desc: "Přijď s vlastním nápadem, i kdyby byl ulítlý. Když žádný nemáš, přinesu svoje." },
+        { title: "Výběr a úprava", desc: "Fotky vyberu a upravím sám. Rozsah a termín předání si potvrdíme podle zakázky." },
+      ],
       tools: "Dva nástroje pro tvůj lepší pohled.",
       foceni101Desc: "Prozkoumej, co ve fotografii dělá světlo, expozice a kompozice.",
       foceni101Cta: "Vyzkoušet",
@@ -178,6 +185,12 @@ const DEFAULTS: Record<Locale, PageCopy> = {
       aboutKicker: "Behind the camera",
       about: "I care about the person. Not a perfect pose.",
       aboutLink: "More about me",
+      steps: [
+        { title: "Planning ahead", desc: "Tell me what the photos are for and what you like. We sort out the place, outfits and ideas before the shoot." },
+        { title: "Guidance on set", desc: "You don't need to know how to pose. During the shoot I'll tell you how to stand, where to put your hands and where to look." },
+        { title: "Ideas from both sides", desc: "Bring your own idea, however wild. If you have none, I'll bring mine." },
+        { title: "Selection and editing", desc: "I select and edit the photos myself. Scope and delivery date are confirmed per job." },
+      ],
       tools: "Two tools for a better view.",
       foceni101Desc: "Explore how light, exposure and composition shape a photograph.",
       foceni101Cta: "Try it",

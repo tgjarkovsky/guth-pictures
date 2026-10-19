@@ -1,3 +1,4 @@
+## [2026-10-19] - Homepage: krémová stránka s tmavými paspartami, navigace v hero kartě, galerie fotek klientů s recenzí na hover, sekce „Jak to u mě probíhá“, bez nástrojů a palety z fotky; fotky v jednom kódování a galerie v q_auto:best; navigace verzálkami na všech stránkách
 ## [2026-10-18] - ROADMAP.md: vize, uživatelé, směry na 1–3 měsíce (víc poptávek) a co nedělat
 ## [2026-10-16] - Smazání klientské galerie maže i fotky v Cloudinary (client-galleries/<slug>/); při chybě 502 a KV zůstane
 ## [2026-10-15] - Sdílený helper signedUploadRequest pro podepsaný upload do Cloudinary (DraftCard, PhotoUploadSection)

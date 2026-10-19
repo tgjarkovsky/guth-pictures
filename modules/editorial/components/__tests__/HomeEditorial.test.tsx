@@ -19,7 +19,7 @@ const content = normalizeContent({
     business: { title: "Business", desc: "Business", packages: [] },
   },
   lightTesterPromo: { title: "Light planner", desc: "Připrav si světlo." },
-  testimonials: [],
+  testimonials: [{ id: "t1", quote: "Focení působí spíš jako hra.", author: "Apolena", photo: "portfolio/abc" }],
 }, "cs");
 
 describe("HomeEditorial", () => {
@@ -31,10 +31,17 @@ describe("HomeEditorial", () => {
     expect(document.querySelector('a[href="/firemni-portrety"]')).not.toBeNull();
     expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')).not.toBeNull();
     expect(document.querySelector("#tvorba ~ #o-mne")).not.toBeNull();
-    expect(document.querySelector("#foto-nastroje")).not.toBeNull();
-    expect(document.querySelector('a[href="/foceni-101"]')).not.toBeNull();
-    expect(document.querySelector('a[href="/light-tester"]')).not.toBeNull();
-    expect(html).toContain("větší obrazovce");
+    expect(document.querySelector("#tvorba blockquote")?.textContent).toBe("Focení působí spíš jako hra.");
+    expect(document.querySelector("#tvorba figcaption span")?.textContent).toBe("Apolena");
+    expect(document.querySelectorAll("#o-mne ol li")).toHaveLength(4);
+    expect(document.querySelector("#foto-nastroje")).toBeNull();
     expect(document.querySelector("#kontakt form")).not.toBeNull();
   });
+});
+
+it("falls back to the admin-picked stories when no testimonial has a photo", () => {
+  const html = renderToStaticMarkup(<HomeEditorial locale="cs" content={{ ...content, testimonials: [] }} images={normalizeImages({ profile: "" })} />);
+  const document = new DOMParser().parseFromString(html, "text/html");
+  expect(document.querySelectorAll("#tvorba figure").length).toBeGreaterThan(0);
+  expect(document.querySelector("#tvorba figcaption")).toBeNull();
 });

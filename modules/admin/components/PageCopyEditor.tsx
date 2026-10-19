@@ -74,8 +74,8 @@ const LABELS: Record<string, string> = {
   servicesLink: "Tlačítko Služby",
 };
 
-// Fields the site no longer renders (business extras are hidden).
-const HIDDEN = new Set(["extrasTitle", "atWorkTitle", "atWorkDesc"]);
+// Fields the site no longer renders (business extras, homepage tools).
+const HIDDEN = new Set(["extrasTitle", "atWorkTitle", "atWorkDesc", "tools", "foceni101Desc", "foceni101Cta", "plannerCta", "plannerNotice"]);
 
 const labelFor = (parent: string, key: string) => LABELS[`${parent}.${key}`] ?? LABELS[key] ?? key;
 
