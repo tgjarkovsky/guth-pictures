@@ -27,6 +27,18 @@ describe("isValidContentData — testimonials", () => {
     expect(isValidContentData(d)).toBe(true);
   });
 
+  it("accepts a testimonial assigned to the business page", () => {
+    const d = valid() as Record<string, unknown>;
+    d.testimonials = [{ id: "1", quote: "Skvělé", author: "Jana", service: "business" }];
+    expect(isValidContentData(d)).toBe(true);
+  });
+
+  it("rejects an unknown testimonial service", () => {
+    const d = valid() as Record<string, unknown>;
+    d.testimonials = [{ id: "1", quote: "Skvělé", author: "Jana", service: "weddings" }];
+    expect(isValidContentData(d)).toBe(false);
+  });
+
   it("rejects a testimonial without a quote", () => {
     const d = valid() as Record<string, unknown>;
     d.testimonials = [{ id: "1", author: "Jana" }];

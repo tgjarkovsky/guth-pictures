@@ -1,22 +1,16 @@
 import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
-import type { EditorialImage, NormalizedContentData, NormalizedSiteImages, Testimonial } from "@/modules/admin/lib/content";
+import type { NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
+import { reviewedWork, WorkGrid, type WorkItem } from "./WorkGrid";
 
 type Props = { locale: string; content: NormalizedContentData; images: NormalizedSiteImages };
-type WorkItem = { image: EditorialImage; review?: Testimonial };
 
-const clientPhoto = (t: Testimonial): EditorialImage => ({
-  publicId: t.photo ?? "",
-  alt: { cs: t.author, en: t.author },
-  focal: { desktop: "50% 30%", mobile: "50% 30%" },
-});
-
-// Client photos carry their review; without any reviewed photos the admin-picked stories stand in.
+// Without any reviewed photos the admin-picked stories stand in.
 function workItems(content: NormalizedContentData, images: NormalizedSiteImages): WorkItem[] {
-  const reviewed = content.testimonials.filter((t) => t.photo).map((t) => ({ image: clientPhoto(t), review: t }));
+  const reviewed = reviewedWork(content.testimonials, "creative");
   return reviewed.length > 0 ? reviewed : images.editorial.home.stories.map((image) => ({ image }));
 }
 
@@ -66,21 +60,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
 
       <section id="tvorba" className="ed-home-work">
         {copy.work && <h2>{copy.work}</h2>}
-        <div className="ed-home-work__grid">
-          {work.map(({ image, review }, index) => (
-            <figure key={`${image.publicId}-${index}`} className="ed-home-story" tabIndex={review ? 0 : undefined}>
-              <div className="ed-home-story__photo">
-                <EditorialImageView image={image} locale={locale} quality="best" sizes={storySizes(index)} placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} />
-              </div>
-              {review && (
-                <figcaption>
-                  <blockquote>{review.quote}</blockquote>
-                  <span>{review.author}{review.role && `, ${review.role}`}</span>
-                </figcaption>
-              )}
-            </figure>
-          ))}
-        </div>
+        <WorkGrid items={work} locale={locale} sizes={storySizes} placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} />
       </section>
 
       <section id="o-mne" className="ed-home-about">

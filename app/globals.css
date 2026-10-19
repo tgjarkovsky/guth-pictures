@@ -1807,33 +1807,47 @@ body::after {
   100% { opacity: 0; transform: translateY(-20px) scale(0.96); filter: blur(8px); }
 }
 
-.editorial-business { --biz-muted: color-mix(in srgb, var(--editorial-ink) 74%, var(--editorial-paper)); --biz-line: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --biz-gutter: clamp(1.25rem, 5cqi, 4rem); font-size: 1rem; line-height: 1.6; }
+/* ── Business: same passe-partout language as home, bottle-green palette ──
+   The hero is a dark card holding the nav, text and photo; client headshots sit on the same mats.
+   The --home-* aliases let the shared WorkGrid styles (see Home) pick up this palette. */
+.editorial-business { --card: #1c2a24; --card-ink: #eef0ea; --card-accent: #9cc7ae; --home-dark: var(--card); --home-dark-ink: var(--card-ink); --home-dark-accent: var(--card-accent); --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --biz-muted: color-mix(in srgb, var(--editorial-ink) 74%, var(--editorial-paper)); --biz-line: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --biz-gutter: clamp(1.25rem, 5cqi, 5rem); font-size: 1rem; line-height: 1.6; overflow-x: clip; }
 .editorial-business ::selection { color: var(--editorial-paper); background: var(--editorial-ink); }
 .editorial-business h1, .editorial-business h2, .editorial-business h3 { text-wrap: balance; }
-.editorial-business h2 { max-width: 16ch; margin: 0 0 1.25rem; font-size: clamp(2.5rem, 4.5cqi, 4.25rem); font-weight: 500; line-height: 1.02; letter-spacing: -.035em; }
-.editorial-business h3 { margin: 0 0 .5rem; font-size: 1.25rem; font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+.editorial-business :is(h1, h2) { font-family: var(--font-editorial-serif), serif; font-weight: 800; letter-spacing: -.04em; }
+.editorial-business h2 { max-width: 14ch; margin: 0 0 1.25rem; font-size: clamp(2.75rem, 5.5cqi, 5.5rem); line-height: .95; }
+.editorial-business h3 { margin: 0 0 .5rem; font-family: var(--font-editorial-serif), serif; font-size: 1.35rem; font-weight: 700; line-height: 1.25; letter-spacing: -.02em; }
 .editorial-business :where(section > p, section > div > p) { max-width: 46ch; margin: 0; color: var(--biz-muted); font-size: 1.125rem; }
 .editorial-business :where(article p, li p) { margin: 0; color: var(--biz-muted); }
-.ed-biz-button { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
+.ed-biz-button { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out, color .2s ease-out; }
 .ed-biz-button:hover { background: var(--editorial-accent); }
-.ed-business-hero { min-height: 44rem; display: grid; grid-template-columns: 1fr 1fr; }
-.ed-business-hero > div { padding: clamp(6rem, 9cqi, 8rem) var(--biz-gutter) clamp(3rem, 6cqi, 5rem); display: flex; flex-direction: column; justify-content: center; align-items: start; }
-.ed-business-hero > div > p:first-child { margin: 0; color: var(--editorial-accent); font-size: .8125rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
-.ed-business-hero h1 { max-width: 11ch; margin: 1.25rem 0 1.5rem; font-size: clamp(3.25rem, 6cqi, 6rem); font-weight: 500; line-height: .95; letter-spacing: -.04em; }
+.editorial-business > .editorial-nav { inset: var(--card-gap) calc(max(0px, (100% - 1440px) / 2) + var(--card-gap)) auto; color: var(--card-ink); }
+.ed-business-hero { --editorial-ink: var(--card-ink); --editorial-paper: var(--card); --editorial-accent: var(--card-accent); --biz-muted: color-mix(in srgb, var(--card-ink) 78%, var(--card)); position: relative; isolation: isolate; margin: 0 var(--card-gap); padding: var(--card-gap) var(--mat) var(--mat); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); color: var(--editorial-ink); }
+.ed-business-hero::before { content: ""; position: absolute; inset: calc(var(--card-gap) - var(--nav-h)) 0 0; z-index: -1; background: var(--card); }
+.ed-business-hero > div { padding: clamp(3rem, 6cqi, 6rem) clamp(1rem, 4cqi, 4rem) clamp(3rem, 6cqi, 6rem) calc(var(--biz-gutter) - var(--card-gap) - var(--mat)); display: flex; flex-direction: column; justify-content: center; align-items: start; }
+.ed-business-hero .ed-kicker { margin: 0; color: var(--editorial-accent); font-weight: 600; text-transform: uppercase; }
+.ed-business-hero h1 { max-width: 12ch; margin: 1.25rem 0 1.5rem; font-size: clamp(2.75rem, 4.6cqi, 4.5rem); font-weight: 700; line-height: .92; }
 .ed-business-hero > div > p:nth-of-type(2) { max-width: 34ch; margin: 0 0 2.25rem; color: var(--biz-muted); font-size: 1.25rem; line-height: 1.5; }
-.ed-business-hero figure { position: relative; margin: 0; }
-.ed-business-headshots, .ed-business-use, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact { padding: clamp(5rem, 8cqi, 8rem) var(--biz-gutter); }
-.ed-business-headshots > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 3rem; }
-.ed-business-headshots figure { position: relative; aspect-ratio: 4 / 5; margin: 0; }
-.ed-business-use { display: grid; grid-template-columns: 1.2fr repeat(3, 1fr); gap: 2.5rem; border-block: 1px solid var(--biz-line); }
-.ed-business-use h2 { margin: 0; }
-.ed-business-use article { padding-top: 1.25rem; border-top: 1px solid var(--editorial-ink); }
-.ed-business-process ol { margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; list-style: none; }
-.ed-business-process li { padding-top: 1.25rem; border-top: 1px solid var(--editorial-ink); }
-.ed-business-process li span { display: block; margin-bottom: 1.5rem; color: var(--editorial-accent); font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.ed-business-pricing > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 3rem; }
+.ed-business-hero .ed-biz-button { color: var(--card); background: var(--card-ink); }
+.ed-business-hero .ed-biz-button:hover { background: var(--card-accent); }
+.ed-business-hero figure { position: relative; min-height: clamp(30rem, 72svh, 48rem); margin: 0; }
+.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact { padding: clamp(4rem, 9cqi, 9rem) var(--biz-gutter); }
+.ed-business-headshots .ed-home-work__grid { margin-top: clamp(2rem, 4cqi, 3.5rem); }
+@media (min-width: 761px) {
+  /* Headshots are portrait: an even 4:5 row instead of the home mosaic. */
+  .ed-business-headshots .ed-home-work__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: auto; }
+  .ed-business-headshots .ed-home-story:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 4 / 5; }
+  .ed-business-headshots .ed-home-story:nth-child(n) blockquote { font-size: clamp(1rem, 1.4cqi, 1.3rem); }
+}
+.ed-business-process { border-top: 1px solid var(--biz-line); }
+.ed-business-process ol { margin: clamp(2rem, 4cqi, 3.5rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5rem 2rem; list-style: none; }
+.ed-business-process li { padding-top: 1rem; border-top: 1px solid currentColor; }
+.ed-business-process li span { display: block; margin-bottom: 1rem; color: var(--editorial-accent); font-family: var(--font-editorial-serif), serif; font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+/* The second package (admin order) is the recommended one and sits on the dark card. */
+.ed-business-pricing > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin-top: clamp(2rem, 4cqi, 3.5rem); }
 .ed-business-pricing article { display: flex; flex-direction: column; padding: 1.75rem 1.5rem 1.5rem; border: 1px solid var(--biz-line); }
-.ed-business-pricing strong { display: block; margin-top: .75rem; font-size: 2rem; font-weight: 500; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ed-business-pricing article:nth-child(2) { --editorial-ink: var(--card-ink); --editorial-paper: var(--card); --biz-muted: color-mix(in srgb, var(--card-ink) 78%, var(--card)); --biz-line: color-mix(in srgb, var(--card-ink) 20%, transparent); color: var(--card-ink); background: var(--card); border-color: var(--card); }
+.ed-business-pricing article:nth-child(2) .ed-biz-button:hover { color: var(--card); background: var(--card-accent); }
+.ed-business-pricing strong { display: block; margin-top: .75rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.35rem, 1.7cqi, 1.6rem); font-weight: 700; line-height: 1.15; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .ed-business-pricing article > p { margin: .375rem 0 0; color: var(--biz-muted); font-size: .9375rem; }
 .ed-business-pricing ul { margin: 1.5rem 0 2rem; padding: 0; list-style: none; color: var(--biz-muted); font-size: .9375rem; }
 .ed-business-pricing ul li { padding: .625rem 0; border-top: 1px solid var(--biz-line); }
@@ -1847,12 +1861,23 @@ body::after {
 .ed-business-faq summary::after { content: "+"; flex: none; color: var(--editorial-accent); font-size: 1.5rem; line-height: 1; transition: transform .2s ease-out; }
 .ed-business-faq details[open] summary::after { transform: rotate(45deg); }
 .ed-business-faq details p { max-width: 60ch; margin: 0; padding: 0 0 1.5rem; color: var(--biz-muted); }
-@media (max-width: 1024px) { .ed-business-use { grid-template-columns: repeat(3, 1fr); } .ed-business-use h2 { grid-column: 1 / -1; } .ed-business-process ol, .ed-business-pricing > div { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 760px) { .ed-business-hero, .ed-business-use, .ed-business-faq, .ed-business-contact { grid-template-columns: 1fr; } .ed-business-hero figure { min-height: 32rem; } .ed-business-headshots > div, .ed-business-process ol, .ed-business-pricing > div { grid-template-columns: 1fr; } }
+.ed-business-email { display: inline-block; margin-top: 1.75rem; color: inherit; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.15rem, 1.8cqi, 1.5rem); font-weight: 700; letter-spacing: -.02em; text-decoration: underline; text-decoration-color: var(--editorial-accent); text-decoration-thickness: 2px; text-underline-offset: .3em; overflow-wrap: anywhere; }
+.ed-business-phone { display: block; margin-top: .75rem; padding: 0; border: 0; background: none; color: var(--biz-muted); font: inherit; font-size: 1.05rem; text-decoration: underline; text-underline-offset: .3em; cursor: pointer; }
+a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.15rem, 1.8cqi, 1.5rem); font-weight: 700; letter-spacing: -.02em; text-decoration-color: var(--editorial-accent); text-decoration-thickness: 2px; }
+.ed-business-contact form { max-width: 34rem; }
+@media (max-width: 1024px) { .ed-business-process ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .editorial-business { --nav-h: 4rem; }
+  .ed-business-hero, .ed-business-faq, .ed-business-contact, .ed-business-process ol { grid-template-columns: 1fr; }
+  .ed-business-hero > div { padding: 2rem 1rem 2.5rem; }
+  .ed-business-hero figure { min-height: 56svh; }
+  .ed-business-headshots > h2 + p { margin-bottom: 1.5rem; }
+}
 
 /* Editorial redesign — scoped so admin, tools, blog and galleries keep their theme. */
 /* body:has() carries the homepage palette to the layout's footer. */
 body:has(.editorial-home),
+body:has(.editorial-business),
 .editorial-home,
 .editorial-portrait,
 .editorial-business,
@@ -1894,7 +1919,7 @@ body:has(.editorial-home) {
 }
 
 .editorial-portrait { --editorial-ink: #eeeae2; --editorial-paper: #0a0a09; --editorial-accent: #eeeae2; }
-.editorial-business { --editorial-ink: #10201f; --editorial-paper: #f3f5f4; --editorial-accent: #536460; }
+body:has(.editorial-business), .editorial-business { --editorial-ink: #12201b; --editorial-paper: #f1efe8; --editorial-accent: #2e5a45; }
 .editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f5f2ec; --editorial-accent: #0b0b0a; }
 .editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f4f1ea; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
 /* Footer lives in the layout, outside the editorial scope. */
@@ -2015,7 +2040,7 @@ body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editori
 /* Cream nudged away from yellow; body scope so the footer follows. */
 body:has(.editorial-home), .editorial-home { --editorial-paper: #f4f2ee; }
 /* The site-wide fixed accent hairline would float over the cream gap above the card. */
-body:has(.editorial-home)::before { display: none; }
+body:has(:is(.editorial-home, .editorial-business))::before { display: none; }
 /* The nav's containing block is the full-width main, the card sits in the 1440px column: inset by both. */
 .editorial-home > .editorial-nav { inset: var(--card-gap) calc(max(0px, (100% - 1440px) / 2) + var(--card-gap)) auto; color: var(--home-dark-ink); }
 .ed-home-hero { --editorial-ink: var(--home-dark-ink); --editorial-paper: var(--home-dark); position: relative; isolation: isolate; margin: 0 var(--card-gap); padding-bottom: var(--mat); display: grid; grid-template-columns: 1fr minmax(16rem, 30%); grid-template-areas: "title title" "image side"; color: var(--editorial-ink); }
@@ -2182,6 +2207,6 @@ body:has(.editorial-home)::before { display: none; }
   :is(.ed-secondary-hero, .ed-about-layout) h1 { font-size: 16vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
   :is(.ed-home-work, .ed-home-about, .ed-home-contact, .ed-secondary-faq, .ed-secondary-contact) h2 { max-width: none; font-size: 15vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
   :is(.ed-events-hero, .ed-portrait-hero) h1, :is(.ed-events-info, .ed-events-pricing, .ed-events-contact, .ed-portrait-process, .ed-portrait-pricing, .ed-portrait-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
-  .ed-business-hero h1 { font-size: 12.5vw; overflow-wrap: break-word; }
+  .ed-business-hero h1, :is(.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
   .ed-article h1, .ed-legal > h1 { font-size: 12vw; font-weight: 700; line-height: .9; overflow-wrap: break-word; }
 }

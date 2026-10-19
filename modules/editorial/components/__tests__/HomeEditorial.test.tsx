@@ -39,6 +39,13 @@ describe("HomeEditorial", () => {
   });
 });
 
+it("leaves business references to the business page", () => {
+  const business = { id: "b", quote: "Firemní reference.", author: "Jana", photo: "portfolio/b", service: "business" as const };
+  const html = renderToStaticMarkup(<HomeEditorial locale="cs" content={{ ...content, testimonials: [...content.testimonials, business] }} images={normalizeImages({ profile: "" })} />);
+  const quotes = [...new DOMParser().parseFromString(html, "text/html").querySelectorAll("#tvorba blockquote")].map((q) => q.textContent);
+  expect(quotes).toEqual(["Focení působí spíš jako hra."]);
+});
+
 it("falls back to the admin-picked stories when no testimonial has a photo", () => {
   const html = renderToStaticMarkup(<HomeEditorial locale="cs" content={{ ...content, testimonials: [] }} images={normalizeImages({ profile: "" })} />);
   const document = new DOMParser().parseFromString(html, "text/html");

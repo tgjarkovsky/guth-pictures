@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cloudinaryUrl, type GalleryPhoto } from "@/lib/cloudinary-utils";
-import type { ContentData, Testimonial } from "@/modules/admin/lib/content";
+import type { ContentData, Testimonial, TestimonialService } from "@/modules/admin/lib/content";
 import { defaultPageCopy, type PageCopy } from "@/modules/admin/lib/page-copy";
 import { AdminPreview, SPLIT_LAYOUT, type PreviewFocus } from "@/modules/admin/preview/AdminPreview";
 import { isPreviewPage, type PreviewPage } from "@/modules/admin/preview/protocol";
@@ -230,13 +230,13 @@ export function ContentEditor({ photos = [] }: { photos?: GalleryPhoto[] }) {
 
         <ServiceSection service="business" title="Firemní portréty" page="business" content={current} patch={patch} showExtras />
 
-        {SHOW_UNUSED_SECTIONS && <Section title="Reference (testimonials)">
+        <Section title="Reference (fotky klientů s citací)">
           <TestimonialEditor
             testimonials={current.testimonials ?? []}
             onChange={(items) => patch((d) => { d.testimonials = items; })}
             photos={photos}
           />
-        </Section>}
+        </Section>
 
         <div className="sticky bottom-0 z-10 flex items-center gap-4 bg-black/90 py-3 backdrop-blur">
           <button
@@ -348,6 +348,17 @@ function TestimonialEditor({
               className="bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40"
             />
           </div>
+          <label className="flex items-center gap-2 text-sm text-gray-400">
+            Zobrazit na
+            <select
+              value={t.service ?? "creative"}
+              onChange={(e) => update(i, (x) => { x.service = e.target.value as TestimonialService; })}
+              className="bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40"
+            >
+              <option value="creative">Homepage (kreativní portrét)</option>
+              <option value="business">Business portréty</option>
+            </select>
+          </label>
           <div className="flex items-center gap-4">
             {t.photo ? (
               // eslint-disable-next-line @next/next/no-img-element

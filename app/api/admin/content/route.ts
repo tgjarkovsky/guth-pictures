@@ -52,6 +52,7 @@ function isTestimonials(v: unknown): boolean {
     if (o.id !== undefined && (typeof o.id !== "string" || o.id.length > MAX_SHORT)) return false;
     if (o.role !== undefined && (typeof o.role !== "string" || o.role.length > MAX_SHORT)) return false;
     if (o.photo !== undefined && (typeof o.photo !== "string" || o.photo.length > MAX_SHORT)) return false;
+    if (o.service !== undefined && o.service !== "creative" && o.service !== "business") return false;
     return true;
   });
 }
