@@ -1,3 +1,4 @@
+## [2026-10-19] - Favicon podle homepage: krémové G v Syne s oxblood tečkou na tmavé kartě (#232120) místo staré vínové palety
 ## [2026-10-19] - Business portréty: vzhled podle homepage v lahvově zelené (tmavá hero karta s navigací, serif nadpisy, fotky v paspartě, velká čísla kroků, doporučený balíček na tmavé kartě), headshoty s referencí na hover, bez placeholderů a sekce „K čemu je využijete“, e-mail a telefon (zobrazí se až po kliknutí, v HTML není) vedle formuláře; reference v adminu znovu viditelné s volbou homepage/business
 ## [2026-10-19] - Navigace: odkaz „Domů“ jako první položka na všech editorial stránkách (desktop i mobil)
 ## [2026-10-19] - Homepage: text v hero lícuje s obsahem sekcí; druhý řádek hlavního nadpisu jde v adminu posunout (desktop i mobil, v em), výchozí posun srovná nožičku n nad dřík h
