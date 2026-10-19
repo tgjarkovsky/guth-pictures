@@ -1,3 +1,4 @@
+import { slugify } from "@/lib/slugify";
 import { readJson, requireAdmin } from "@/lib/admin-route";
 import { listGalleriesWithSelection, createGallery } from "@/modules/gallery/lib/gallery";
 import { getTokens, getCatalogId } from "@/modules/gallery/lib/lightroom";
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid maxSelection" }, { status: 400 });
   }
 
-  const slugClean =slug.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-");
+  const slugClean = slugify(slug);
   if (!slugClean) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
   }

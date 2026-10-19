@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { slugify } from "@/lib/slugify";
 import type { BlogPost } from "@/modules/blog/lib/blog";
 
 type Locale = "cs" | "en";
@@ -14,17 +15,6 @@ const emptyForm = (): Omit<BlogPost, "id" | "publishedAt" | "updatedAt"> => ({
   cs: emptyLocale(),
   en: emptyLocale(),
 });
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
 
 export function BlogEditor() {
   const [posts, setPosts] = useState<BlogPost[]>([]);

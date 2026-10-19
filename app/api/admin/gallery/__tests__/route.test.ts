@@ -90,4 +90,13 @@ describe("POST /api/admin/gallery maxSelection", () => {
     expect((await post({})).status).toBe(201);
     expect(store.get("gallery:s")).not.toHaveProperty("maxSelection");
   });
+
+  it("slug normalizuje (diakritika, mezery)", async () => {
+    expect((await post({ slug: "Jana Nováková" })).status).toBe(201);
+    expect(store.has("gallery:jana-novakova")).toBe(true);
+  });
+
+  it("slug bez použitelných znaků odmítne", async () => {
+    expect((await post({ slug: "!!!" })).status).toBe(400);
+  });
 });
