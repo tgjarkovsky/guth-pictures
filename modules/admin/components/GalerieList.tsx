@@ -5,6 +5,7 @@ import { useState } from "react";
 import { type GalleryRecord, type GalleryListItem } from "@/modules/gallery/lib/gallery";
 import { type LightroomAlbum } from "@/modules/gallery/lib/lightroom";
 import { formatGalleryInvite } from "@/modules/gallery/lib/gallery-invite";
+import { slugify } from "@/lib/slugify";
 import { siteUrl } from "@/lib/config";
 
 interface Props {
@@ -87,7 +88,7 @@ function NewGalleryForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          slug,
+          slug: slugify(slug),
           albumId,
           password,
           expiryDays,
@@ -113,18 +114,18 @@ function NewGalleryForm({
       <h2 className="text-lg font-medium">Nová galerie</h2>
 
       <div className="space-y-1">
-        <label className="text-xs text-gray-400">URL slug (jen písmena, čísla, pomlčky)</label>
+        <label className="text-xs text-gray-400">URL slug (diakritika a speciální znaky se převedou)</label>
         <input
           type="text"
           value={slug}
-          onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
+          onChange={(e) => setSlug(e.target.value)}
           placeholder="novakovi-svadba-2025"
           required
           className="w-full bg-zinc-900 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-white"
         />
-        {slug && (
+        {slugify(slug) && (
           <p className="text-xs text-gray-500">
-            /gallery/{slug}
+            /gallery/{slugify(slug)}
           </p>
         )}
       </div>
@@ -212,7 +213,7 @@ function NewGalleryForm({
 
       <button
         type="submit"
-        disabled={submitting || !slug || !albumId || !password}
+        disabled={submitting || !slugify(slug) || !albumId || !password}
         className="px-6 py-2 bg-white text-black text-sm font-medium hover:bg-gray-200 disabled:opacity-40 transition-colors"
       >
         {submitting ? "Vytvářím…" : "Vytvořit galerii"}
