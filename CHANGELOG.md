@@ -1,3 +1,4 @@
+## [2026-10-19] - Oprava buildu: výběr referencí (reviewedWork) mimo klientský WorkGrid a velikosti obrázků jako pole místo funkce, prerender /firemni-portrety padal
 ## [2026-10-19] - Admin › Fotky: pořadí referencí jde měnit přetažením řádku nebo šipkami přímo ve sbaleném seznamu
 ## [2026-10-19] - Reference s fotkou jdou rozkliknout: celá fotka bez ořezu vedle citace na tmavé kartě stránky, listování šipkami, klávesami i swipem, zavření ×, Esc nebo klikem vedle
 ## [2026-10-19] - Oprava buildu: seznam zamčených sekcí adminu mimo klientskou komponentu (prerender /admin/tema padal)

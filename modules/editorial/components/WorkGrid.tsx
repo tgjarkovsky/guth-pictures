@@ -3,27 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary-utils";
-import type { EditorialImage, Testimonial, TestimonialService } from "@/modules/admin/lib/content";
+import type { EditorialImage, Testimonial } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
+import type { WorkItem } from "./work-items";
 
-export type WorkItem = { image: EditorialImage; review?: Testimonial };
 type Reviewed = { image: EditorialImage; review: Testimonial };
-
-const clientPhoto = (t: Testimonial): EditorialImage => ({
-  publicId: t.photo ?? "",
-  alt: { cs: t.author, en: t.author },
-  focal: { desktop: "50% 30%", mobile: "50% 30%" },
-});
-
-export const reviewedWork = (testimonials: Testimonial[], service: TestimonialService): WorkItem[] =>
-  testimonials
-    .filter((t) => t.photo && (t.service ?? "creative") === service)
-    .map((t) => ({ image: clientPhoto(t), review: t }));
 
 const isReviewed = (item: WorkItem): item is Reviewed => Boolean(item.review);
 const wrap = (index: number, length: number) => (index + length) % length;
 
-type Props = { items: WorkItem[]; locale: string; sizes: (index: number) => string; placeholderLabel: string };
+type Props = { items: WorkItem[]; locale: string; sizes: string[]; placeholderLabel: string };
 
 // Client photos; each carries its review, revealed over the photo on hover/focus (always shown on touch).
 // Clicking a reviewed photo opens it uncropped next to the full quote.
@@ -37,7 +26,7 @@ export function WorkGrid({ items, locale, sizes, placeholderLabel }: Props) {
       {items.map((item, index) => (
         <figure key={`${item.image.publicId}-${index}`} className="ed-home-story">
           <div className="ed-home-story__photo">
-            <EditorialImageView image={item.image} locale={locale} quality="best" sizes={sizes(index)} placeholderLabel={placeholderLabel} />
+            <EditorialImageView image={item.image} locale={locale} quality="best" sizes={sizes[index]} placeholderLabel={placeholderLabel} />
           </div>
           {item.review && (
             <>

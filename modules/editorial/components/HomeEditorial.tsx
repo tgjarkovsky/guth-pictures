@@ -4,7 +4,8 @@ import { Link } from "@/i18n/navigation";
 import type { NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
-import { reviewedWork, WorkGrid, type WorkItem } from "./WorkGrid";
+import { WorkGrid } from "./WorkGrid";
+import { reviewedWork, type WorkItem } from "./work-items";
 
 type Props = { locale: string; content: NormalizedContentData; images: NormalizedSiteImages };
 
@@ -60,7 +61,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
 
       <section id="tvorba" className="ed-home-work">
         {copy.work && <h2>{copy.work}</h2>}
-        <WorkGrid items={work} locale={locale} sizes={storySizes} placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} />
+        <WorkGrid items={work} locale={locale} sizes={work.map((_, i) => storySizes(i))} placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} />
       </section>
 
       <section id="o-mne" className="ed-home-about">
