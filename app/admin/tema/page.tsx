@@ -1,5 +1,5 @@
 import { AdminShell } from "@/modules/admin/components/AdminShell";
-import { LOCKED } from "@/modules/admin/components/AdminNav";
+import { LOCKED } from "@/modules/admin/lib/locked";
 import { ThemeEditor } from "@/modules/admin/components/ThemeEditor";
 
 export default function TemaPage() {

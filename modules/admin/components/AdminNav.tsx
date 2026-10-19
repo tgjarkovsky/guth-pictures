@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LOCKED } from "@/modules/admin/lib/locked";
 
-// Locked sections stay visible in the nav but can't be opened (Téma: undecided what to do with it).
-export const LOCKED = new Set(["/admin/tema"]);
 
 const groups = [
   { title: "Web", tabs: [
