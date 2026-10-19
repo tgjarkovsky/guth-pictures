@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { ogImage } from "@/lib/config";
 import { getContent, getImages } from "@/modules/admin/lib/content";
 import { cloudinaryUrl, blurUrl, PROFILE_TRANSFORM } from "@/lib/cloudinary-utils";
 import { EditorialSubpage } from "@/modules/editorial/components/EditorialSubpage";
@@ -22,7 +23,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       url: `/${locale}/o-mne`,
       locale: locale === "cs" ? "cs_CZ" : "en_US",
       type: "profile",
+      siteName: "Guth Pictures",
+      images: [ogImage],
     },
+    twitter: { card: "summary_large_image", title: t("title"), description: t("description"), images: [ogImage.url] },
   };
 }
 
