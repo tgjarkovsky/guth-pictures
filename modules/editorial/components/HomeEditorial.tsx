@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
 import type { EditorialImage, NormalizedContentData, NormalizedSiteImages, Testimonial } from "@/modules/admin/lib/content";
@@ -28,10 +29,18 @@ const storySizes = (index: number) => {
   return `(max-width: 760px) 160vw, (min-width: 1440px) ${px}px, ${vw}vw`;
 };
 
+const em = (value: string) => `${Number.isFinite(Number(value)) ? Number(value) : 0}em`;
+
 // Trailing punctuation of the tagline takes the accent; it stays glued to the last word, so it can't wrap alone.
-function Headline({ text }: { text: string }) {
+// The last word gets its own line, shifted by hand (admin) so its letters can line up with the line above.
+function Headline({ text, shift, shiftMobile }: { text: string; shift: string; shiftMobile: string }) {
   const mark = /[.!?]$/.test(text) ? text.slice(-1) : "";
-  return <h1>{mark ? <>{text.slice(0, -1)}<span className="ed-home-hero__mark">{mark}</span></> : text}</h1>;
+  const body = mark ? text.slice(0, -1) : text;
+  const split = body.lastIndexOf(" ");
+  const last = <>{body.slice(split + 1)}{mark && <span className="ed-home-hero__mark">{mark}</span>}</>;
+  if (split < 0) return <h1>{last}</h1>;
+  const style = { "--shift": em(shift), "--shift-mobile": em(shiftMobile) } as CSSProperties;
+  return <h1 style={style}><span>{body.slice(0, split)}</span> <span className="ed-home-hero__line2">{last}</span></h1>;
 }
 
 export function HomeEditorial({ locale, content, images }: Props) {
@@ -43,7 +52,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
     <main className="editorial-home">
       <EditorialNav tone="dark" active="home" />
       <section className="ed-home-hero">
-        <Headline text={copy.title} />
+        <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />
         <div className="ed-home-hero__meta">
           {copy.intro && <p>{copy.intro}</p>}
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">

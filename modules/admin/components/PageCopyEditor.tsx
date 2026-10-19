@@ -9,6 +9,8 @@ type Value = string | Value[] | { [key: string]: Value };
 const LABELS: Record<string, string> = {
   title: "Nadpis",
   heroTitle: "Hlavní nadpis",
+  titleShift: "Posun 2. řádku nadpisu (em, záporné = doleva)",
+  titleShiftMobile: "Posun 2. řádku nadpisu na mobilu (em)",
   intro: "Úvodní text",
   kicker: "Nadtitulek",
   eyebrow: "Nadtitulek",

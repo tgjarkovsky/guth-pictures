@@ -30,6 +30,8 @@ export type BrandCopy = ServiceCopy & {
 export type PageCopy = {
   home: {
     title: string;
+    titleShift: string;
+    titleShiftMobile: string;
     intro: string;
     creative: string;
     business: string;
@@ -108,6 +110,8 @@ const DEFAULTS: Record<Locale, PageCopy> = {
   cs: {
     home: {
       title: "Jiný pohled.",
+      titleShift: "-0.06",
+      titleShiftMobile: "-0.04",
       intro: "Portréty s charakterem. Příběhy v obrazech.",
       creative: "Kreativní portrét",
       business: "Business portrét",
@@ -177,6 +181,8 @@ const DEFAULTS: Record<Locale, PageCopy> = {
   en: {
     home: {
       title: "A different view.",
+      titleShift: "0",
+      titleShiftMobile: "0",
       intro: "Portraits with character. Stories in images.",
       creative: "Creative portrait",
       business: "Business portrait",
