@@ -31,9 +31,17 @@ function highlight(element: Element | null) {
 }
 
 // Links and forms stay inert so the admin preview never navigates away or sends the contact form.
+// A click also tells the admin what was clicked, so it can open the matching field.
 function blockInteraction(event: Event) {
   const target = event.target as Element | null;
   if (event.type === "submit" || target?.closest("a")) event.preventDefault();
+  if (event.type === "click" && target) pick(target);
+}
+
+function pick(target: Element) {
+  const text = ((target as HTMLElement).innerText || target.textContent || "").replace(/\s+/g, " ").trim().slice(0, 2000);
+  const src = target instanceof HTMLImageElement ? target.currentSrc || target.src : undefined;
+  window.parent.postMessage({ type: "preview:pick", text, src } satisfies PreviewMessage, window.location.origin);
 }
 
 export function PreviewSurface({ page, locale, content: initialContent, images: initialImages }: Props) {

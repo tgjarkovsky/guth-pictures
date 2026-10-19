@@ -41,6 +41,14 @@ describe("PreviewSurface", () => {
     send({ type: "preview:data", content: draft("Podvrh") }, "https://evil.example");
     expect(screen.getByRole("heading")).not.toHaveTextContent("Podvrh");
   });
+
+  it("reports the clicked text to the admin", () => {
+    const post = vi.spyOn(window, "postMessage");
+    render(<PreviewSurface page="home" locale="cs" content={content} images={normalizeImages({ profile: "" })} />);
+    act(() => { screen.getByRole("heading").click(); });
+    expect(post).toHaveBeenCalledWith({ type: "preview:pick", text: content.pages.home.title, src: undefined }, window.location.origin);
+    post.mockRestore();
+  });
 });
 
 describe("findByText", () => {
