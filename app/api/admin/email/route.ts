@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
   }
   await setContactEmail(email);
-  revalidatePath("/cs");
-  revalidatePath("/en");
+  revalidatePath("/", "layout");
+  revalidatePath("/llms.txt");
   return NextResponse.json({ ok: true });
 }
