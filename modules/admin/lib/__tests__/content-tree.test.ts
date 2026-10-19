@@ -35,12 +35,16 @@ describe("CONTENT_TREE", () => {
 
   it("covers every editable ContentData field", () => {
     const fields = ["home.title", "home.subtitle", "o-mne.title", "o-mne.subtitle", "o-mne.bio",
-      "editorial.eventsTitle", "sluzby.portraits", "sluzby.weddings", "sluzby.business", "testimonials"];
+      "editorial.eventsTitle", "sluzby.portraits", "sluzby.weddings", "sluzby.business"];
     expect(fields.filter((path) => !covered(path))).toEqual([]);
   });
 
   it("leaves out fields the site no longer renders", () => {
     expect(allPaths.filter((path) => path.startsWith("lightTesterPromo"))).toEqual([]);
+  });
+
+  it("leaves references to Fotky", () => {
+    expect(allPaths.filter((path) => path.startsWith("testimonials"))).toEqual([]);
   });
 
   it("has unique section ids", () => {
@@ -73,9 +77,6 @@ describe("searchSections", () => {
     expect(searchSections(CONTENT_TREE, sample(), "2 000 kč").has("portrait-pricing")).toBe(true);
   });
 
-  it("ignores ids and photo ids", () => {
-    expect(searchSections(CONTENT_TREE, sample(), "t1").has("testimonials")).toBe(false);
-  });
 });
 
 describe("dirtySections", () => {

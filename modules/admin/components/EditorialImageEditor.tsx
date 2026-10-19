@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { cloudinaryUrl, type GalleryPhoto } from "@/lib/cloudinary-utils";
-import type { EditorialImage, EditorialImages } from "@/modules/admin/lib/content";
+import type { EditorialImage, EditorialImages, Testimonial, TestimonialService } from "@/modules/admin/lib/content";
+import { mergeReferences, splitReferences, type Reference } from "@/modules/admin/lib/references";
 import { AdminPreview, type PreviewFocus } from "@/modules/admin/preview/AdminPreview";
 import type { PreviewPage, PreviewPick } from "@/modules/admin/preview/protocol";
 import { FocalPicker } from "./FocalPicker";
+import { ReferenceEditor } from "./ReferenceEditor";
 import { TreeLayout } from "./TreeLayout";
 
 type Slot = {
@@ -31,17 +33,15 @@ const list = (
   group: read,
 }));
 
+// Only slots the site renders. Homepage stories and business headshots are a fallback the site
+// shows only while no client reference has a photo; they stay in KV but are not edited here.
 function imageSlots(data: EditorialImages): Slot[] {
   return [
     single("Homepage — hero", (v) => v.home.hero, (v, image) => { v.home.hero = image; }),
-    ...list("Homepage — příběh", data, (v) => v.home.stories),
     single("Homepage — fotograf", (v) => v.home.photographer, (v, image) => { v.home.photographer = image; }),
-    single("Homepage — Focení 101", (v) => v.home.tools.foceni101, (v, image) => { v.home.tools.foceni101 = image; }),
-    single("Homepage — plánovač světla", (v) => v.home.tools.lightPlanner, (v, image) => { v.home.tools.lightPlanner = image; }),
     single("Portréty — hero", (v) => v.portrait.hero, (v, image) => { v.portrait.hero = image; }),
     ...list("Portréty — galerie", data, (v) => v.portrait.gallery),
     single("Business — hero", (v) => v.business.hero, (v, image) => { v.business.hero = image; }),
-    ...list("Business — headshot", data, (v) => v.business.headshots),
     single("Eventy — hero", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
     ...list("Eventy — reportáž", data, (v) => v.events.reportage),
   ];
@@ -50,9 +50,8 @@ function imageSlots(data: EditorialImages): Slot[] {
 // Where each slot lives on the site (first matching label prefix wins).
 const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
   ["Homepage — hero", "home", ".ed-home-hero"],
-  ["Homepage — příběh", "home", ".ed-home-work"],
+  ["Homepage — vybrané příběhy", "home", ".ed-home-work"],
   ["Homepage — fotograf", "home", ".ed-home-about"],
-  ["Homepage —", "home", ".ed-home-tools"],
   ["Portréty — hero", "portrety", ".ed-portrait-hero"],
   ["Portréty —", "portrety", ".ed-portrait-gallery"],
   ["Business — hero", "business", ".ed-business-hero"],
@@ -63,6 +62,13 @@ const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
 ];
 const targetOf = (label: string) => TARGETS.find(([prefix]) => label.startsWith(prefix))!;
 
+// Client photos with reviews, listed in the tree right after the page's hero.
+const REF_ITEMS: { id: string; service: TestimonialService; after: string }[] = [
+  { id: "Homepage — vybrané příběhy", service: "creative", after: "Homepage — hero" },
+  { id: "Business — headshoty", service: "business", after: "Business — hero" },
+];
+const LOCALES = ["cs", "en"] as const;
+
 const EMPTY_IMAGE: EditorialImage = { publicId: "", alt: { cs: "", en: "" }, focal: { desktop: "50% 50%", mobile: "50% 50%" } };
 const groupOf = (label: string) => label.split(" — ")[0];
 const shortLabel = (label: string) => {
@@ -70,9 +76,16 @@ const shortLabel = (label: string) => {
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
-export function EditorialImageEditor({ editorial, photos }: { editorial: EditorialImages; photos: GalleryPhoto[] }) {
+export function EditorialImageEditor({ editorial, photos, references }: {
+  editorial: EditorialImages;
+  photos: GalleryPhoto[];
+  references?: { cs: Testimonial[]; en: Testimonial[] };
+}) {
   const [data, setData] = useState(editorial);
   const [saved, setSaved] = useState(editorial);
+  const [refs, setRefs] = useState<Reference[]>(() => references ? mergeReferences(references.cs, references.en) : []);
+  const [savedRefs, setSavedRefs] = useState(refs);
+  const refItems = references ? REF_ITEMS : [];
   const [pickerOpen, setPickerOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
   const slots = imageSlots(data);
@@ -80,10 +93,13 @@ export function EditorialImageEditor({ editorial, photos }: { editorial: Editori
   const [page, setPage] = useState<PreviewPage>("home");
   const [locale, setLocale] = useState<"cs" | "en">("cs");
   const [focus, setFocus] = useState<PreviewFocus | null>(null);
+  const refItem = refItems.find((r) => r.id === selected);
   const slot = slots.find((s) => s.label === selected) ?? slots[0];
   const image = slot.read(data);
   const isDirty = (s: Slot) => JSON.stringify(s.read(data)) !== JSON.stringify(s.read(saved));
-  const dirtyCount = slots.filter(isDirty).length;
+  const ofService = (list: Reference[], service: TestimonialService) => JSON.stringify(list.filter((r) => r.service === service));
+  const refsDirty = (service: TestimonialService) => ofService(refs, service) !== ofService(savedRefs, service);
+  const dirtyCount = slots.filter(isDirty).length + refItems.filter((r) => refsDirty(r.service)).length;
 
   function select(label: string) {
     const [, slotPage, selector] = targetOf(label);
@@ -96,6 +112,9 @@ export function EditorialImageEditor({ editorial, photos }: { editorial: Editori
   // A click on a photo in the preview opens the slot that uses it (current page first).
   function pick({ src }: PreviewPick) {
     if (!src) return;
+    const ref = refs.find((r) => r.photo && src.includes(r.photo));
+    const refTarget = ref && refItems.find((r) => r.service === ref.service);
+    if (refTarget) return select(refTarget.id);
     const uses = slots.filter((s) => s.read(data).publicId && src.includes(s.read(data).publicId));
     const hit = uses.find((s) => targetOf(s.label)[1] === page) ?? uses[0];
     if (hit) select(hit.label);
@@ -121,6 +140,19 @@ export function EditorialImageEditor({ editorial, photos }: { editorial: Editori
     });
   }
 
+  // References live in content:<locale>; re-read it right before saving so texts edited elsewhere survive.
+  async function saveReferences(locale: "cs" | "en") {
+    const current = await fetch(`/api/admin/content?locale=${locale}`);
+    if (!current.ok) return false;
+    const content = await current.json();
+    const response = await fetch("/api/admin/content", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale, data: { ...content, testimonials: splitReferences(refs, locale) } }),
+    });
+    return response.ok;
+  }
+
   async function save() {
     setStatus("saving");
     try {
@@ -129,33 +161,45 @@ export function EditorialImageEditor({ editorial, photos }: { editorial: Editori
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ editorial: data }),
       });
-      setStatus(response.ok ? "ok" : "error");
       if (response.ok) setSaved(data);
+      let ok = response.ok;
+      if (refItems.some((r) => refsDirty(r.service))) {
+        const results = await Promise.all(LOCALES.map(saveReferences));
+        if (results.every(Boolean)) setSavedRefs(refs);
+        ok &&= results.every(Boolean);
+      }
+      setStatus(ok ? "ok" : "error");
     } catch {
       setStatus("error");
     }
   }
 
+  const thumb = (id: string) => (id ? cloudinaryUrl(id, "w_48,h_48,c_fill,q_auto,f_auto") : undefined);
   const groups = [...new Set(slots.map((s) => groupOf(s.label)))].map((title) => ({
     title,
-    items: slots.filter((s) => groupOf(s.label) === title).map((s) => {
-      const id = s.read(data).publicId;
-      return {
-        id: s.label,
-        label: shortLabel(s.label),
-        dirty: isDirty(s),
-        thumb: id ? cloudinaryUrl(id, "w_48,h_48,c_fill,q_auto,f_auto") : undefined,
-      };
-    }),
+    items: slots.filter((s) => groupOf(s.label) === title).flatMap((s) => [
+      { id: s.label, label: shortLabel(s.label), dirty: isDirty(s), thumb: thumb(s.read(data).publicId) },
+      ...refItems.filter((r) => r.after === s.label).map((r) => ({
+        id: r.id,
+        label: shortLabel(r.id),
+        dirty: refsDirty(r.service),
+        thumb: thumb(refs.find((x) => x.service === r.service && x.photo)?.photo ?? ""),
+      })),
+    ]),
   }));
 
   return <TreeLayout
     groups={groups}
-    selected={slot.label}
+    selected={refItem?.id ?? slot.label}
     onSelect={select}
     preview={<AdminPreview page={page} onPageChange={setPage} locale={locale} onLocaleChange={setLocale} editorial={data} focus={focus} onPick={pick} />}
   >
-    <article className="space-y-4">
+    {refItem ? <article className="space-y-4">
+      <h2 className="text-lg font-semibold">
+        <span className="text-gray-500 font-normal">{groupOf(refItem.id)} › </span>{shortLabel(refItem.id)}
+      </h2>
+      <ReferenceEditor service={refItem.service} refs={refs} onChange={setRefs} photos={photos} />
+    </article> : <article className="space-y-4">
       <h2 className="text-lg font-semibold">
         <span className="text-gray-500 font-normal">{groupOf(slot.label)} › </span>{shortLabel(slot.label)}
       </h2>
@@ -184,7 +228,7 @@ export function EditorialImageEditor({ editorial, photos }: { editorial: Editori
         <input aria-label={`${slot.label} alt CZ`} value={image.alt.cs} onChange={(event) => update(slot, { ...image, alt: { ...image.alt, cs: event.target.value } })} placeholder="Alt text CZ" className="w-full bg-zinc-900 border border-zinc-700 px-2 py-1.5 text-sm" />
         <input aria-label={`${slot.label} alt EN`} value={image.alt.en} onChange={(event) => update(slot, { ...image, alt: { ...image.alt, en: event.target.value } })} placeholder="Alt text EN" className="w-full bg-zinc-900 border border-zinc-700 px-2 py-1.5 text-sm" />
       </div>
-    </article>
+    </article>}
     <div className="sticky bottom-0 z-10 mt-4 flex items-center gap-3 bg-zinc-950/95 py-3 backdrop-blur">
       <button type="button" onClick={save} disabled={status === "saving"} className="px-4 py-2 bg-white text-black text-sm font-medium disabled:opacity-50">
         Uložit editorialové fotky{dirtyCount > 0 && <span aria-hidden> · {dirtyCount}</span>}

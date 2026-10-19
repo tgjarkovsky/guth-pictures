@@ -70,7 +70,6 @@ export const CONTENT_TREE: TreePage[] = [
     page: "Ostatní", sections: [
       { id: "about", title: "O mně", paths: ["o-mne.title", "o-mne.subtitle", "o-mne.bio", ...p("about", ["eyebrow", "portfolioLink", "servicesLink"])] },
       { id: "footer", title: "Patička", paths: ["home.title", "home.subtitle"] },
-      { id: "testimonials", title: "Reference", paths: ["testimonials"] },
       { id: "settings", title: "Nastavení", paths: [], special: "settings" },
     ],
   },

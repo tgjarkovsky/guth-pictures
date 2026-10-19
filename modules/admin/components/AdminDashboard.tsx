@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { type GalleryPhoto, cloudinaryUrl, blurUrl } from "@/lib/cloudinary-utils";
-import type { EditorialImages } from "@/modules/admin/lib/content";
+import type { EditorialImages, Testimonial } from "@/modules/admin/lib/content";
 import { EditorialImageEditor } from "./EditorialImageEditor";
 import { PhotoUploadSection } from "./PhotoUploadSection";
 import { HeroTriptychEditor, PANEL_LABELS, type Triptych, type Slot } from "./HeroTriptychEditor";
@@ -12,9 +12,10 @@ type Props = {
   photos: GalleryPhoto[];
   heroTriptych?: Triptych;
   editorial?: EditorialImages;
+  references?: { cs: Testimonial[]; en: Testimonial[] };
 };
 
-export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych, editorial }: Props) {
+export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych, editorial, references }: Props) {
   const [photos, setPhotos] = useState(initial);
   const [triptych, setTriptych] = useState<Triptych>(initialTriptych ?? [[], [], []]);
   const [activeSlot, setActiveSlot] = useState<Slot | null>(null);
@@ -90,7 +91,7 @@ export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych,
           <button type="button" role="tab" aria-selected={tab === "library"} onClick={() => setTab("library")} className={tabClass(tab === "library")}>Knihovna ({photos.length})</button>
         </div>
       )}
-      {editorial && tab === "web" && <EditorialImageEditor editorial={editorial} photos={photos} />}
+      {editorial && tab === "web" && <EditorialImageEditor editorial={editorial} photos={photos} references={references} />}
       {tab === "library" && <>
       <HeroTriptychEditor
         triptych={triptych}

@@ -1,3 +1,4 @@
+## [2026-10-19] - Admin odpovídá webu: reference (fotka, jméno, citace CS/EN) se upravují ve Fotkách u své stránky (Homepage › Vybrané příběhy, Business › Headshoty) a ukládají do obou jazyků; z Fotek pryč sloty, které web nevykresluje (příběhy, headshoty, Focení 101, plánovač; data v KV zůstávají); z Textů pryč Reference; Téma zatím zamčené
 ## [2026-10-19] - Admin: pryč sekce „Light planner karta“, web ji nevykresluje (data v KV zůstávají)
 ## [2026-10-19] - Admin: texty i fotky ve stromu Stránka → Sekce, uprostřed jen vybraná sekce, vpravo náhled; hledání v textech, tečka u neuložených změn, uložení obou jazyků jedním tlačítkem; klik do náhledu otevře pole nebo slot; FAQ, kroky, balíčky a reference sbalené; fotky rozdělené na „Na webu“ a „Knihovnu“ s filtrem kategorií; navigace ve skupinách Web / Klienti / Publikace, /admin otevře texty
 ## [2026-10-19] - Favicon podle homepage: krémové G v Syne s oxblood tečkou na tmavé kartě (#232120) místo staré vínové palety
