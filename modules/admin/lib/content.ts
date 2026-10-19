@@ -19,7 +19,10 @@ export type Testimonial = {
   author: string;
   role?: string;   // optional — e.g. "Svatba, Praha" / job title
   photo?: string;  // optional — Cloudinary public ID
+  service?: TestimonialService; // which page shows it; missing = creative (homepage)
 };
+
+export type TestimonialService = "creative" | "business";
 
 export type FocalPoint = {
   desktop: string;

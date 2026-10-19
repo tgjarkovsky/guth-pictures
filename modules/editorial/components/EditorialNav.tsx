@@ -35,7 +35,6 @@ export function EditorialNav({ tone, active }: Props) {
   const serviceLinks = [
     { key: "portrait" as const, href: hrefs.portrait, label: cs ? "Portréty" : "Portraits" },
     { key: "business" as const, href: hrefs.business, label: "Business" },
-    { key: "events" as const, href: hrefs.events, label: cs ? "Eventy a svatby" : "Events & weddings" },
   ];
   const secondaryLinks = [
     { key: "services" as const, href: hrefs.services, label: cs ? "Služby" : "Services" },
@@ -43,7 +42,8 @@ export function EditorialNav({ tone, active }: Props) {
     { key: "about" as const, href: hrefs.about, label: cs ? "O mně" : "About" },
     { key: "blog" as const, href: hrefs.blog, label: "Blog" },
   ];
-  const links = secondaryPages.has(active) ? secondaryLinks : serviceLinks;
+  const homeLink = { key: "home" as const, href: hrefs.home, label: cs ? "Domů" : "Home" };
+  const links = [homeLink, ...(secondaryPages.has(active) ? secondaryLinks : serviceLinks)];
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

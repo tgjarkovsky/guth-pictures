@@ -150,15 +150,14 @@ export function PhotoUploadSection() {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold mb-4">Nahrát fotky</h2>
-      <div className="space-y-3 max-w-2xl">
+      <div className="space-y-3">
         {/* Drop zone */}
         <div
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded px-6 py-10 text-center cursor-pointer transition-colors ${
+          className={`border-2 border-dashed rounded px-6 py-5 text-center cursor-pointer transition-colors ${
             dragOver ? "border-white bg-zinc-800" : "border-zinc-600 hover:border-zinc-400"
           }`}
         >
@@ -173,8 +172,9 @@ export function PhotoUploadSection() {
           />
         </div>
 
+        {fileItems.length > 0 && <>
         {/* Batch settings */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -244,6 +244,7 @@ export function PhotoUploadSection() {
             <span className="text-sm text-gray-400">{progress.current} / {progress.total}</span>
           )}
         </div>
+        </>}
         {uploadError && (
           <p className="text-sm text-red-400">{uploadError}</p>
         )}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { type GalleryPhoto, cloudinaryUrl, blurUrl } from "@/lib/cloudinary-utils";
-import type { EditorialImages } from "@/modules/admin/lib/content";
+import type { EditorialImages, Testimonial } from "@/modules/admin/lib/content";
 import { EditorialImageEditor } from "./EditorialImageEditor";
 import { PhotoUploadSection } from "./PhotoUploadSection";
 import { HeroTriptychEditor, PANEL_LABELS, type Triptych, type Slot } from "./HeroTriptychEditor";
@@ -12,13 +12,18 @@ type Props = {
   photos: GalleryPhoto[];
   heroTriptych?: Triptych;
   editorial?: EditorialImages;
+  references?: { cs: Testimonial[]; en: Testimonial[] };
 };
 
-export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych, editorial }: Props) {
+export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych, editorial, references }: Props) {
   const [photos, setPhotos] = useState(initial);
   const [triptych, setTriptych] = useState<Triptych>(initialTriptych ?? [[], [], []]);
   const [activeSlot, setActiveSlot] = useState<Slot | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [tab, setTab] = useState<"web" | "library">(editorial ? "web" : "library");
+  const [category, setCategory] = useState<string | null>(null);
+  const categories = [...new Set(photos.map((p) => p.category).filter(Boolean))];
+  const shown = category ? photos.filter((p) => p.category === category) : photos;
 
   async function handleDelete(publicId: string) {
     if (!confirm("Smazat fotku?")) return;
@@ -73,9 +78,21 @@ export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych,
     setTriptych(next);
   }
 
+  const tabClass = (active: boolean) =>
+    `px-4 py-2 text-sm font-medium transition-colors ${active ? "bg-white text-black" : "border border-white/10 text-gray-400 hover:text-white hover:border-white/30"}`;
+  const chip = (active: boolean) =>
+    `px-2.5 py-1 text-xs border transition-colors ${active ? "bg-white text-black border-white" : "border-white/20 text-gray-300 hover:border-white/50"}`;
+
   return (
-    <div className="space-y-12">
-      {editorial && <EditorialImageEditor editorial={editorial} photos={photos} />}
+    <div className="space-y-8">
+      {editorial && (
+        <div role="tablist" className="flex gap-1">
+          <button type="button" role="tab" aria-selected={tab === "web"} onClick={() => setTab("web")} className={tabClass(tab === "web")}>Fotky na webu</button>
+          <button type="button" role="tab" aria-selected={tab === "library"} onClick={() => setTab("library")} className={tabClass(tab === "library")}>Knihovna ({photos.length})</button>
+        </div>
+      )}
+      {editorial && tab === "web" && <EditorialImageEditor editorial={editorial} photos={photos} references={references} />}
+      {tab === "library" && <>
       <HeroTriptychEditor
         triptych={triptych}
         setTriptych={setTriptych}
@@ -86,9 +103,16 @@ export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych,
 
       {/* Photo list */}
       <section>
-        <h2 className="text-lg font-semibold mb-1">
-          Fotky ({photos.length})
-        </h2>
+        {categories.length > 1 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            <button type="button" aria-pressed={category === null} onClick={() => setCategory(null)} className={chip(category === null)}>Vše ({photos.length})</button>
+            {categories.map((c) => (
+              <button key={c} type="button" aria-pressed={category === c} onClick={() => setCategory(c)} className={chip(category === c)}>
+                {c} ({photos.filter((p) => p.category === c).length})
+              </button>
+            ))}
+          </div>
+        )}
         <p className="text-xs text-gray-500 mb-1">
           ★ = podklad pro automatické návrhy stories ({photos.filter(p => p.selected).length} označeno)
         </p>
@@ -104,7 +128,7 @@ export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych,
           <p className="text-gray-500">Žádné fotky</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {photos.map((photo) => {
+            {shown.map((photo) => {
               const inSlots = ([0, 1, 2] as const).filter((s) => triptych[s].includes(photo.publicId));
               return (
               <div
@@ -158,6 +182,7 @@ export function AdminDashboard({ photos: initial, heroTriptych: initialTriptych,
           </div>
         )}
       </section>
+      </>}
     </div>
   );
 }

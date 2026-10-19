@@ -14,7 +14,7 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Guth Pictures" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Portréty" })).toHaveAttribute("href", "/sluzby/portretni-foceni");
     expect(screen.getByRole("link", { name: "Business" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Eventy a svatby" })).toHaveAttribute("href", "/sluzby/eventy-a-svatby");
+    expect(screen.queryByRole("link", { name: "Eventy a svatby" })).toBeNull();
     expect(screen.getByRole("link", { name: "Kontakt" })).toHaveAttribute("href", "/#kontakt");
   });
 
@@ -25,6 +25,17 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Portfolio" })).toHaveAttribute("href", "/portfolio");
     expect(screen.getByRole("link", { name: "O mně" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
+  });
+
+  it("offers an explicit home link on service and content pages", () => {
+    const { rerender } = render(<EditorialNav tone="light" active="business" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("href", "/");
+
+    rerender(<EditorialNav tone="light" active="home" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("aria-current", "page");
+
+    rerender(<EditorialNav tone="light" active="about" />);
+    expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("href", "/");
   });
 
   it("keeps the current page when switching language on desktop and mobile", () => {

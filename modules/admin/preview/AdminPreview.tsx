@@ -2,17 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ContentData, EditorialImages } from "@/modules/admin/lib/content";
-import { PREVIEW_PAGES, type PreviewMessage, type PreviewPage } from "./protocol";
+import { PREVIEW_PAGES, type PreviewMessage, type PreviewPage, type PreviewPick } from "./protocol";
 
 export type PreviewFocus = { selector: string } | { text: string };
 type Locale = "cs" | "en";
 
 const DEVICES = { desktop: 1280, mobile: 390 } as const;
 type Device = keyof typeof DEVICES;
-
-// Editor + preview side by side; on lg+ the split breaks out of the narrow admin column.
-export const SPLIT_LAYOUT =
-  "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-8 lg:items-start lg:w-[min(96vw,1800px)] lg:ml-[calc(50%_-_min(48vw,900px))]";
 
 const tab = (active: boolean) =>
   `px-2.5 py-1 text-xs border transition-colors ${active ? "bg-white text-black border-white" : "border-white/20 text-gray-300 hover:border-white/50"}`;
@@ -25,9 +21,10 @@ type Props = {
   content?: ContentData;
   editorial?: EditorialImages;
   focus?: PreviewFocus | null;
+  onPick?: (pick: PreviewPick) => void;
 };
 
-export function AdminPreview({ page, onPageChange, locale, onLocaleChange, content, editorial, focus }: Props) {
+export function AdminPreview({ page, onPageChange, locale, onLocaleChange, content, editorial, focus, onPick }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const [device, setDevice] = useState<Device>("desktop");
@@ -37,6 +34,8 @@ export function AdminPreview({ page, onPageChange, locale, onLocaleChange, conte
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [open, setOpen] = useState(false);
   const src = `/${locale}/nahled/${page}`;
+  const pickRef = useRef(onPick);
+  useEffect(() => { pickRef.current = onPick; });
 
   const post = useCallback((message: PreviewMessage) => {
     iframeRef.current?.contentWindow?.postMessage(message, window.location.origin);
@@ -46,6 +45,7 @@ export function AdminPreview({ page, onPageChange, locale, onLocaleChange, conte
     function onMessage(event: MessageEvent<PreviewMessage>) {
       if (event.origin !== window.location.origin || event.source !== iframeRef.current?.contentWindow) return;
       if (event.data?.type === "preview:ready") setReady(true);
+      if (event.data?.type === "preview:pick") pickRef.current?.({ text: event.data.text, src: event.data.src });
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
@@ -99,7 +99,7 @@ export function AdminPreview({ page, onPageChange, locale, onLocaleChange, conte
             <button key={key} type="button" aria-pressed={locale === key} onClick={() => onLocaleChange(key)} className={tab(locale === key)}>{key.toUpperCase()}</button>
           ))}
         </>}
-        <span className="ml-auto text-[11px] text-gray-500">neuložené změny se ukazují hned</span>
+        <span className="ml-auto text-[11px] text-gray-500">{onPick ? "klikni do náhledu = otevřít pole" : "neuložené změny se ukazují hned"}</span>
         {open && <button type="button" onClick={() => setOpen(false)} className="lg:hidden ml-2 text-sm underline">Zavřít</button>}
       </div>
       <div ref={frameRef} className="relative flex-1 min-h-0 overflow-hidden border border-white/10 bg-zinc-900 flex justify-center">

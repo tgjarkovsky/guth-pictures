@@ -19,6 +19,11 @@ describe("cloudinaryLoader", () => {
       .toBe(`${BASE}/c_limit,w_828,q_auto:good,f_auto/v123/my_folder/abc`);
   });
 
+  it("moves a standalone quality segment into the final, single encode", () => {
+    expect(cloudinaryLoader({ src: `${BASE}/q_auto:best/portfolio/abc`, width: 1600 }))
+      .toBe(`${BASE}/c_limit,w_1600,q_auto:best,f_auto/portfolio/abc`);
+  });
+
   it("leaves non-Cloudinary sources untouched", () => {
     expect(cloudinaryLoader({ src: "/editorial/foceni-101-preview.webp", width: 640 }))
       .toBe("/editorial/foceni-101-preview.webp");

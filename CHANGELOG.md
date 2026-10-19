@@ -1,5 +1,19 @@
+## [2026-10-19] - Oprava buildu: výběr referencí (reviewedWork) mimo klientský WorkGrid a velikosti obrázků jako pole místo funkce, prerender /firemni-portrety padal
+## [2026-10-19] - Admin › Fotky: pořadí referencí jde měnit přetažením řádku nebo šipkami přímo ve sbaleném seznamu
+## [2026-10-19] - Reference s fotkou jdou rozkliknout: celá fotka bez ořezu vedle citace na tmavé kartě stránky, listování šipkami, klávesami i swipem, zavření ×, Esc nebo klikem vedle
+## [2026-10-19] - Oprava buildu: seznam zamčených sekcí adminu mimo klientskou komponentu (prerender /admin/tema padal)
+## [2026-10-19] - Admin odpovídá webu: reference (fotka, jméno, citace CS/EN) se upravují ve Fotkách u své stránky (Homepage › Vybrané příběhy, Business › Headshoty) a ukládají do obou jazyků; z Fotek pryč sloty, které web nevykresluje (příběhy, headshoty, Focení 101, plánovač; data v KV zůstávají); z Textů pryč Reference; Téma zatím zamčené
+## [2026-10-19] - Admin: pryč sekce „Light planner karta“, web ji nevykresluje (data v KV zůstávají)
+## [2026-10-19] - Admin: texty i fotky ve stromu Stránka → Sekce, uprostřed jen vybraná sekce, vpravo náhled; hledání v textech, tečka u neuložených změn, uložení obou jazyků jedním tlačítkem; klik do náhledu otevře pole nebo slot; FAQ, kroky, balíčky a reference sbalené; fotky rozdělené na „Na webu“ a „Knihovnu“ s filtrem kategorií; navigace ve skupinách Web / Klienti / Publikace, /admin otevře texty
+## [2026-10-19] - Favicon podle homepage: krémové G v Syne s oxblood tečkou na tmavé kartě (#232120) místo staré vínové palety
+## [2026-10-19] - Business portréty: vzhled podle homepage v lahvově zelené (tmavá hero karta s navigací, serif nadpisy, fotky v paspartě, velká čísla kroků, doporučený balíček na tmavé kartě), headshoty s referencí na hover, bez placeholderů a sekce „K čemu je využijete“, e-mail a telefon (zobrazí se až po kliknutí, v HTML není) vedle formuláře; reference v adminu znovu viditelné s volbou homepage/business
+## [2026-10-19] - Navigace: odkaz „Domů“ jako první položka na všech editorial stránkách (desktop i mobil)
+## [2026-10-19] - Homepage: text v hero lícuje s obsahem sekcí; druhý řádek hlavního nadpisu jde v adminu posunout (desktop i mobil, v em), výchozí posun srovná nožičku n nad dřík h
+## [2026-10-19] - Homepage: bordo sjednoceno do teplého oxbloodu (#8f2b24 na krému, #c4574a na tmavé); eventy pryč z navigace a hero; patička editorial stránek v Epilogue
+## [2026-10-19] - Homepage: krémová stránka s tmavými paspartami, navigace v hero kartě, galerie fotek klientů s recenzí na hover, sekce „Jak to u mě probíhá“, bez nástrojů a palety z fotky; fotky v jednom kódování a galerie v q_auto:best; navigace verzálkami na všech stránkách
 ## [2026-10-18] - ROADMAP.md: vize, uživatelé, směry na 1–3 měsíce (víc poptávek) a co nedělat
 ## [2026-10-16] - Smazání klientské galerie maže i fotky v Cloudinary (client-galleries/<slug>/); při chybě 502 a KV zůstane
+## [2026-10-16] - Sync galerie z Lightroomu odebere ze výběru klienta fotky, které v albu už nejsou; POST výběru ignoruje duplicitní id
 ## [2026-10-15] - Sdílený helper signedUploadRequest pro podepsaný upload do Cloudinary (DraftCard, PhotoUploadSection)
 ## [2026-10-15] - Admin: po vytvoření galerie hotová zpráva pro klienta (odkaz, heslo, platnost, limit výběru) s tlačítkem Kopírovat zprávu
 ## [2026-10-15] - isPreviewPage už nepropouští zděděné klíče (toString, constructor, __proto__), /nahled/toString vrací 404

@@ -9,6 +9,8 @@ type Props = {
   priority?: boolean;
   className?: string;
   placeholderLabel?: string;
+  /** "best" trades bytes for the least visible compression. */
+  quality?: "best";
 };
 
 export function EditorialImageView({
@@ -18,6 +20,7 @@ export function EditorialImageView({
   priority = false,
   className = "",
   placeholderLabel,
+  quality,
 }: Props) {
   const alt = locale === "en" ? image.alt.en : image.alt.cs;
   if (!image.publicId) {
@@ -34,7 +37,7 @@ export function EditorialImageView({
 
   return (
     <Image
-      src={cloudinaryUrl(image.publicId, "c_fill,w_1800,q_auto,f_auto")}
+      src={cloudinaryUrl(image.publicId, quality === "best" ? "q_auto:best" : "")}
       alt={alt}
       fill
       sizes={sizes}

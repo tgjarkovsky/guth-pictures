@@ -2,7 +2,6 @@
 
 import { useId } from "react";
 import type { PricingPackage } from "@/lib/types";
-import type { PreviewPage } from "@/modules/admin/preview/protocol";
 
 // Sekce, které web už nevykresluje (reference, nadpis Light Testeru, příplatky).
 // Jen skryté — data v KV zůstávají a ukládají se beze změny.
@@ -10,21 +9,14 @@ export const SHOW_UNUSED_SECTIONS = false;
 
 const emptyPackage = (): PricingPackage => ({ id: crypto.randomUUID(), name: "", price: "", duration: "", includes: [] });
 
-export function Section({ title, page, children }: { title: string; page?: PreviewPage; children: React.ReactNode }) {
-  return (
-    <div className="border border-white/10 p-6" data-preview-page={page}>
-      <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">{title}</h3>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
 export function Field({
+  path,
   label,
   value,
   onChange,
   textarea,
 }: {
+  path?: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -32,7 +24,7 @@ export function Field({
 }) {
   const id = useId();
   return (
-    <div>
+    <div data-path={path}>
       <label htmlFor={id} className="block text-sm text-gray-400 mb-1">{label}</label>
       {textarea ? (
         <textarea
@@ -56,12 +48,14 @@ export function Field({
 }
 
 export function PackageEditor({
+  path,
   packages,
   onChange,
   label = "Balíčky ceníku",
   addLabel = "+ Přidat balíček",
   simple = false,
 }: {
+  path?: string;
   packages: PricingPackage[];
   onChange: (pkgs: PricingPackage[]) => void;
   label?: string;
@@ -82,24 +76,22 @@ export function PackageEditor({
   function removePkg(i: number) { onChange(packages.filter((_, idx) => idx !== i)); }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2" data-path={path}>
       <p className="text-sm text-gray-400">{label}</p>
       {packages.map((pkg, i) => (
-        <div key={pkg.id ?? String(i)} className="border border-white/10 p-4 space-y-2">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-gray-500 uppercase tracking-wider">{simple ? "Položka" : "Balíček"} {i + 1}</span>
-            <button
-              type="button"
-              onClick={() => removePkg(i)}
-              className="text-xs text-red-400 hover:text-red-300 transition-colors"
-            >
-              Odebrat
-            </button>
-          </div>
+        <details key={pkg.id ?? String(i)} data-path={path && `${path}.${i}`} className="group border border-white/10">
+          <summary className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-white/5">
+            <span className="text-xs text-gray-500">{i + 1}.</span>
+            <span className="truncate flex-1">{pkg.name || <em className="text-gray-500">bez názvu</em>}</span>
+            <span className="text-xs text-gray-400">{pkg.price}</span>
+            <span className="text-gray-500 group-open:rotate-90 transition-transform">›</span>
+          </summary>
+          <div className="space-y-2 border-t border-white/10 p-3">
           <div className={`grid gap-2 ${simple ? "grid-cols-2" : "grid-cols-3"}`}>
             <input
               type="text"
               placeholder="Název"
+              aria-label="Název"
               value={pkg.name}
               onChange={(e) => updatePkg(i, (p) => { p.name = e.target.value; })}
               className="bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40"
@@ -107,6 +99,7 @@ export function PackageEditor({
             <input
               type="text"
               placeholder="Cena"
+              aria-label="Cena"
               value={pkg.price}
               onChange={(e) => updatePkg(i, (p) => { p.price = e.target.value; })}
               className="bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40"
@@ -114,6 +107,7 @@ export function PackageEditor({
             {!simple && <input
               type="text"
               placeholder="Délka"
+              aria-label="Délka"
               value={pkg.duration}
               onChange={(e) => updatePkg(i, (p) => { p.duration = e.target.value; })}
               className="bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40"
@@ -121,12 +115,21 @@ export function PackageEditor({
           </div>
           {!simple && <textarea
             placeholder={"Co zahrnuje (každá položka na nový řádek)"}
+            aria-label="Co zahrnuje"
             value={pkg.includes.join("\n")}
             onChange={(e) => updatePkg(i, (p) => { p.includes = e.target.value.split("\n"); })}
             rows={3}
-            className="w-full bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40 resize-none"
+            className="w-full bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40 resize-y"
           />}
-        </div>
+          <button
+            type="button"
+            onClick={() => removePkg(i)}
+            className="text-xs text-red-400 hover:text-red-300 transition-colors"
+          >
+            Odebrat {simple ? "položku" : "balíček"}
+          </button>
+          </div>
+        </details>
       ))}
       <button
         type="button"

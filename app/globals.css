@@ -1807,33 +1807,47 @@ body::after {
   100% { opacity: 0; transform: translateY(-20px) scale(0.96); filter: blur(8px); }
 }
 
-.editorial-business { --biz-muted: color-mix(in srgb, var(--editorial-ink) 74%, var(--editorial-paper)); --biz-line: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --biz-gutter: clamp(1.25rem, 5cqi, 4rem); font-size: 1rem; line-height: 1.6; }
+/* ── Business: same passe-partout language as home, bottle-green palette ──
+   The hero is a dark card holding the nav, text and photo; client headshots sit on the same mats.
+   The --home-* aliases let the shared WorkGrid styles (see Home) pick up this palette. */
+.editorial-business { --card: #1c2a24; --card-ink: #eef0ea; --card-accent: #9cc7ae; --home-dark: var(--card); --home-dark-ink: var(--card-ink); --home-dark-accent: var(--card-accent); --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --biz-muted: color-mix(in srgb, var(--editorial-ink) 74%, var(--editorial-paper)); --biz-line: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --biz-gutter: clamp(1.25rem, 5cqi, 5rem); font-size: 1rem; line-height: 1.6; overflow-x: clip; }
 .editorial-business ::selection { color: var(--editorial-paper); background: var(--editorial-ink); }
 .editorial-business h1, .editorial-business h2, .editorial-business h3 { text-wrap: balance; }
-.editorial-business h2 { max-width: 16ch; margin: 0 0 1.25rem; font-size: clamp(2.5rem, 4.5cqi, 4.25rem); font-weight: 500; line-height: 1.02; letter-spacing: -.035em; }
-.editorial-business h3 { margin: 0 0 .5rem; font-size: 1.25rem; font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+.editorial-business :is(h1, h2) { font-family: var(--font-editorial-serif), serif; font-weight: 800; letter-spacing: -.04em; }
+.editorial-business h2 { max-width: 14ch; margin: 0 0 1.25rem; font-size: clamp(2.75rem, 5.5cqi, 5.5rem); line-height: .95; }
+.editorial-business h3 { margin: 0 0 .5rem; font-family: var(--font-editorial-serif), serif; font-size: 1.35rem; font-weight: 700; line-height: 1.25; letter-spacing: -.02em; }
 .editorial-business :where(section > p, section > div > p) { max-width: 46ch; margin: 0; color: var(--biz-muted); font-size: 1.125rem; }
 .editorial-business :where(article p, li p) { margin: 0; color: var(--biz-muted); }
-.ed-biz-button { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
+.ed-biz-button { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out, color .2s ease-out; }
 .ed-biz-button:hover { background: var(--editorial-accent); }
-.ed-business-hero { min-height: 44rem; display: grid; grid-template-columns: 1fr 1fr; }
-.ed-business-hero > div { padding: clamp(6rem, 9cqi, 8rem) var(--biz-gutter) clamp(3rem, 6cqi, 5rem); display: flex; flex-direction: column; justify-content: center; align-items: start; }
-.ed-business-hero > div > p:first-child { margin: 0; color: var(--editorial-accent); font-size: .8125rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
-.ed-business-hero h1 { max-width: 11ch; margin: 1.25rem 0 1.5rem; font-size: clamp(3.25rem, 6cqi, 6rem); font-weight: 500; line-height: .95; letter-spacing: -.04em; }
+.editorial-business > .editorial-nav { inset: var(--card-gap) calc(max(0px, (100% - 1440px) / 2) + var(--card-gap)) auto; color: var(--card-ink); }
+.ed-business-hero { --editorial-ink: var(--card-ink); --editorial-paper: var(--card); --editorial-accent: var(--card-accent); --biz-muted: color-mix(in srgb, var(--card-ink) 78%, var(--card)); position: relative; isolation: isolate; margin: 0 var(--card-gap); padding: var(--card-gap) var(--mat) var(--mat); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); color: var(--editorial-ink); }
+.ed-business-hero::before { content: ""; position: absolute; inset: calc(var(--card-gap) - var(--nav-h)) 0 0; z-index: -1; background: var(--card); }
+.ed-business-hero > div { padding: clamp(3rem, 6cqi, 6rem) clamp(1rem, 4cqi, 4rem) clamp(3rem, 6cqi, 6rem) calc(var(--biz-gutter) - var(--card-gap) - var(--mat)); display: flex; flex-direction: column; justify-content: center; align-items: start; }
+.ed-business-hero .ed-kicker { margin: 0; color: var(--editorial-accent); font-weight: 600; text-transform: uppercase; }
+.ed-business-hero h1 { max-width: 12ch; margin: 1.25rem 0 1.5rem; font-size: clamp(2.75rem, 4.6cqi, 4.5rem); font-weight: 700; line-height: .92; }
 .ed-business-hero > div > p:nth-of-type(2) { max-width: 34ch; margin: 0 0 2.25rem; color: var(--biz-muted); font-size: 1.25rem; line-height: 1.5; }
-.ed-business-hero figure { position: relative; margin: 0; }
-.ed-business-headshots, .ed-business-use, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact { padding: clamp(5rem, 8cqi, 8rem) var(--biz-gutter); }
-.ed-business-headshots > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 3rem; }
-.ed-business-headshots figure { position: relative; aspect-ratio: 4 / 5; margin: 0; }
-.ed-business-use { display: grid; grid-template-columns: 1.2fr repeat(3, 1fr); gap: 2.5rem; border-block: 1px solid var(--biz-line); }
-.ed-business-use h2 { margin: 0; }
-.ed-business-use article { padding-top: 1.25rem; border-top: 1px solid var(--editorial-ink); }
-.ed-business-process ol { margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; list-style: none; }
-.ed-business-process li { padding-top: 1.25rem; border-top: 1px solid var(--editorial-ink); }
-.ed-business-process li span { display: block; margin-bottom: 1.5rem; color: var(--editorial-accent); font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.ed-business-pricing > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 3rem; }
+.ed-business-hero .ed-biz-button { color: var(--card); background: var(--card-ink); }
+.ed-business-hero .ed-biz-button:hover { background: var(--card-accent); }
+.ed-business-hero figure { position: relative; min-height: clamp(30rem, 72svh, 48rem); margin: 0; }
+.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact { padding: clamp(4rem, 9cqi, 9rem) var(--biz-gutter); }
+.ed-business-headshots .ed-home-work__grid { margin-top: clamp(2rem, 4cqi, 3.5rem); }
+@media (min-width: 761px) {
+  /* Headshots are portrait: an even 4:5 row instead of the home mosaic. */
+  .ed-business-headshots .ed-home-work__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: auto; }
+  .ed-business-headshots .ed-home-story:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 4 / 5; }
+  .ed-business-headshots .ed-home-story:nth-child(n) blockquote { font-size: clamp(1rem, 1.4cqi, 1.3rem); }
+}
+.ed-business-process { border-top: 1px solid var(--biz-line); }
+.ed-business-process ol { margin: clamp(2rem, 4cqi, 3.5rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5rem 2rem; list-style: none; }
+.ed-business-process li { padding-top: 1rem; border-top: 1px solid currentColor; }
+.ed-business-process li span { display: block; margin-bottom: 1rem; color: var(--editorial-accent); font-family: var(--font-editorial-serif), serif; font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+/* The second package (admin order) is the recommended one and sits on the dark card. */
+.ed-business-pricing > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; margin-top: clamp(2rem, 4cqi, 3.5rem); }
 .ed-business-pricing article { display: flex; flex-direction: column; padding: 1.75rem 1.5rem 1.5rem; border: 1px solid var(--biz-line); }
-.ed-business-pricing strong { display: block; margin-top: .75rem; font-size: 2rem; font-weight: 500; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ed-business-pricing article:nth-child(2) { --editorial-ink: var(--card-ink); --editorial-paper: var(--card); --biz-muted: color-mix(in srgb, var(--card-ink) 78%, var(--card)); --biz-line: color-mix(in srgb, var(--card-ink) 20%, transparent); color: var(--card-ink); background: var(--card); border-color: var(--card); }
+.ed-business-pricing article:nth-child(2) .ed-biz-button:hover { color: var(--card); background: var(--card-accent); }
+.ed-business-pricing strong { display: block; margin-top: .75rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.35rem, 1.7cqi, 1.6rem); font-weight: 700; line-height: 1.15; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .ed-business-pricing article > p { margin: .375rem 0 0; color: var(--biz-muted); font-size: .9375rem; }
 .ed-business-pricing ul { margin: 1.5rem 0 2rem; padding: 0; list-style: none; color: var(--biz-muted); font-size: .9375rem; }
 .ed-business-pricing ul li { padding: .625rem 0; border-top: 1px solid var(--biz-line); }
@@ -1847,12 +1861,23 @@ body::after {
 .ed-business-faq summary::after { content: "+"; flex: none; color: var(--editorial-accent); font-size: 1.5rem; line-height: 1; transition: transform .2s ease-out; }
 .ed-business-faq details[open] summary::after { transform: rotate(45deg); }
 .ed-business-faq details p { max-width: 60ch; margin: 0; padding: 0 0 1.5rem; color: var(--biz-muted); }
-@media (max-width: 1024px) { .ed-business-use { grid-template-columns: repeat(3, 1fr); } .ed-business-use h2 { grid-column: 1 / -1; } .ed-business-process ol, .ed-business-pricing > div { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 760px) { .ed-business-hero, .ed-business-use, .ed-business-faq, .ed-business-contact { grid-template-columns: 1fr; } .ed-business-hero figure { min-height: 32rem; } .ed-business-headshots > div, .ed-business-process ol, .ed-business-pricing > div { grid-template-columns: 1fr; } }
+.ed-business-email { display: inline-block; margin-top: 1.75rem; color: inherit; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.15rem, 1.8cqi, 1.5rem); font-weight: 700; letter-spacing: -.02em; text-decoration: underline; text-decoration-color: var(--editorial-accent); text-decoration-thickness: 2px; text-underline-offset: .3em; overflow-wrap: anywhere; }
+.ed-business-phone { display: block; margin-top: .75rem; padding: 0; border: 0; background: none; color: var(--biz-muted); font: inherit; font-size: 1.05rem; text-decoration: underline; text-underline-offset: .3em; cursor: pointer; }
+a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.15rem, 1.8cqi, 1.5rem); font-weight: 700; letter-spacing: -.02em; text-decoration-color: var(--editorial-accent); text-decoration-thickness: 2px; }
+.ed-business-contact form { max-width: 34rem; }
+@media (max-width: 1024px) { .ed-business-process ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .editorial-business { --nav-h: 4rem; }
+  .ed-business-hero, .ed-business-faq, .ed-business-contact, .ed-business-process ol { grid-template-columns: 1fr; }
+  .ed-business-hero > div { padding: 2rem 1rem 2.5rem; }
+  .ed-business-hero figure { min-height: 56svh; }
+  .ed-business-headshots > h2 + p { margin-bottom: 1.5rem; }
+}
 
 /* Editorial redesign — scoped so admin, tools, blog and galleries keep their theme. */
 /* body:has() carries the homepage palette to the layout's footer. */
 body:has(.editorial-home),
+body:has(.editorial-business),
 .editorial-home,
 .editorial-portrait,
 .editorial-business,
@@ -1860,7 +1885,7 @@ body:has(.editorial-home),
 .editorial-secondary {
   --editorial-ink: #191315;
   --editorial-paper: #f3efe7;
-  --editorial-accent: #7a1834;
+  --editorial-accent: #8f2b24;
   --color-bg: var(--editorial-paper);
   --color-bg-elevated: color-mix(in srgb, var(--editorial-ink) 4%, var(--editorial-paper));
   --color-text: var(--editorial-ink);
@@ -1894,9 +1919,11 @@ body:has(.editorial-home) {
 }
 
 .editorial-portrait { --editorial-ink: #eeeae2; --editorial-paper: #0a0a09; --editorial-accent: #eeeae2; }
-.editorial-business { --editorial-ink: #10201f; --editorial-paper: #f3f5f4; --editorial-accent: #536460; }
+body:has(.editorial-business), .editorial-business { --editorial-ink: #12201b; --editorial-paper: #f1efe8; --editorial-accent: #2e5a45; }
 .editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f5f2ec; --editorial-accent: #0b0b0a; }
 .editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f4f1ea; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
+/* Footer lives in the layout, outside the editorial scope. */
+body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editorial-events, .editorial-secondary)) footer { font-family: var(--font-editorial-sans), sans-serif; }
 
 .editorial-nav {
   position: absolute;
@@ -1913,7 +1940,7 @@ body:has(.editorial-home) {
   font-family: var(--font-editorial-sans), sans-serif;
 }
 .editorial-wordmark { color: inherit; font-family: var(--font-editorial-serif), serif; font-size: 1.05rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
-.editorial-nav__desktop { display: flex; align-items: center; gap: clamp(1rem, 2.5cqi, 2.5rem); font-size: .78rem; }
+.editorial-nav__desktop { display: flex; align-items: center; gap: clamp(1rem, 2.5cqi, 2.5rem); font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .editorial-nav a { color: inherit; text-decoration: none; }
 .editorial-nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .45rem; }
 .editorial-nav__tools { display: flex; align-items: center; gap: 1rem; }
@@ -2006,92 +2033,123 @@ body:has(.editorial-home) {
   .ed-legal section { grid-template-columns: 1fr; gap: 1.25rem; }
 }
 
-.ed-home-hero { min-height: calc(100svh - 4.5rem); display: grid; grid-template-columns: minmax(19rem, 38%) 1fr; }
-.ed-home-hero__copy { padding: clamp(2rem, 6cqi, 6rem); display: flex; flex-direction: column; justify-content: center; }
-.ed-home-hero h1 { margin: 0; max-width: 6ch; font-family: var(--font-editorial-serif), serif; font-size: clamp(4.5rem, 9cqi, 9rem); font-weight: 800; line-height: .95; letter-spacing: -.04em; }
-.ed-home-hero__copy > p { max-width: 24ch; margin: 2rem 0; font-family: var(--font-editorial-sans), sans-serif; font-size: clamp(1.2rem, 2cqi, 1.7rem); line-height: 1.05; }
-.ed-home-hero__image { position: relative; min-height: 38rem; }
-.ed-service-index { display: grid; margin-top: auto; border-top: 1px solid currentColor; }
+/* ── Home: cream page, dark only as passe-partout ──
+   The hero is a dark card holding the nav, the headline and the photo, so header and hero read as
+   one framed object; photos below sit on the same dark mats. The headline's baseline rests on the photo. */
+.editorial-home { --home-dark: #232120; --home-dark-ink: #f1eee9; --home-dark-accent: #c4574a; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --gutter: clamp(1.25rem, 5cqi, 5rem); overflow-x: clip; }
+/* Cream nudged away from yellow; body scope so the footer follows. */
+body:has(.editorial-home), .editorial-home { --editorial-paper: #f4f2ee; }
+/* The site-wide fixed accent hairline would float over the cream gap above the card. */
+body:has(:is(.editorial-home, .editorial-business))::before { display: none; }
+/* The nav's containing block is the full-width main, the card sits in the 1440px column: inset by both. */
+.editorial-home > .editorial-nav { inset: var(--card-gap) calc(max(0px, (100% - 1440px) / 2) + var(--card-gap)) auto; color: var(--home-dark-ink); }
+.ed-home-hero { --editorial-ink: var(--home-dark-ink); --editorial-paper: var(--home-dark); position: relative; isolation: isolate; margin: 0 var(--card-gap); padding-bottom: var(--mat); display: grid; grid-template-columns: 1fr minmax(16rem, 30%); grid-template-areas: "title title" "image side"; color: var(--editorial-ink); }
+.ed-home-hero::before { content: ""; position: absolute; inset: calc(var(--card-gap) - var(--nav-h)) 0 0; z-index: -1; background: var(--home-dark); }
+.ed-home-hero h1 { grid-area: title; position: relative; z-index: 2; margin: 0 0 -.16em; padding: calc(var(--card-gap) + clamp(1.5rem, 3cqi, 3rem)) calc(var(--gutter) - var(--card-gap)) 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(5rem, 13.5cqi, 13rem); font-weight: 800; line-height: .82; letter-spacing: -.04em; text-wrap: balance; }
+.ed-home-hero__mark { color: var(--home-dark-accent); }
+.ed-home-hero h1 > span { display: block; }
+.ed-home-hero__line2 { margin-inline-start: var(--shift, 0); }
+.ed-home-hero__image { grid-area: image; position: relative; min-height: clamp(30rem, 72svh, 52rem); margin-left: var(--mat); }
+.ed-home-hero__meta { grid-area: side; padding: 2.5rem calc(var(--gutter) - var(--card-gap)) 2rem 2rem; }
+.ed-home-hero__meta > p { max-width: 28ch; margin: 0 0 2rem; font-size: clamp(1.15rem, 1.6cqi, 1.45rem); line-height: 1.3; color: color-mix(in srgb, var(--editorial-ink) 80%, var(--editorial-paper)); }
+.ed-service-index { display: grid; border-top: 1px solid currentColor; }
 .ed-service-index a { display: grid; grid-template-columns: 2.25rem 1fr; padding: .75rem 0; color: inherit; border-bottom: 1px solid color-mix(in srgb, currentColor 55%, transparent); text-decoration: none; font-family: var(--font-editorial-sans), sans-serif; font-size: 1.05rem; }
 .ed-service-index span { font-family: var(--font-editorial-sans), sans-serif; font-size: .67rem; }
-.ed-home-work, .ed-home-tools, .ed-home-contact { padding: clamp(4rem, 9cqi, 9rem) clamp(1.25rem, 5cqi, 5rem); }
-.ed-home-work h2, .ed-home-about h2, .ed-home-tools h2, .ed-home-contact h2 { margin: 0; font-family: var(--font-editorial-serif), serif; font-weight: 800; font-size: clamp(3rem, 6cqi, 6rem); line-height: .95; letter-spacing: -.04em; }
-.ed-home-work__grid { display: grid; grid-template-columns: 1.08fr 1fr; gap: 1rem; margin-top: 2rem; }
-.ed-home-story { position: relative; margin: 0; min-height: 24rem; }
-.ed-home-story--1 { grid-row: span 2; min-height: 48rem; }
-.ed-home-story--2, .ed-home-story--3 { min-height: 23.5rem; }
-.ed-home-about { max-width: 76rem; margin: 0 auto; padding: clamp(4rem, 9cqi, 8rem) clamp(1.25rem, 5cqi, 5rem); display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem, 6cqi, 6rem); align-items: center; }
-.ed-home-about__image { position: relative; min-height: 34rem; }
-.ed-home-about p:not(.ed-kicker) { max-width: 50ch; margin: 1.5rem 0; line-height: 1.75; }
-.ed-home-about a, .ed-tool a { color: inherit; text-underline-offset: .35rem; }
+.ed-home-work, .ed-home-contact { padding: clamp(4rem, 9cqi, 9rem) clamp(1.25rem, 5cqi, 5rem); }
+.ed-home-work h2, .ed-home-about h2, .ed-home-contact h2 { margin: 0; font-family: var(--font-editorial-serif), serif; font-weight: 800; font-size: clamp(3rem, 6cqi, 6rem); line-height: .95; letter-spacing: -.04em; }
+/* Client photos; each carries its review. Desktop: a 6-photo rhythm (one large, two stacked, three tall)
+   with the quote revealed over the photo on hover/focus. Touch: quote always shown. */
+.ed-home-work__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(13rem, 21cqi, 19rem); gap: 1rem; margin-top: 2rem; }
+.ed-home-story { position: relative; margin: 0; grid-column: span 4; grid-row: span 2; overflow: hidden; outline-offset: 4px; }
+.ed-home-story:nth-child(6n + 1) { grid-column: span 7; }
+.ed-home-story:nth-child(6n + 2), .ed-home-story:nth-child(6n + 3) { grid-column: span 5; grid-row: span 1; }
+.ed-home-story__photo { position: absolute; inset: 0; }
+.ed-home-story figcaption { position: absolute; inset: 0; z-index: 1; padding: clamp(1.25rem, 2.5cqi, 2rem); display: flex; flex-direction: column; justify-content: end; gap: 1rem; color: #f4f1ea; background: linear-gradient(0deg, rgba(20,20,20,.55), transparent 35%); transition: background-color .35s ease-out; }
+.ed-home-story blockquote { max-width: 32ch; margin: 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.05rem, 1.6cqi, 1.5rem); font-weight: 600; line-height: 1.2; letter-spacing: -.01em; white-space: pre-line; opacity: 0; transform: translateY(.75rem); transition: opacity .35s ease-out, transform .35s ease-out; }
+.ed-home-story blockquote::before { content: "„"; margin-right: .05em; font-size: 1.6em; line-height: 0; color: var(--home-dark-accent); }
+.ed-home-story blockquote::after { content: "“"; }
+.ed-home-story figcaption span { font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.ed-home-story:is(:hover, :has(:focus-visible)) figcaption { background-color: rgba(20,20,20,.62); }
+.ed-home-story:is(:hover, :has(:focus-visible)) blockquote { opacity: 1; transform: none; }
+.ed-home-story:nth-child(6n + 2) blockquote, .ed-home-story:nth-child(6n + 3) blockquote { font-size: clamp(.95rem, 1.3cqi, 1.2rem); }
+@media (hover: none) {
+  .ed-home-story figcaption { background-color: rgba(20,20,20,.5); }
+  .ed-home-story blockquote { opacity: 1; transform: none; }
+}
+.ed-home-story__open { position: absolute; inset: 0; z-index: 2; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.ed-home-story__open:focus-visible { outline: 2px solid var(--home-dark-accent); outline-offset: -2px; }
+
+/* Review lightbox: the uncropped photo beside its quote, on the page's dark card colour. */
+html:has(.ed-review-lightbox[open]) { overflow: hidden; }
+.ed-review-lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: clamp(1rem, 4vw, 3.5rem); border: 0; background: var(--home-dark); color: var(--home-dark-ink); overscroll-behavior: contain; }
+.ed-review-lightbox[open] { animation: ed-review-in .35s ease-out; }
+.ed-review-lightbox::backdrop { background: rgba(10,10,11,.6); }
+.ed-review-lightbox__body { height: 100%; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 26rem); gap: clamp(2rem, 5vw, 5rem); align-items: center; animation: ed-review-in .35s ease-out; }
+.ed-review-lightbox__photo { position: relative; height: 100%; }
+.ed-review-lightbox__img { object-fit: contain; }
+.ed-review-lightbox figcaption { display: flex; flex-direction: column; gap: 1.75rem; padding-bottom: 3rem; }
+.ed-review-lightbox blockquote { margin: 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.35rem, 2.3vw, 2.1rem); font-weight: 600; line-height: 1.2; letter-spacing: -.015em; white-space: pre-line; text-wrap: pretty; }
+.ed-review-lightbox blockquote::before { content: "„"; margin-right: .05em; color: var(--home-dark-accent); }
+.ed-review-lightbox blockquote::after { content: "“"; }
+.ed-review-lightbox figcaption span { display: flex; align-items: center; gap: .9rem; font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.ed-review-lightbox figcaption span::before { content: ""; width: 2rem; height: 1px; background: var(--home-dark-accent); }
+.ed-review-lightbox button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); border-radius: 50%; background: none; color: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; transition: border-color .2s; }
+.ed-review-lightbox button:is(:hover, :focus-visible) { border-color: var(--home-dark-accent); outline: none; }
+.ed-review-lightbox__close { position: absolute; top: clamp(.75rem, 2vw, 1.5rem); right: clamp(.75rem, 2vw, 1.5rem); }
+.ed-review-lightbox__nav { position: absolute; right: clamp(1rem, 4vw, 3.5rem); bottom: clamp(1rem, 4vw, 3.5rem); display: flex; align-items: center; gap: 1rem; font-size: .8rem; letter-spacing: .1em; font-variant-numeric: tabular-nums; }
+@keyframes ed-review-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ed-review-lightbox[open], .ed-review-lightbox__body { animation: none; } }
+@media (max-width: 760px) {
+  .ed-review-lightbox { padding: 3.75rem 1rem 4.5rem; }
+  .ed-review-lightbox__body { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 1.25rem; align-items: stretch; }
+  .ed-review-lightbox figcaption { max-height: 38svh; overflow-y: auto; gap: 1rem; padding-bottom: 0; }
+  .ed-review-lightbox blockquote { font-size: 1.15rem; }
+  .ed-review-lightbox__nav { right: 50%; bottom: .75rem; transform: translateX(50%); }
+}
+.ed-home-about { padding: clamp(4rem, 9cqi, 9rem) clamp(1.25rem, 5cqi, 5rem); display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 7cqi, 7rem); align-items: start; }
+.ed-home-about__image { position: sticky; top: 6.5rem; aspect-ratio: 4 / 5; }
+.ed-home-about__text > p:not(.ed-kicker) { max-width: 46ch; margin: 1.5rem 0 0; font-size: 1.125rem; line-height: 1.65; }
+.ed-home-about__steps { margin: clamp(2.5rem, 5cqi, 4rem) 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 2rem; list-style: none; }
+.ed-home-about__steps li { padding-top: 1rem; border-top: 1px solid currentColor; }
+.ed-home-about__steps span { display: block; margin-bottom: 1rem; color: var(--editorial-accent); font-family: var(--font-editorial-serif), serif; font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.ed-home-about__steps h3 { margin: 0 0 .5rem; font-family: var(--font-editorial-serif), serif; font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; }
+.ed-home-about__steps p { margin: 0; color: var(--color-text-muted); line-height: 1.6; }
 .ed-kicker { font-size: .72rem; letter-spacing: .14em; }
-.ed-home-tools__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2.5rem; }
-.ed-tool__image { position: relative; min-height: 24rem; background: color-mix(in srgb, var(--editorial-ink) 12%, var(--editorial-paper)); overflow: hidden; }
-.ed-tool h3 { margin: 1rem 0 .25rem; font-family: var(--font-editorial-serif), serif; font-size: 2rem; font-weight: 700; }
-.ed-tool p { max-width: 54ch; margin: .25rem 0 .65rem; }
-.ed-tool__notice { font-size: .78rem; opacity: .65; }
-.ed-home-contact { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr); gap: clamp(2rem, 8cqi, 8rem); align-items: start; border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent); }
+.ed-home-contact { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr); gap: clamp(2rem, 8cqi, 8rem); align-items: start; }
 .ed-home-contact form { max-width: 34rem; }
 
-/* ── Headlines over photos ──
-   Hero, Tvorba and O mně headlines overlap their photos with an inverting blend.
-   Photos sit in greyscale under the text; a colour copy (.ed-photo-front) fades in
-   above it — on hover with a mouse, on scroll on touch screens. Must not get a
-   z-index/transform on the figure itself, or the copy can't rise above the heading. */
-.ed-home-hero h1, .ed-home-work > h2, .ed-home-about h2 { position: relative; z-index: 2; color: #fff; mix-blend-mode: difference; pointer-events: none; }
-.ed-photo-front { position: absolute; inset: 0; z-index: 3; opacity: 0; pointer-events: none; }
+:is(.ed-home-story, .ed-home-about__image) { border: var(--mat) solid var(--home-dark); background: var(--home-dark); color: var(--home-dark-ink); }
 
-@media (min-width: 761px) {
-  .ed-home-hero h1 { font-size: clamp(6rem, 12cqi, 12rem); }
-  .ed-home-work { display: grid; grid-template-columns: minmax(0, 1fr); }
-  .ed-home-work > h2 { grid-area: 1 / 1; align-self: center; font-size: clamp(5rem, 12cqi, 14rem); }
-  .ed-home-work__grid { grid-area: 1 / 1; margin-top: 0; }
-  .ed-home-about > div:last-child { min-width: 0; }
-  .ed-home-about h2 { margin-left: calc(-1 * clamp(8rem, 16cqi, 14rem)); }
-}
+/* Warm light pools, as if from an off-frame softbox. They span the whole window, not the 1440px
+   column (main clips the sideways overflow), and each fades out inside its section, so no edge shows. */
+:is(.ed-home-work, .ed-home-about, .ed-home-contact) { position: relative; isolation: isolate; }
+:is(.ed-home-work, .ed-home-about, .ed-home-contact)::before { content: ""; position: absolute; inset: 0 calc((100% - 100vw) / 2); z-index: -1; pointer-events: none; background: var(--glow); }
+.ed-home-work { --glow: radial-gradient(45% 45% at 74% 48%, rgba(214, 140, 80, .26), transparent 70%), radial-gradient(28% 28% at 16% 66%, rgba(214, 140, 80, .16), transparent 70%); }
+.ed-home-about { --glow: radial-gradient(42% 45% at 25% 50%, rgba(214, 140, 80, .23), transparent 70%); }
+.ed-home-contact { --glow: radial-gradient(38% 45% at 78% 50%, rgba(214, 140, 80, .17), transparent 70%); }
 
-@media (hover: hover) and (min-width: 761px) {
-  :is(.ed-home-story, .ed-home-about__image) > img { filter: grayscale(1); }
-  .ed-photo-front { transition: opacity .6s ease, transform .6s ease; }
-  :is(.ed-home-story, .ed-home-about__image):hover > .ed-photo-front { opacity: 1; transform: scale(1.02); }
-}
-
-/* Touch screens: colour comes in as the photo reaches the middle of the viewport.
-   Browsers without scroll-driven animations simply keep the photos in colour. */
-@supports (animation-timeline: view()) {
-  @media not ((hover: hover) and (min-width: 761px)) {
-    :is(.ed-home-story, .ed-home-about__image) > img { filter: grayscale(1); }
-    /* Stays under the heading here — colour arrives on its own, so it must not hide the text. */
-    .ed-photo-front { z-index: 1; animation: ed-photo-reveal linear both; animation-timeline: view(); animation-range: cover 25% cover 50%; }
-  }
-  /* Phone carousel scrolls sideways, so colour follows the swipe instead. */
-  @media (max-width: 760px) {
-    /* Earlier range than vertical — the last slide can't scroll past ~45% cover. */
-    .ed-home-story > .ed-photo-front { animation-timeline: view(inline); animation-range: cover 18% cover 40%; }
-  }
-}
-@keyframes ed-photo-reveal { to { opacity: 1; } }
 
 @media (max-width: 760px) {
-  .ed-home-hero { min-height: auto; display: flex; flex-direction: column; }
-  .ed-home-hero__copy { min-height: 53svh; padding: 2rem 1.25rem 1rem; }
-  .ed-home-hero h1 { font-size: clamp(4.2rem, 24cqi, 7rem); }
-  .ed-home-hero__copy > p { margin: 1.25rem 0; }
-  .ed-home-hero__image { min-height: 52svh; }
-  .ed-home-work__grid, .ed-home-tools__grid, .ed-home-contact, .ed-home-about { grid-template-columns: 1fr; }
-  .ed-home-work > h2 { margin-bottom: -.45em; }
+  .editorial-home { --nav-h: 4rem; }
+  .ed-home-hero { display: flex; flex-direction: column; }
+  .ed-home-hero h1 { padding: 1.5rem 1.25rem 0; }
+  .ed-home-hero__line2 { margin-inline-start: var(--shift-mobile, 0); }
+  .ed-home-hero__meta { padding: 1.5rem 1.25rem 2rem; }
+  .ed-home-hero__meta > p { margin-bottom: 1.5rem; }
+  .ed-home-hero__image { min-height: 56svh; margin-right: var(--mat); }
+  .ed-home-story figcaption { padding: .75rem .25rem .25rem; }
+  .ed-home-contact, .ed-home-about, .ed-home-about__steps { grid-template-columns: 1fr; }
+  .ed-home-about__image { position: relative; top: auto; }
+  .ed-home-work > h2 { margin-bottom: 1.5rem; }
   /* Swipeable row bleeding to the screen edges; the next photo peeks in as a hint. */
   .ed-home-work__grid { --bleed: clamp(1.25rem, 5cqi, 5rem); display: flex; gap: .75rem; margin: 0 calc(-1 * var(--bleed)); padding: 0 var(--bleed); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--bleed); scrollbar-width: none; }
   .ed-home-work__grid::-webkit-scrollbar { display: none; }
-  .ed-home-story, .ed-home-story--1, .ed-home-story--2, .ed-home-story--3 { flex: 0 0 82%; min-height: 30rem; scroll-snap-align: start; }
-  .ed-home-about__image { min-height: 29rem; }
-  .ed-tool__image { min-height: 16rem; }
+  .ed-home-story, .ed-home-story:nth-child(n) { flex: 0 0 82%; display: flex; flex-direction: column; overflow: visible; scroll-snap-align: start; }
+  .ed-home-story__photo { position: relative; inset: auto; aspect-ratio: 4 / 5; }
+  .ed-home-story figcaption, .ed-home-story:is(:hover, :has(:focus-visible)) figcaption { position: static; padding: 1rem 0 0; color: inherit; background: none; }
+  .ed-home-story blockquote, .ed-home-story:nth-child(n) blockquote { font-size: 1.05rem; opacity: 1; transform: none; }
 }
 
-@media (max-width: 340px) {
-  .ed-home-hero h1 { font-size: 4rem; }
-  .ed-home-hero__copy { min-height: 56svh; }
-}
 
 .ed-events-hero { min-height: calc(100svh - 4.5rem); display: grid; grid-template-columns: .85fr 1.15fr; }
 .ed-events-hero > div { padding: clamp(3rem, 7cqi, 7rem); display: flex; flex-direction: column; justify-content: end; align-items: start; }
@@ -2164,8 +2222,8 @@ body:has(.editorial-home) {
 
 /* Standalone editorial CTAs share the business button look — Tailwind's preflight strips
    link underlines, so these otherwise read as plain body text. */
-:is(.ed-home-about, .ed-tool, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
-:is(.ed-home-about, .ed-tool, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a:hover { background: color-mix(in srgb, var(--editorial-accent) 80%, var(--editorial-paper)); }
+:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
+:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a:hover { background: color-mix(in srgb, var(--editorial-accent) 80%, var(--editorial-paper)); }
 /* Inline link inside a sentence — stays a link, just visibly underlined. */
 .ed-portrait-process a { text-decoration: underline; }
 
@@ -2175,11 +2233,10 @@ body:has(.editorial-home) {
    words up to ~6.6em ("Profesionální", "celebrations"), so it gets 12.5vw.
    break-word only guards against unusually long CMS words. */
 @media (max-width: 760px) {
-  .ed-home-hero h1 { max-width: none; font-size: 25vw; font-weight: 700; line-height: .82; }
-  .ed-home-hero h1:lang(en) { font-size: 19vw; } /* "different" is ~1.3× wider than "příběh" */
+  .ed-home-hero h1 { max-width: none; font-size: 21vw; font-weight: 700; line-height: .85; }
   :is(.ed-secondary-hero, .ed-about-layout) h1 { font-size: 16vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
-  :is(.ed-home-work, .ed-home-about, .ed-home-tools, .ed-home-contact, .ed-secondary-faq, .ed-secondary-contact) h2 { max-width: none; font-size: 15vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
+  :is(.ed-home-work, .ed-home-about, .ed-home-contact, .ed-secondary-faq, .ed-secondary-contact) h2 { max-width: none; font-size: 15vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
   :is(.ed-events-hero, .ed-portrait-hero) h1, :is(.ed-events-info, .ed-events-pricing, .ed-events-contact, .ed-portrait-process, .ed-portrait-pricing, .ed-portrait-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
-  .ed-business-hero h1 { font-size: 12.5vw; overflow-wrap: break-word; }
+  .ed-business-hero h1, :is(.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
   .ed-article h1, .ed-legal > h1 { font-size: 12vw; font-weight: 700; line-height: .9; overflow-wrap: break-word; }
 }

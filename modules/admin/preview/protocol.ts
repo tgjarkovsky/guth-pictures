@@ -15,7 +15,10 @@ export type PreviewMessage =
   | { type: "preview:ready" }
   | { type: "preview:data"; content?: ContentData; editorial?: EditorialImages }
   | { type: "preview:focus"; selector: string }
-  | { type: "preview:find"; text: string };
+  | { type: "preview:find"; text: string }
+  | { type: "preview:pick"; text: string; src?: string };
+
+export type PreviewPick = { text: string; src?: string };
 
 // Finds the element whose visible text contains the given value (used to locate an edited field).
 export function findByText(root: Node, text: string): HTMLElement | null {
