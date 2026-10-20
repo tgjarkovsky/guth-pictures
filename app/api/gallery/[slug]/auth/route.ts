@@ -1,4 +1,4 @@
-import { getGallery, verifyGalleryPassword, isExpired } from "@/modules/gallery/lib/gallery";
+import { getGallery, verifyGalleryPassword, isExpired, markGalleryOpened } from "@/modules/gallery/lib/gallery";
 import { signGalleryToken, galleryCookieName } from "@/modules/gallery/lib/gallery-auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
@@ -40,6 +40,8 @@ export async function POST(
   if (!valid) {
     return NextResponse.json({ error: "Wrong password" }, { status: 401 });
   }
+
+  await markGalleryOpened(slug);
 
   const token = await signGalleryToken(slug);
   const response = NextResponse.json({ ok: true });

@@ -14,6 +14,8 @@ export interface GalleryRecord {
   photoCount: number;
   maxSelection?: number;
   delivered?: boolean;
+  firstOpenedAt?: string; // ISO
+  lastOpenedAt?: string; // ISO
 }
 
 export interface GalleryPhoto {
@@ -115,6 +117,19 @@ export async function setGalleryDelivered(slug: string, delivered: boolean): Pro
   const record = await kv.get<GalleryRecord>(key(slug));
   if (!record) return;
   await kv.set(key(slug), { ...record, delivered });
+}
+
+export async function markGalleryOpened(slug: string): Promise<void> {
+  const kv = await getKv();
+  if (!kv) return;
+  const record = await kv.get<GalleryRecord>(key(slug));
+  if (!record) return;
+  const now = new Date().toISOString();
+  await kv.set(key(slug), {
+    ...record,
+    firstOpenedAt: record.firstOpenedAt ?? now,
+    lastOpenedAt: now,
+  });
 }
 
 export async function deleteGallery(slug: string): Promise<void> {

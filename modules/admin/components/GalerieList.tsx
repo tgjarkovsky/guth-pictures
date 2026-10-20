@@ -5,6 +5,7 @@ import { useState } from "react";
 import { type GalleryRecord, type GalleryListItem } from "@/modules/gallery/lib/gallery";
 import { type LightroomAlbum } from "@/modules/gallery/lib/lightroom";
 import { formatGalleryInvite } from "@/modules/gallery/lib/gallery-invite";
+import { galleryOpenedLabel } from "@/modules/gallery/lib/gallery-opened";
 import { slugify } from "@/lib/slugify";
 import { siteUrl } from "@/lib/config";
 
@@ -335,6 +336,7 @@ export function GalerieList({ galleries: initial, lrConnected, flashConnected, f
                 <p className="text-xs text-gray-500">
                   {g.photoCount} fotek · vyprší {formatDate(g.expiresAt)}
                   {g.syncedAt && ` · sync ${formatDate(g.syncedAt)}`}
+                  {` · ${galleryOpenedLabel(g)}`}
                 </p>
                 <p className="text-xs text-gray-500">
                   {g.selection
