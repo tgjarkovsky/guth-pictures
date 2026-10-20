@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { CONTENT_PAGES, revalidateLocalized } from "@/lib/revalidate";
 import { requireAdmin } from "@/lib/admin-route";
 import { getContent, setContent, type ContentData } from "@/modules/admin/lib/content";
 import { isValidPageCopy } from "@/modules/admin/lib/page-copy";
@@ -105,19 +105,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid content structure" }, { status: 400 });
   }
   await setContent(locale, data);
-  revalidatePath("/cs");
-  revalidatePath("/en");
-  revalidatePath("/cs/sluzby");
-  revalidatePath("/en/sluzby");
-  revalidatePath("/cs/firemni-portrety");
-  revalidatePath("/en/firemni-portrety");
-  revalidatePath("/cs/sluzby/portretni-foceni");
-  revalidatePath("/en/sluzby/portretni-foceni");
-  revalidatePath("/cs/sluzby/brandove-foceni");
-  revalidatePath("/en/sluzby/brandove-foceni");
-  revalidatePath("/cs/sluzby/eventy-a-svatby");
-  revalidatePath("/en/sluzby/eventy-a-svatby");
-  revalidatePath("/cs/o-mne");
-  revalidatePath("/en/o-mne");
+  revalidateLocalized(CONTENT_PAGES);
   return NextResponse.json({ ok: true });
 }

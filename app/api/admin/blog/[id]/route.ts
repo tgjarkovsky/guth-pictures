@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { BLOG_INDEX, revalidateLocalized } from "@/lib/revalidate";
 import { requireAdmin } from "@/lib/admin-route";
 import { getBlogPostById, deleteBlogPost } from "@/modules/blog/lib/blog";
 
@@ -21,10 +21,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   if (post) {
-    revalidatePath("/cs/blog");
-    revalidatePath("/en/blog");
-    revalidatePath(`/cs/blog/${post.slug}`);
-    revalidatePath(`/en/blog/${post.slug}`);
+    revalidateLocalized([...BLOG_INDEX, `/blog/${post.slug}`]);
   }
   return NextResponse.json({ ok: true });
 }

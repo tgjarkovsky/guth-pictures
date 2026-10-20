@@ -1,3 +1,4 @@
+## [2026-10-20] - Admin API: revalidace cs/en cest přes jeden helper lib/revalidate.ts (content, images, blog); množina cest beze změny
 ## [2026-10-20] - Kontaktní formulář: výběr „O co máte zájem“ (portrét, firemní portréty, svatba, event/larp, jiné) předvyplní upravitelnou osnovu zprávy; ručně upravený text se při změně volby nepřepíše; tlačítko balíčku v ceníku službu rovnou předvybere (?topic=)
 ## [2026-10-20] - Admin › Galerie: u každé galerie je vidět, kdy ji klient poprvé (a naposledy) otevřel, nebo že ji zatím neotevřel
 ## [2026-10-20] - Admin GalerieDetail rozdělen na GalleryActions, ClientSelectionPanel a AllPhotosGrid, společná async akce v useAdminAction; chování beze změny
