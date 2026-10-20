@@ -1,5 +1,6 @@
 ## [2026-10-20] - Kontaktní formulář: výběr „O co máte zájem“ (portrét, firemní portréty, svatba, event/larp, jiné) předvyplní upravitelnou osnovu zprávy; ručně upravený text se při změně volby nepřepíše; tlačítko balíčku v ceníku službu rovnou předvybere (?topic=)
 ## [2026-10-20] - Admin › Galerie: u každé galerie je vidět, kdy ji klient poprvé (a naposledy) otevřel, nebo že ji zatím neotevřel
+## [2026-10-20] - Admin GalerieDetail rozdělen na GalleryActions, ClientSelectionPanel a AllPhotosGrid, společná async akce v useAdminAction; chování beze změny
 ## [2026-10-20] - Portrétní stránka: galerie v řadách 2 + 3 na výšku místo široké fotky přes celou stránku, v adminu jde fotky do galerie přidávat a odebírat (max 12); portrétní stránka a portfolio (mřížka i lightbox) v q_auto:best; upload přeukládá jen fotky nad 10 MB (limit Cloudinary free), ostatní jdou v originále
 ## [2026-10-20] - Reference jdou uložit bez citace (jen fotka a jméno), admin je už tiše nezahazuje; business headshoty z adminu se tak ukážou na /firemni-portrety
 ## [2026-10-19] - Nový favicon: hledáček s vínovým bodem místo „G.“, přibyla ikona pro plochu iPhonu (apple-icon)
