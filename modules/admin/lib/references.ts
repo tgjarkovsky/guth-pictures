@@ -39,9 +39,11 @@ export function mergeReferences(cs: Testimonial[], en: Testimonial[]): Reference
   return [...byId.values()];
 }
 
-// A locale gets only references with a quote in that language (the API rejects empty quotes).
+const hasNoQuote = (r: Reference) => !r.quote.cs.trim() && !r.quote.en.trim();
+
+// A locale gets references quoted in that language, plus photo-only ones quoted in neither.
 export function splitReferences(refs: Reference[], locale: Locale): Testimonial[] {
   return refs
-    .filter((r) => r.quote[locale].trim() && r.author.trim())
+    .filter((r) => r.author.trim() && (r.quote[locale].trim() || hasNoQuote(r)))
     .map((r) => ({ id: r.id, quote: r.quote[locale], author: r.author, role: r.role[locale], photo: r.photo, service: r.service }));
 }

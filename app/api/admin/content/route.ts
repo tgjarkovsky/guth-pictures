@@ -47,7 +47,7 @@ function isTestimonials(v: unknown): boolean {
   return v.every((t) => {
     if (!t || typeof t !== "object" || Array.isArray(t)) return false;
     const o = t as Record<string, unknown>;
-    if (typeof o.quote !== "string" || o.quote.length === 0 || o.quote.length > MAX_LONG) return false;
+    if (typeof o.quote !== "string" || o.quote.length > MAX_LONG) return false;
     if (typeof o.author !== "string" || o.author.length === 0 || o.author.length > MAX_SHORT) return false;
     if (o.id !== undefined && (typeof o.id !== "string" || o.id.length > MAX_SHORT)) return false;
     if (o.role !== undefined && (typeof o.role !== "string" || o.role.length > MAX_SHORT)) return false;

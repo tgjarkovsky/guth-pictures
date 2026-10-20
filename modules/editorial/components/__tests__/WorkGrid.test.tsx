@@ -47,4 +47,11 @@ describe("WorkGrid lightbox", () => {
     render(<WorkGrid items={[{ image: items[0].image }]} locale="cs" sizes={["50vw"]} placeholderLabel="Foto" />);
     expect(screen.queryByRole("button")).toBeNull();
   });
+
+  it("shows a reference without a quote with just the name", () => {
+    const [item] = reviewedWork([{ id: "h", quote: "", author: "Petr", photo: "portfolio/h", service: "business" }], "business");
+    const { container } = render(<WorkGrid items={[item]} locale="cs" sizes={["50vw"]} placeholderLabel="Foto" />);
+    expect(container.querySelector("blockquote")).toBeNull();
+    expect(screen.getByText("Petr")).toBeTruthy();
+  });
 });
