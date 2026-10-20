@@ -67,6 +67,34 @@ describe("EditorialImageEditor", () => {
     ]);
   });
 
+  it("přidá a odebere fotku v portrétní galerii", async () => {
+    const value = editorial();
+    value.portrait.gallery[0].publicId = "portfolio/first";
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+
+    render(<EditorialImageEditor editorial={value} photos={[]} />);
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Portréty — galerie 1");
+    await user.click(screen.getByRole("button", { name: "Přidat fotku: Portréty — galerie" }));
+    expect(screen.getByRole("heading", { name: /Galerie 4/ })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Přidat fotku: Portréty — galerie" }));
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Portréty — galerie 2");
+    await user.click(screen.getByRole("button", { name: "Odebrat: Portréty — galerie 2" }));
+    await user.click(screen.getByRole("button", { name: "Uložit editorialové fotky" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.editorial.portrait.gallery.map((image: EditorialImage) => image.publicId)).toEqual(["portfolio/first", "", "", ""]);
+  });
+
+  it("u reportáže eventů přidání nenabízí (pevný layout)", async () => {
+    const user = userEvent.setup();
+    render(<EditorialImageEditor editorial={editorial()} photos={[]} />);
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — reportáž 1");
+    expect(screen.queryByRole("button", { name: /Přidat fotku/ })).toBeNull();
+  });
+
   it("ukazuje jen vybraný slot", async () => {
     const user = userEvent.setup();
     render(<EditorialImageEditor editorial={editorial()} photos={[]} />);

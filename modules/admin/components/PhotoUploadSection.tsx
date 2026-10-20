@@ -7,8 +7,11 @@ import { signedUploadRequest } from "@/lib/cloudinary-signed-upload";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE_MB = 100; // raw foťák fotky, komprese proběhne v prohlížeči
+const CLOUDINARY_MAX_BYTES = 10 * 1024 * 1024; // limit jednoho obrázku na free plánu
 
-async function compressImage(file: File, maxPx = 4000, quality = 0.88): Promise<File> {
+// Přeukládá jen soubory, které by Cloudinary odmítl; ostatní jdou nahoru v původní kvalitě.
+async function compressImage(file: File, maxPx = 4000, quality = 0.95): Promise<File> {
+  if (file.size <= CLOUDINARY_MAX_BYTES) return file;
   return new Promise((resolve) => {
     const img = new window.Image();
     const blobUrl = URL.createObjectURL(file);

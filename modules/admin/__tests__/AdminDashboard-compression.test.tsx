@@ -24,6 +24,8 @@ global.URL.revokeObjectURL = vi.fn();
 // vi.stubGlobal replaces window.Image so onerror fires synchronously → compressImage
 // resolves with the original file, button leaves "compressing" state.
 class MockImage {
+  static created = 0;
+  constructor() { MockImage.created++; }
   onload: (() => void) | null = null;
   onerror: ((e: Event) => void) | null = null;
   width = 800;
@@ -66,6 +68,33 @@ describe("AdminDashboard — přímý upload na Cloudinary", () => {
     global.fetch = mockFetch;
     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME = "testcloud";
     vi.stubGlobal("Image", MockImage);
+    MockImage.created = 0;
+  });
+
+  it("soubor pod limitem Cloudinary nahraje beze změny (bez přeuložení)", async () => {
+    mockFetch.mockResolvedValueOnce(mockSigOk()).mockResolvedValue(mockUploadOk());
+    const user = userEvent.setup();
+    render(<AdminDashboard photos={[]} />);
+    const file = new File([new Uint8Array(100)], "photo.png", { type: "image/png" });
+
+    await user.upload(getFileInput(), file);
+    await user.click(screen.getByRole("button", { name: /nahrát/i }));
+
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3));
+    expect(MockImage.created).toBe(0);
+    expect(mockFetch.mock.calls[1][1].body.get("file")).toBe(file);
+  });
+
+  it("soubor nad 10 MB před uploadem zmenší", async () => {
+    mockFetch.mockResolvedValueOnce(mockSigOk()).mockResolvedValue(mockUploadOk());
+    const user = userEvent.setup();
+    render(<AdminDashboard photos={[]} />);
+
+    await user.upload(getFileInput(), new File([new Uint8Array(11 * 1024 * 1024)], "big.jpg", { type: "image/jpeg" }));
+    await user.click(screen.getByRole("button", { name: /nahrát/i }));
+
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3));
+    expect(MockImage.created).toBe(1);
   });
 
   it("nejdřív zavolá /api/admin/upload-signature", async () => {

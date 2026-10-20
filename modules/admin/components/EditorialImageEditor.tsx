@@ -16,6 +16,7 @@ type Slot = {
   write: (data: EditorialImages, image: EditorialImage) => void;
   index?: number;
   group?: (data: EditorialImages) => EditorialImage[];
+  resizable?: boolean;
 };
 
 const single = (label: string, read: Slot["read"], write: Slot["write"]): Slot => ({ label, read, write });
@@ -23,6 +24,7 @@ const list = (
   label: string,
   data: EditorialImages,
   read: (value: EditorialImages) => EditorialImage[],
+  resizable = false,
 ): Slot[] => read(data).map((_, index) => ({
   ...single(
     `${label} ${index + 1}`,
@@ -31,6 +33,7 @@ const list = (
   ),
   index,
   group: read,
+  resizable,
 }));
 
 // Only slots the site renders. Homepage stories and business headshots are a fallback the site
@@ -40,7 +43,8 @@ function imageSlots(data: EditorialImages): Slot[] {
     single("Homepage — hero", (v) => v.home.hero, (v, image) => { v.home.hero = image; }),
     single("Homepage — fotograf", (v) => v.home.photographer, (v, image) => { v.home.photographer = image; }),
     single("Portréty — hero", (v) => v.portrait.hero, (v, image) => { v.portrait.hero = image; }),
-    ...list("Portréty — galerie", data, (v) => v.portrait.gallery),
+    // The portrait gallery grid takes any count; other lists have a fixed layout.
+    ...list("Portréty — galerie", data, (v) => v.portrait.gallery, true),
     single("Business — hero", (v) => v.business.hero, (v, image) => { v.business.hero = image; }),
     single("Eventy — hero", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
     ...list("Eventy — reportáž", data, (v) => v.events.reportage),
@@ -60,6 +64,7 @@ const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
   ["Eventy — reportáž 4", "eventy", ".ed-events-wide"],
   ["Eventy —", "eventy", ".ed-events-strip"],
 ];
+const groupLabel = (label: string) => label.replace(/ \d+$/, "");
 const targetOf = (label: string) => TARGETS.find(([prefix]) => label.startsWith(prefix))!;
 
 // Client photos with reviews, listed in the tree right after the page's hero.
@@ -69,6 +74,7 @@ const REF_ITEMS: { id: string; service: TestimonialService; after: string }[] = 
 ];
 const LOCALES = ["cs", "en"] as const;
 
+const MAX_GALLERY = 12; // mirrors MAX_IMAGES in /api/admin/images
 const EMPTY_IMAGE: EditorialImage = { publicId: "", alt: { cs: "", en: "" }, focal: { desktop: "50% 50%", mobile: "50% 50%" } };
 const groupOf = (label: string) => label.split(" — ")[0];
 const shortLabel = (label: string) => {
@@ -138,6 +144,26 @@ export function EditorialImageEditor({ editorial, photos, references }: {
       [images[target.index!], images[to]] = [images[to], images[target.index!]];
       return next;
     });
+  }
+
+  // Adds an empty slot at the end of the group and opens it.
+  function add(target: Slot) {
+    const length = target.group!(data).length;
+    setData((current) => {
+      const next = structuredClone(current);
+      target.group!(next).push(structuredClone(EMPTY_IMAGE));
+      return next;
+    });
+    setSelected(`${groupLabel(target.label)} ${length + 1}`);
+  }
+
+  function remove(target: Slot) {
+    setData((current) => {
+      const next = structuredClone(current);
+      target.group!(next).splice(target.index!, 1);
+      return next;
+    });
+    setSelected(`${groupLabel(target.label)} ${Math.max(1, target.index!)}`);
   }
 
   // References live in content:<locale>; re-read it right before saving so texts edited elsewhere survive.
@@ -214,6 +240,10 @@ export function EditorialImageEditor({ editorial, photos, references }: {
         {slot.index !== undefined && slot.group && <>
           <button type="button" aria-label={`Posunout nahoru: ${slot.label}`} onClick={() => move(slot, -1)} disabled={slot.index === 0} className="disabled:opacity-30">↑</button>
           <button type="button" aria-label={`Posunout dolů: ${slot.label}`} onClick={() => move(slot, 1)} disabled={slot.index === slot.group(data).length - 1} className="disabled:opacity-30">↓</button>
+        </>}
+        {slot.resizable && <>
+          <button type="button" aria-label={`Odebrat: ${slot.label}`} onClick={() => remove(slot)} disabled={slot.group!(data).length <= 1} className="text-gray-400 hover:text-white disabled:opacity-30">Odebrat</button>
+          <button type="button" aria-label={`Přidat fotku: ${groupLabel(slot.label)}`} onClick={() => add(slot)} disabled={slot.group!(data).length >= MAX_GALLERY} className="text-gray-400 hover:text-white disabled:opacity-30">+ Přidat fotku</button>
         </>}
       </div>
       {pickerOpen && <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-96 overflow-y-auto border border-white/10 p-2">

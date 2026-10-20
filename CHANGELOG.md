@@ -1,3 +1,4 @@
+## [2026-10-20] - Portrétní stránka: galerie v řadách 2 + 3 na výšku místo široké fotky přes celou stránku, v adminu jde fotky do galerie přidávat a odebírat (max 12); portrétní stránka a portfolio (mřížka i lightbox) v q_auto:best; upload přeukládá jen fotky nad 10 MB (limit Cloudinary free), ostatní jdou v originále
 ## [2026-10-20] - Reference jdou uložit bez citace (jen fotka a jméno), admin je už tiše nezahazuje; business headshoty z adminu se tak ukážou na /firemni-portrety
 ## [2026-10-19] - Nový favicon: hledáček s vínovým bodem místo „G.“, přibyla ikona pro plochu iPhonu (apple-icon)
 ## [2026-10-19] - Stories: cron drží max 12 draftů a markPhotosUsed maže záznamy starší 8 týdnů, KV už neroste donekonečna

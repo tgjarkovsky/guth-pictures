@@ -16,4 +16,6 @@ it("renders a dark portrait exhibition with pricing, learning link and contact",
   expect(html).toContain('href="/foceni-101"');
   expect(html).toContain("<form");
   expect(html).toContain('class="editorial-portrait"');
+  expect(html).toContain("q_auto%3Abest"); // next/image URL-encodes the src
+  expect(html).not.toContain("q_auto%3Agood");
 });
