@@ -7,6 +7,10 @@ import { contactEmail } from "@/lib/config";
 
 type Status = "idle" | "sending" | "success" | "error";
 
+const TOPICS = ["portraits", "business", "weddings", "events", "other"] as const;
+type Topic = (typeof TOPICS)[number];
+const isTopic = (v: string | null): v is Topic => TOPICS.includes(v as Topic);
+
 export function ContactForm() {
   const t = useTranslations("kontakt");
   return (
@@ -22,9 +26,22 @@ function ContactFormFields() {
   const searchParams = useSearchParams();
   const packageName = searchParams.get("package");
   const serviceName = searchParams.get("service");
-  const defaultMessage = packageName && serviceName
+  const topicParam = searchParams.get("topic");
+  const initialTopic = isTopic(topicParam) ? topicParam : "";
+  const initialMessage = packageName && serviceName
     ? t("packagePreset", { package: packageName, service: serviceName })
-    : undefined;
+    : initialTopic ? t(`presets.${initialTopic}`) : "";
+  const [topic, setTopic] = useState<Topic | "">(initialTopic);
+  const [message, setMessage] = useState(initialMessage);
+  const [preset, setPreset] = useState(initialMessage);
+
+  // Swap the preset only while the visitor hasn't edited the text
+  function handleTopicChange(next: Topic | "") {
+    setTopic(next);
+    const nextPreset = next ? t(`presets.${next}`) : "";
+    if (message === preset || message.trim() === "") setMessage(nextPreset);
+    setPreset(nextPreset);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -98,13 +115,27 @@ function ContactFormFields() {
         />
       </div>
       <div>
+        <label htmlFor="contact-topic" className="block text-sm text-[var(--color-text)] font-medium mb-1">{t("topic")}</label>
+        <select
+          id="contact-topic"
+          name="topic"
+          value={topic}
+          onChange={(e) => handleTopicChange(e.target.value as Topic | "")}
+          className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text)] px-4 py-3 focus:outline-none focus:border-[var(--color-text-muted)] focus:ring-1 focus:ring-[var(--color-border)] transition-colors"
+        >
+          <option value="">{t("topicPlaceholder")}</option>
+          {TOPICS.map((key) => <option key={key} value={key}>{t(`topics.${key}`)}</option>)}
+        </select>
+      </div>
+      <div>
         <label htmlFor="contact-message" className="block text-sm text-[var(--color-text)] font-medium mb-1">{t("message")}</label>
         <textarea
           id="contact-message"
           name="message"
           required
           rows={5}
-          defaultValue={defaultMessage}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder={t("messagePlaceholder")}
           className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] px-4 py-3 focus:outline-none focus:border-[var(--color-text-muted)] focus:ring-1 focus:ring-[var(--color-border)] transition-colors resize-none"
         />

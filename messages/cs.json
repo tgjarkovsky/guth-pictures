@@ -126,7 +126,23 @@
     "success": "Zpráva odeslána. Ozvu se co nejdříve.",
     "error": "Něco se pokazilo. Zkuste to znovu nebo napište přímo na <link>{email}</link>.",
     "notConfigured": "Kontaktní formulář není momentálně dostupný.",
-    "packagePreset": "Mám zájem o balíček {package} ({service}). "
+    "packagePreset": "Mám zájem o balíček {package} ({service}). ",
+    "topic": "O co máte zájem",
+    "topicPlaceholder": "Vyberte typ focení",
+    "topics": {
+      "portraits": "Portrét",
+      "business": "Firemní portréty",
+      "weddings": "Svatba",
+      "events": "Event nebo larp",
+      "other": "Něco jiného"
+    },
+    "presets": {
+      "portraits": "Dobrý den, chtěl(a) bych portrétní focení.\nK čemu fotky budou: \nPředstava o místě (ateliér / venku): \nTermín, který by mi vyhovoval: ",
+      "business": "Dobrý den, zajímají nás firemní portréty.\nFirma: \nPočet lidí k nafocení: \nKde bychom fotili: \nTermín: ",
+      "weddings": "Dobrý den, plánujeme svatbu a hledáme fotografa.\nDatum: \nMísto: \nPřibližný počet hostů: \nJak dlouho byste nás fotil: ",
+      "events": "Dobrý den, hledám fotografa na akci.\nO jakou akci jde: \nDatum a místo: \nJak dlouho by focení trvalo: ",
+      "other": "Dobrý den, "
+    }
   },
   "brand-shoot": {
     "gateLabel": "Návrh focení",
