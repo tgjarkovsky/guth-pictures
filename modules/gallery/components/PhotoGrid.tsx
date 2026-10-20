@@ -33,7 +33,7 @@ export function PhotoGrid({ photos, locale }: Props) {
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedIndex(i); } }}
           >
             <Image
-              src={cloudinaryUrl(photo.publicId)}
+              src={cloudinaryUrl(photo.publicId, "q_auto:best")}
               alt={getAlt(photo, locale)}
               width={photo.width}
               height={photo.height}
