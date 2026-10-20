@@ -126,7 +126,23 @@
     "success": "Message sent. I'll get back to you as soon as possible.",
     "error": "Something went wrong. Please try again or email <link>{email}</link>.",
     "notConfigured": "The contact form is not available at the moment.",
-    "packagePreset": "I'm interested in the {package} package ({service}). "
+    "packagePreset": "I'm interested in the {package} package ({service}). ",
+    "topic": "What are you interested in",
+    "topicPlaceholder": "Choose a type of shoot",
+    "topics": {
+      "portraits": "Portrait",
+      "business": "Business portraits",
+      "weddings": "Wedding",
+      "events": "Event or larp",
+      "other": "Something else"
+    },
+    "presets": {
+      "portraits": "Hi, I'd like a portrait session.\nWhat the photos are for: \nLocation (studio / outdoors): \nPreferred date: ",
+      "business": "Hi, we're interested in business portraits.\nCompany: \nNumber of people: \nWhere we'd shoot: \nDate: ",
+      "weddings": "Hi, we're planning a wedding and looking for a photographer.\nDate: \nVenue: \nApproximate number of guests: \nHow long you'd cover the day: ",
+      "events": "Hi, I'm looking for a photographer for an event.\nWhat kind of event: \nDate and place: \nHow long the shoot would take: ",
+      "other": "Hi, "
+    }
   },
   "brand-shoot": {
     "gateLabel": "Personal brand concept",

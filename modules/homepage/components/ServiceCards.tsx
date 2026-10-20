@@ -45,7 +45,7 @@ export function ServiceCards({ services, selectLabel }: Props) {
                     </li>
                   ))}
                 </ul>
-                <a href={`?package=${encodeURIComponent(pkg.name)}&service=${encodeURIComponent(service.title)}#kontakt`} className="inline-block mt-3 px-3 py-1.5 border border-[var(--color-border-sub)] text-xs hover:bg-[var(--color-bg-overlay)] transition-colors">
+                <a href={`?package=${encodeURIComponent(pkg.name)}&service=${encodeURIComponent(service.title)}&topic=${service.key}#kontakt`} className="inline-block mt-3 px-3 py-1.5 border border-[var(--color-border-sub)] text-xs hover:bg-[var(--color-bg-overlay)] transition-colors">
                   {selectLabel}<span aria-hidden="true"> →</span>
                 </a>
               </div>

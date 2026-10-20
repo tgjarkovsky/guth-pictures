@@ -11,6 +11,9 @@ vi.mock("next-intl", () => ({
   },
 }));
 
+let searchParams = new URLSearchParams();
+vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
+
 describe("ContactForm", () => {
   const mockFetch = vi.fn();
 
@@ -18,6 +21,45 @@ describe("ContactForm", () => {
     vi.clearAllMocks();
     global.fetch = mockFetch;
     process.env.NEXT_PUBLIC_FORMSPREE_FORM_ID = "test123";
+    searchParams = new URLSearchParams();
+  });
+
+  it("odkaz z ceníku (?package=&service=&topic=) předvybere službu a text balíčku", () => {
+    searchParams = new URLSearchParams("package=Mini&service=Portréty&topic=portraits");
+    render(<ContactForm />);
+    expect(screen.getByLabelText("topic")).toHaveValue("portraits");
+    expect(screen.getByLabelText("message")).toHaveValue("packagePreset");
+  });
+
+  it("výběr služby předvyplní zprávu a nepřepíše ručně upravený text", async () => {
+    const user = userEvent.setup();
+    render(<ContactForm />);
+    const topic = screen.getByLabelText("topic");
+    const message = screen.getByLabelText("message");
+
+    await user.selectOptions(topic, "weddings");
+    expect(message).toHaveValue("presets.weddings");
+
+    await user.selectOptions(topic, "events");
+    expect(message).toHaveValue("presets.events");
+
+    await user.type(message, " vlastní");
+    await user.selectOptions(topic, "business");
+    expect(message).toHaveValue("presets.events vlastní");
+  });
+
+  it("odešle zvolenou službu do Formspree", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true });
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    await user.type(screen.getByLabelText("name"), "Jan");
+    await user.type(screen.getByLabelText("email"), "jan@test.cz");
+    await user.selectOptions(screen.getByLabelText("topic"), "business");
+    await user.click(screen.getByRole("button", { name: "send" }));
+
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledOnce());
+    expect((mockFetch.mock.calls[0][1].body as FormData).get("topic")).toBe("business");
   });
 
   it("renderuje všechna pole a tlačítko", () => {
