@@ -6,10 +6,11 @@ vi.mock("@/modules/gallery/lib/gallery", () => ({
   getGallery: vi.fn(),
   verifyGalleryPassword: vi.fn(),
   isExpired: vi.fn(),
+  markGalleryOpened: vi.fn(),
 }));
 vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: vi.fn() }));
 
-import { getGallery, verifyGalleryPassword, isExpired } from "@/modules/gallery/lib/gallery";
+import { getGallery, verifyGalleryPassword, isExpired, markGalleryOpened } from "@/modules/gallery/lib/gallery";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { POST } from "../route";
 
@@ -50,6 +51,17 @@ describe("POST /api/gallery/[slug]/auth", () => {
     expect(res.status).toBe(200);
     const cookie = res.cookies.get("gallery-session-test");
     expect(cookie?.value).toBeTruthy();
+    expect(markGalleryOpened).toHaveBeenCalledWith("test");
+  });
+
+  it("does not mark opened on wrong password, rate limit or expiry", async () => {
+    vi.mocked(verifyGalleryPassword).mockResolvedValue(false);
+    await call({ password: "bad" });
+    vi.mocked(isExpired).mockReturnValue(true);
+    await call({ password: "good" });
+    vi.mocked(checkRateLimit).mockResolvedValue(false);
+    await call({ password: "good" });
+    expect(markGalleryOpened).not.toHaveBeenCalled();
   });
 
   it("returns 401 without cookie on wrong password", async () => {
