@@ -44,4 +44,10 @@ describe("splitReferences", () => {
     expect(splitReferences(refs, "cs").map((t) => t.id)).toEqual(["a"]);
     expect(splitReferences(refs, "en")).toEqual([]);
   });
+
+  it("keeps a reference with no quote in either language in both locales", () => {
+    const refs = mergeReferences([{ id: "h", quote: "", author: "Petr", photo: "p/h", service: "business" }], []);
+    expect(splitReferences(refs, "cs")).toMatchObject([{ id: "h", quote: "", author: "Petr", service: "business" }]);
+    expect(splitReferences(refs, "en").map((t) => t.id)).toEqual(["h"]);
+  });
 });

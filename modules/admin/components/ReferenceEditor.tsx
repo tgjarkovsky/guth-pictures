@@ -69,7 +69,7 @@ export function ReferenceEditor({ service, refs, onChange, photos }: {
   return (
     <div className="space-y-2">
       <p className="text-xs text-gray-500">
-        Na webu se ukážou reference s fotkou, jménem a citací (citace zvlášť pro CS a EN). Fotka, jméno a pořadí platí pro oba jazyky. Pořadí změníš přetažením řádku nebo šipkami.
+        Na webu se ukážou reference s fotkou a jménem. Citace je volitelná, zvlášť pro CS a EN; když je vyplněná jen jedna, druhý jazyk referenci neukáže. Fotka, jméno a pořadí platí pro oba jazyky. Pořadí změníš přetažením řádku nebo šipkami.
       </p>
       {shown.map((r, i) => (
         <details key={r.id} open={r.id === openId}

@@ -45,6 +45,12 @@ describe("isValidContentData — testimonials", () => {
     expect(isValidContentData(d)).toBe(false);
   });
 
+  it("accepts a testimonial with an empty quote", () => {
+    const d = valid() as Record<string, unknown>;
+    d.testimonials = [{ id: "1", quote: "", author: "Jana", service: "business" }];
+    expect(isValidContentData(d)).toBe(true);
+  });
+
   it("rejects when testimonials is not an array", () => {
     const d = valid() as Record<string, unknown>;
     d.testimonials = "nope";

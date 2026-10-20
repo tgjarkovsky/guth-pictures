@@ -31,7 +31,7 @@ export function WorkGrid({ items, locale, sizes, placeholderLabel }: Props) {
           {item.review && (
             <>
               <figcaption>
-                <blockquote>{item.review.quote}</blockquote>
+                {item.review.quote && <blockquote>{item.review.quote}</blockquote>}
                 <span>{byline(item.review)}</span>
               </figcaption>
               <button
@@ -101,7 +101,7 @@ function ReviewLightbox({ reviews, index, cs, onNavigate, onClose }: LightboxPro
           />
         </div>
         <figcaption>
-          <blockquote>{review.quote}</blockquote>
+          {review.quote && <blockquote>{review.quote}</blockquote>}
           <span>{byline(review)}</span>
         </figcaption>
       </figure>
