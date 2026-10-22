@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { IMAGE_PAGES, revalidateLocalized } from "@/lib/revalidate";
 import { requireAdmin } from "@/lib/admin-route";
 import { getImages, setImages, type EditorialImage, type EditorialImages } from "@/modules/admin/lib/content";
 
@@ -96,10 +96,6 @@ export async function POST(req: NextRequest) {
     heroTriptych: heroTriptych ?? current.heroTriptych,
     editorial: editorial ?? current.editorial,
   });
-  for (const path of [
-    "/cs", "/en", "/cs/sluzby/portretni-foceni", "/en/sluzby/portretni-foceni",
-    "/cs/firemni-portrety", "/en/firemni-portrety",
-    "/cs/sluzby/eventy-a-svatby", "/en/sluzby/eventy-a-svatby",
-  ]) revalidatePath(path);
+  revalidateLocalized(IMAGE_PAGES);
   return NextResponse.json({ ok: true });
 }

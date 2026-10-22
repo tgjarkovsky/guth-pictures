@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { BLOG_INDEX, revalidateLocalized } from "@/lib/revalidate";
 import { readJson, requireAdmin } from "@/lib/admin-route";
 import { getBlogPosts, saveBlogPost, type BlogPost } from "@/modules/blog/lib/blog";
 
@@ -49,13 +49,7 @@ export async function POST(req: NextRequest) {
   if (!result.ok) {
     return NextResponse.json({ error: "Slug already used by another post" }, { status: 409 });
   }
-  revalidatePath("/cs/blog");
-  revalidatePath("/en/blog");
-  revalidatePath(`/cs/blog/${post.slug}`);
-  revalidatePath(`/en/blog/${post.slug}`);
-  if (result.previousSlug) {
-    revalidatePath(`/cs/blog/${result.previousSlug}`);
-    revalidatePath(`/en/blog/${result.previousSlug}`);
-  }
+  revalidateLocalized([...BLOG_INDEX, `/blog/${post.slug}`]);
+  if (result.previousSlug) revalidateLocalized([`/blog/${result.previousSlug}`]);
   return NextResponse.json({ ok: true });
 }
