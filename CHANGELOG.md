@@ -1,3 +1,4 @@
+## [2026-10-23] - Měření poptávek: web si na první stránce návštěvy zapamatuje zdroj (UTM, gclid/fbclid, jinak referrer; jen sessionStorage, bez cookie) a přiloží ho k e-mailu z formuláře (source, medium, campaign, landing_page, page, package); úspěšné odeslání se ve Vercel Analytics měří jako událost „lead“ se službou, stránkou a zdrojem
 ## [2026-10-20] - Admin API: revalidace cs/en cest přes jeden helper lib/revalidate.ts (content, images, blog); množina cest beze změny
 ## [2026-10-20] - Kontaktní formulář: výběr „O co máte zájem“ (portrét, firemní portréty, svatba, event/larp, jiné) předvyplní upravitelnou osnovu zprávy; ručně upravený text se při změně volby nepřepíše; tlačítko balíčku v ceníku službu rovnou předvybere (?topic=)
 ## [2026-10-20] - Admin › Galerie: u každé galerie je vidět, kdy ji klient poprvé (a naposledy) otevřel, nebo že ji zatím neotevřel

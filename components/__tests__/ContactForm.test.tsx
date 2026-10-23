@@ -12,7 +12,10 @@ vi.mock("next-intl", () => ({
 }));
 
 let searchParams = new URLSearchParams();
-vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams, usePathname: () => "/firemni-portrety" }));
+
+const track = vi.fn();
+vi.mock("@vercel/analytics", () => ({ track: (...args: unknown[]) => track(...args) }));
 
 describe("ContactForm", () => {
   const mockFetch = vi.fn();
@@ -22,6 +25,48 @@ describe("ContactForm", () => {
     global.fetch = mockFetch;
     process.env.NEXT_PUBLIC_FORMSPREE_FORM_ID = "test123";
     searchParams = new URLSearchParams();
+    sessionStorage.clear();
+  });
+
+  it("přiloží k poptávce zdroj návštěvy a po odeslání ji změří jako lead", async () => {
+    sessionStorage.setItem("gp-lead-source", JSON.stringify({ source: "google", medium: "cpc", campaign: "firemni", landingPage: "/firemni-portrety" }));
+    searchParams = new URLSearchParams("package=Tým&service=Firemní&topic=business");
+    mockFetch.mockResolvedValueOnce({ ok: true });
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    await user.type(screen.getByLabelText("name"), "Jan");
+    await user.type(screen.getByLabelText("email"), "jan@test.cz");
+    await user.click(screen.getByRole("button", { name: "send" }));
+
+    await waitFor(() => expect(track).toHaveBeenCalledOnce());
+    const body = mockFetch.mock.calls[0][1].body as FormData;
+    expect(body.get("source")).toBe("google");
+    expect(body.get("campaign")).toBe("firemni");
+    expect(body.get("page")).toBe("/firemni-portrety");
+    expect(body.get("package")).toBe("Tým");
+    expect(track).toHaveBeenCalledWith("lead", {
+      topic: "business",
+      page: "/firemni-portrety",
+      package: "Tým",
+      source: "google",
+      medium: "cpc",
+      campaign: "firemni",
+    });
+  });
+
+  it("neúspěšné odeslání se jako lead nezměří", async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false });
+    const user = userEvent.setup();
+    render(<ContactForm />);
+
+    await user.type(screen.getByLabelText("name"), "Jan");
+    await user.type(screen.getByLabelText("email"), "jan@test.cz");
+    await user.type(screen.getByLabelText("message"), "x");
+    await user.click(screen.getByRole("button", { name: "send" }));
+
+    await waitFor(() => expect(screen.getByText("error")).toBeInTheDocument());
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("odkaz z ceníku (?package=&service=&topic=) předvybere službu a text balíčku", () => {
