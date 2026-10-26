@@ -205,5 +205,149 @@
     "shot": "hands",
     "direction": "Two hands with wedding rings intertwined, close-up of fingers, sleeves of suit and dress visible.",
     "label": "Propletené ruce s prstýnky, detail"
+  },
+  {
+    "id": "pradlo-01",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "gauč"
+    ],
+    "shot": "seated",
+    "direction": "Sitting upright sideways on the sofa armrest, one leg tucked under, torso turned three-quarters to camera, one hand lifting the hair, wearing a bralette and high-waisted silk shorts.",
+    "label": "Bokem na opěrce gauče, noha pod sebou, ruka ve vlasech"
+  },
+  {
+    "id": "pradlo-02",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "gauč"
+    ],
+    "shot": "full",
+    "direction": "Reclining diagonally across the sofa, one arm along the backrest, head tilted back, torso open to camera, wearing a bralette and silk shorts.",
+    "label": "Rozvalená přes gauč, ruka na opěradle, hlava zakloněná"
+  },
+  {
+    "id": "pradlo-03",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "gauč"
+    ],
+    "shot": "three-quarter",
+    "direction": "Kneeling on the sofa cushions facing the backrest, back to camera, looking over the shoulder, showing the back straps and clasp of the bralette.",
+    "label": "Klečí na gauči zády, pohled přes rameno, záda podprsenky"
+  },
+  {
+    "id": "pradlo-04",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "postel"
+    ],
+    "shot": "three-quarter",
+    "direction": "Kneeling on the bed sitting back on the heels, both hands in the hair, elbows up, chin slightly lifted, wearing a bralette and high-waisted briefs-style silk shorts.",
+    "label": "Na posteli v kleku na patách, ruce ve vlasech, lokty nahoru"
+  },
+  {
+    "id": "pradlo-05",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "postel"
+    ],
+    "shot": "full",
+    "direction": "Lying on the stomach on the bed, propped on both elbows, chin resting on hands, feet crossed up in the air, facing camera, wearing a bralette.",
+    "label": "Na břiše, opřená o lokty, brada v dlaních, nohy nahoře"
+  },
+  {
+    "id": "pradlo-06",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "postel"
+    ],
+    "shot": "seated",
+    "direction": "Sitting cross-legged on the bed, leaning back on both hands, shoulders relaxed, torso open to camera, soft smile, wearing a bralette and silk shorts.",
+    "label": "Turecký sed na posteli, opřená dozadu o ruce"
+  },
+  {
+    "id": "pradlo-07",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "postel"
+    ],
+    "shot": "full",
+    "direction": "Lying on the back on the bed seen from above, one knee bent, both arms resting above the head on the pillow, wearing a bralette and silk shorts.",
+    "label": "Na zádech shora, koleno pokrčené, ruce nad hlavou"
+  },
+  {
+    "id": "pradlo-08",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "okno"
+    ],
+    "shot": "three-quarter",
+    "direction": "Standing at the window holding the curtain aside with one hand, body turned three-quarters to camera, looking out of the window, wearing a bralette and high-waisted trousers.",
+    "label": "U okna, ruka odhrnuje závěs, pohled ven"
+  },
+  {
+    "id": "pradlo-09",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "okno"
+    ],
+    "shot": "three-quarter",
+    "direction": "Standing with back to camera at the window, both hands behind the back adjusting the bralette clasp, head turned in profile.",
+    "label": "Zády u okna, ruce na zapínání podprsenky, profil"
+  },
+  {
+    "id": "pradlo-10",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "okno"
+    ],
+    "shot": "three-quarter",
+    "direction": "Leaning one shoulder against the window frame, a sheer curtain loosely draped over one hip, bralette clearly visible, eyes closed, relaxed.",
+    "label": "Opřená o rám okna, průsvitný závěs přes bok"
+  },
+  {
+    "id": "pradlo-11",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "kuchyně",
+      "lifestyle"
+    ],
+    "shot": "seated",
+    "direction": "Sitting on the kitchen counter, one leg bent up, holding a coffee mug with both hands, an oversized open shirt worn over a bralette.",
+    "label": "Na kuchyňské lince s hrnkem, rozepnutá košile přes podprsenku"
+  },
+  {
+    "id": "pradlo-12",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "kuchyně"
+    ],
+    "shot": "three-quarter",
+    "direction": "Leaning back against the kitchen counter, hands resting on the edge behind, chest open to camera, chin slightly down, wearing a bralette and high-waisted trousers.",
+    "label": "Zády opřená o linku, ruce za sebou na hraně"
+  },
+  {
+    "id": "pradlo-13",
+    "tags": [
+      "boudoir",
+      "prádlo",
+      "detail"
+    ],
+    "shot": "hands",
+    "direction": "Close-up of a hand adjusting the bralette strap on the shoulder, collarbone and part of the cup visible, face out of frame.",
+    "label": "Detail: ruka upravuje ramínko"
   }
 ]

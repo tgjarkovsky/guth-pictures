@@ -28,4 +28,5 @@ Příklad: `<stylový blok> Three-quarter (knees-up) framing. Weight on back foo
 ## Štítky (`tags` v poses.json)
 
 Typ focení, víc štítků na pózu je v pořádku: `portrét`, `business`, `boudoir`, `páry`,
-`svatba`, `event`, `lifestyle`. Galerie podle nich filtruje.
+`svatba`, `event`, `lifestyle`, `prádlo` (katalog prádla). Navíc místo: `gauč`, `postel`,
+`okno`, `kuchyně`, `detail`. Galerie podle nich filtruje.
