@@ -51,4 +51,18 @@ výstup `output/poses/<id>.jpg` + `output/poses/index.html`.
 7. `node tools/pose-pack/build-gallery.mjs` a otevři `output/poses/index.html` v prohlížeči.
 
 Selektory v Gemini UI se mění. Hledej podle textu nebo role (`find`, `read_page`), ne podle
-uložených selektorů. Záloha: chatgpt.com stejným postupem.
+uložených selektorů.
+
+## ChatGPT (chatgpt.com), ověřená alternativa
+
+Stejná pravidla: 2 pózy na chat, v každém novém chatu reference `business-01.jpg`.
+- Reference: `find` file input „Přiložit fotky“ → `file_upload`.
+- Hotovo = v `main` jsou ≥ 2 (pak 3) `img` s `naturalWidth > 500` (reference se počítá)
+  a v textu není „Vytváření“. Pak ještě ~8 s počkej, jinak se klik na obrázek mine.
+- Stažení: klik na poslední „Vygenerovaný obrázek“ otevře náhled → tlačítko „Stáhnout“ →
+  Escape. Stahuje se PNG s názvem podle obsahu, záměna obrázků tu nehrozí:
+  `f=$(ls -t ~/Downloads/*.png | head -1)` → `output/poses/<id>.png`.
+- Po Escape si `find`-ni hlavní textbox „Zeptat se ChatGPT“; jinak se prompt napíše do
+  pole „Popište úpravy“ v náhledu a neodešle se.
+- Slovo „lingerie“ ChatGPT odmítá, saténové pyžamo nebo košilka projdou.
+- 13 obrázků za sebou na Plus prošlo bez limitu.
