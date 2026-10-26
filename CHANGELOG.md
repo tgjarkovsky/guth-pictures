@@ -1,3 +1,4 @@
+## [2026-10-26] - Pose pack: všech 22 póz hotových, postup pro ChatGPT ve skillu pose-pack, galerie bere i PNG
 ## [2026-10-26] - Pose pack: návrhy póz pro klienty generované přes Gemini v Chromu (skill pose-pack, světlý brandový styl, štítky typu focení, HTML galerie s filtrem v output/poses, obrázky mimo git)
 ## [2026-10-20] - Admin API: revalidace cs/en cest přes jeden helper lib/revalidate.ts (content, images, blog); množina cest beze změny
 ## [2026-10-20] - Kontaktní formulář: výběr „O co máte zájem“ (portrét, firemní portréty, svatba, event/larp, jiné) předvyplní upravitelnou osnovu zprávy; ručně upravený text se při změně volby nepřepíše; tlačítko balíčku v ceníku službu rovnou předvybere (?topic=)

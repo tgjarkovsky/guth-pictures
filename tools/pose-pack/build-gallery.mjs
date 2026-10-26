@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Build output/poses/index.html from poses.json + generated JPGs.
+// Build output/poses/index.html from poses.json + generated JPG/PNG images.
 // Usage: node tools/pose-pack/build-gallery.mjs
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -12,10 +12,12 @@ const outDir = join(here, "..", "..", "output", "poses");
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
+const imageFile = (id) => [`${id}.jpg`, `${id}.png`].find((f) => existsSync(join(outDir, f)));
+
 const card = (p) => {
-  const has = existsSync(join(outDir, `${p.id}.jpg`));
-  const media = has
-    ? `<img src="${esc(p.id)}.jpg" alt="${esc(p.label)}" loading="lazy">`
+  const file = imageFile(p.id);
+  const media = file
+    ? `<img src="${esc(file)}" alt="${esc(p.label)}" loading="lazy">`
     : `<div class="missing">chybí</div>`;
   const tags = p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("");
   return `<figure data-tags="${esc(p.tags.join(" "))}">${media}<figcaption><strong>${esc(p.id)}</strong> · ${esc(p.shot)}<br>${esc(p.label)}<div>${tags}</div></figcaption></figure>`;
@@ -54,5 +56,5 @@ pick("vše");
 const poses = JSON.parse(await readFile(join(here, "poses.json"), "utf8"));
 await mkdir(outDir, { recursive: true });
 await writeFile(join(outDir, "index.html"), page(poses));
-const done = poses.filter((p) => existsSync(join(outDir, `${p.id}.jpg`))).length;
+const done = poses.filter((p) => imageFile(p.id)).length;
 console.log(`Gallery: ${join(outDir, "index.html")}  (${done}/${poses.length} hotovo)`);
