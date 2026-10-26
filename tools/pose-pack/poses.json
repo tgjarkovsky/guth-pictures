@@ -1,0 +1,209 @@
+[
+  {
+    "id": "portret-01",
+    "tags": [
+      "portrét",
+      "business"
+    ],
+    "shot": "headshot",
+    "direction": "Shoulders turned 45 degrees away, face back toward camera, chin slightly forward and down, relaxed half smile.",
+    "label": "Rameno od foťáku, brada mírně dopředu"
+  },
+  {
+    "id": "portret-02",
+    "tags": [
+      "portrét",
+      "lifestyle"
+    ],
+    "shot": "three-quarter",
+    "direction": "Weight on back foot, hands loosely in pockets, chin slightly down, looking off-camera left.",
+    "label": "Váha na zadní noze, ruce v kapsách, pohled mimo"
+  },
+  {
+    "id": "portret-03",
+    "tags": [
+      "portrét",
+      "business"
+    ],
+    "shot": "seated",
+    "direction": "Sitting sideways on a simple stool, elbow resting on knee, leaning slightly toward camera, relaxed hands.",
+    "label": "Bokem na stoličce, loket na koleni, náklon k foťáku"
+  },
+  {
+    "id": "business-01",
+    "tags": [
+      "business"
+    ],
+    "shot": "three-quarter",
+    "direction": "Standing with arms loosely crossed, weight on one hip, slight head tilt, confident relaxed smile, wearing a blazer.",
+    "label": "Ruce volně zkřížené, váha na jedné noze, mírný úklon hlavy"
+  },
+  {
+    "id": "business-02",
+    "tags": [
+      "business"
+    ],
+    "shot": "three-quarter",
+    "direction": "Leaning one shoulder against a plain wall, one hand in trouser pocket, other arm relaxed, looking straight at camera.",
+    "label": "Rameno opřené o zeď, ruka v kapse, přímý pohled"
+  },
+  {
+    "id": "business-03",
+    "tags": [
+      "business",
+      "lifestyle"
+    ],
+    "shot": "seated",
+    "direction": "Sitting at the edge of a simple table, one foot on the floor, hands clasped loosely on the knee, leaning slightly forward.",
+    "label": "Na hraně stolu, ruce volně na koleni, náklon dopředu"
+  },
+  {
+    "id": "business-04",
+    "tags": [
+      "business"
+    ],
+    "shot": "three-quarter",
+    "direction": "Walking toward camera mid-step, buttoning blazer jacket with both hands, looking slightly down at the button.",
+    "label": "V chůzi, zapíná si sako, pohled dolů"
+  },
+  {
+    "id": "business-05",
+    "tags": [
+      "business",
+      "portrét"
+    ],
+    "shot": "hands",
+    "direction": "Hand adjusting shirt cuff or watch, elbow bent at chest height, face partly visible above, calm expression.",
+    "label": "Upravuje manžetu nebo hodinky, detail rukou"
+  },
+  {
+    "id": "portret-04",
+    "tags": [
+      "portrét",
+      "lifestyle"
+    ],
+    "shot": "headshot",
+    "direction": "Looking over the shoulder back toward camera, back three-quarters turned away, chin near the shoulder.",
+    "label": "Pohled přes rameno, záda k foťáku"
+  },
+  {
+    "id": "portret-05",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "headshot",
+    "direction": "Hand gently touching the jawline, fingers relaxed, head slightly tilted, eyes toward camera.",
+    "label": "Ruka lehce u brady, uvolněné prsty"
+  },
+  {
+    "id": "portret-06",
+    "tags": [
+      "portrét",
+      "lifestyle"
+    ],
+    "shot": "full",
+    "direction": "Sitting on the floor with knees pulled up, arms wrapped loosely around the knees, head resting sideways on the arms.",
+    "label": "Na zemi, kolena u těla, hlava položená na rukou"
+  },
+  {
+    "id": "boudoir-01",
+    "tags": [
+      "boudoir"
+    ],
+    "shot": "full",
+    "direction": "Lying on the side on a bed, propped on one elbow, legs gently bent and stacked, wearing a silk slip, soft gaze toward camera.",
+    "label": "Na boku na posteli, opřená o loket, nohy pokrčené"
+  },
+  {
+    "id": "boudoir-02",
+    "tags": [
+      "boudoir"
+    ],
+    "shot": "seated",
+    "direction": "Sitting on the edge of a bed, wearing an oversized white shirt, one shoulder slightly exposed, looking down and away.",
+    "label": "Na hraně postele v pánské košili, odhalené rameno, pohled dolů"
+  },
+  {
+    "id": "boudoir-03",
+    "tags": [
+      "boudoir"
+    ],
+    "shot": "three-quarter",
+    "direction": "Standing by a window, back to camera, silk robe slipping slightly off one shoulder, head turned in profile.",
+    "label": "Zády u okna, župan sklouzává z ramene, profil"
+  },
+  {
+    "id": "boudoir-04",
+    "tags": [
+      "boudoir"
+    ],
+    "shot": "full",
+    "direction": "Lying on the back across a bed, head toward camera, hair spread out, one arm resting above the head, wearing lingerie set.",
+    "label": "Na zádech přes postel, vlasy rozprostřené, ruka nad hlavou"
+  },
+  {
+    "id": "pary-01",
+    "tags": [
+      "páry"
+    ],
+    "shot": "three-quarter",
+    "direction": "Couple standing close, one behind the other with arms wrapped around the waist, chin resting on the partner shoulder, both smiling.",
+    "label": "Objetí zezadu, brada na rameni partnera"
+  },
+  {
+    "id": "pary-02",
+    "tags": [
+      "páry"
+    ],
+    "shot": "three-quarter",
+    "direction": "Couple facing each other, foreheads touching, eyes closed, hands holding at chest height.",
+    "label": "Čela k sobě, zavřené oči, ruce u hrudi"
+  },
+  {
+    "id": "pary-03",
+    "tags": [
+      "páry",
+      "lifestyle"
+    ],
+    "shot": "full",
+    "direction": "Couple walking side by side holding hands, one looking at the other laughing, mid-step.",
+    "label": "Chůze za ruce, jeden se směje na druhého"
+  },
+  {
+    "id": "pary-04",
+    "tags": [
+      "páry"
+    ],
+    "shot": "seated",
+    "direction": "Couple sitting on steps, one leaning back between the other partner knees, both relaxed and looking at each other.",
+    "label": "Na schodech, jeden opřený mezi koleny druhého"
+  },
+  {
+    "id": "svatba-01",
+    "tags": [
+      "svatba",
+      "páry"
+    ],
+    "shot": "full",
+    "direction": "Wedding couple, groom gently dipping the bride backward for a kiss, her veil flowing.",
+    "label": "Ženich zaklání nevěstu k polibku, závoj vlaje"
+  },
+  {
+    "id": "svatba-02",
+    "tags": [
+      "svatba"
+    ],
+    "shot": "three-quarter",
+    "direction": "Bride holding a bouquet low at hip level, looking down at the flowers, soft smile, wedding dress.",
+    "label": "Nevěsta drží kytici u boku, pohled na květiny"
+  },
+  {
+    "id": "svatba-03",
+    "tags": [
+      "svatba"
+    ],
+    "shot": "hands",
+    "direction": "Two hands with wedding rings intertwined, close-up of fingers, sleeves of suit and dress visible.",
+    "label": "Propletené ruce s prstýnky, detail"
+  }
+]

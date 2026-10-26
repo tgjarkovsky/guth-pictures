@@ -49,3 +49,5 @@ next-env.d.ts
 
 # superpowers brainstorm sessions
 .superpowers/
+
+/output/poses/
