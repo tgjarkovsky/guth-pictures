@@ -3,10 +3,6 @@
 import { useId } from "react";
 import type { PricingPackage } from "@/lib/types";
 
-// Sekce, které web už nevykresluje (reference, nadpis Light Testeru, příplatky).
-// Jen skryté — data v KV zůstávají a ukládají se beze změny.
-export const SHOW_UNUSED_SECTIONS = false;
-
 const emptyPackage = (): PricingPackage => ({ id: crypto.randomUUID(), name: "", price: "", duration: "", includes: [] });
 
 export function Field({
