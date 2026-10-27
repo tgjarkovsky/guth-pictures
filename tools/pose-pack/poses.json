@@ -349,5 +349,95 @@
     "shot": "hands",
     "direction": "Close-up of a hand adjusting the bralette strap on the shoulder, collarbone and part of the cup visible, face out of frame.",
     "label": "Detail: ruka upravuje ramínko"
+  },
+  {
+    "id": "portret-07",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "headshot",
+    "direction": "Both hands framing the face, fingers partly crossing over one eye, direct gaze through the fingers.",
+    "label": "Ruce rámují obličej, prsty částečně přes oko"
+  },
+  {
+    "id": "portret-08",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "headshot",
+    "direction": "One open palm covering half of the face, the visible eye looking straight into the camera.",
+    "label": "Dlaň zakrývá půl obličeje, druhé oko do foťáku"
+  },
+  {
+    "id": "portret-09",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "headshot",
+    "direction": "Clean side profile, chin lifted, eyes closed, calm expression.",
+    "label": "Čistý profil, brada nahoru, oči zavřené"
+  },
+  {
+    "id": "portret-10",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "three-quarter",
+    "direction": "Caught mid-motion turning the head quickly, hair flying across the face, shoulders following the turn.",
+    "label": "Otočka hlavy, vlasy letí přes obličej"
+  },
+  {
+    "id": "portret-11",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "full",
+    "direction": "Lying on the back on the floor, seen from directly above, hair spread out in a circle around the head, arms relaxed.",
+    "label": "Na zádech na zemi shora, vlasy kolem hlavy"
+  },
+  {
+    "id": "portret-12",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "three-quarter",
+    "direction": "Dramatic low angle from below, hands in pockets, looking down into the camera, strong upward perspective.",
+    "label": "Podhled zespodu, ruce v kapsách, pohled dolů"
+  },
+  {
+    "id": "portret-13",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "three-quarter",
+    "direction": "A large scarf draped over the head and pulled across the face, only one eye and part of the face peeking out.",
+    "label": "Šála přes hlavu, vykukuje jen část obličeje"
+  },
+  {
+    "id": "portret-14",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "seated",
+    "direction": "Sitting backwards on a simple chair, forearms resting on the backrest, chin resting on the stacked hands.",
+    "label": "Obráceně na židli, brada na rukou"
+  },
+  {
+    "id": "portret-15",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "headshot",
+    "direction": "Head tilted far back, neck stretched, one hand resting on the collarbone, eyes closed.",
+    "label": "Hlava zakloněná, ruka na klíční kosti"
+  },
+  {
+    "id": "portret-16",
+    "tags": [
+      "portrét"
+    ],
+    "shot": "three-quarter",
+    "direction": "One hand reaching toward the camera in strong foreshortening, the face behind it sharp and calm.",
+    "label": "Ruka natažená k foťáku, obličej za ní"
   }
 ]
