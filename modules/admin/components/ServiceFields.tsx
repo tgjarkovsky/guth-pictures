@@ -1,7 +1,7 @@
 "use client";
 
 import type { ContentData } from "@/modules/admin/lib/content";
-import { Field, PackageEditor, SHOW_UNUSED_SECTIONS } from "./FormParts";
+import { Field, PackageEditor } from "./FormParts";
 
 type ServiceKey = keyof ContentData["sluzby"];
 
@@ -36,14 +36,6 @@ export function ServiceFields({
         packages={s.packages ?? []}
         onChange={(pkgs) => patch((d) => { d.sluzby[service].packages = pkgs; })}
       />
-      {SHOW_UNUSED_SECTIONS && service === "business" && <PackageEditor
-        path={`${path}.extras`}
-        label="Příplatky"
-        addLabel="+ Přidat příplatek"
-        simple
-        packages={s.extras ?? []}
-        onChange={(pkgs) => patch((d) => { d.sluzby[service].extras = pkgs; })}
-      />}
       <Field
         path={`${path}.note`}
         label="Poznámka pod ceníkem"
