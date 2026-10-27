@@ -13,3 +13,6 @@ export const filterToQuery = ({ tag, shot }: PoseFilter) => {
   const q = params.toString();
   return q ? `?${q}` : "";
 };
+
+export const keepAllowed = (ids: unknown, allowed: string[]): string[] =>
+  Array.isArray(ids) ? [...new Set(ids.filter((id): id is string => typeof id === "string" && allowed.includes(id)))] : [];

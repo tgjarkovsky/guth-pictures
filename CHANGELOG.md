@@ -1,3 +1,5 @@
+## [2026-10-27] - Výběr póz klientem: v adminu (/admin/pozy) vytvořím odkaz s podmnožinou póz pro klienta (neuhádnutelný slug, noindex), klient na /pozy/<slug> označí, co se mu líbí, přidá poznámku a pošle; výběr i poznámku vidím v adminu, jde poslat opakovaně
+## [2026-10-27] - Pose pack: 10 kreativních portrétních póz (portret-07 až portret-16) přes ChatGPT, exportované do public/poses
 ## [2026-10-26] - Stránka /pozy: katalog póz pro klienty s filtrem typu focení a záběru, jedna velká póza s přepínáním šipkami, klávesnicí nebo swipem (scroll-snap) a pásem náhledů, filtr se drží v URL (?stitek=…&zaber=…) pro předfiltrovaný odkaz; skrytá (noindex, mimo menu a sitemapu); obrázky zmenšené do public/poses přes tools/pose-pack/export-web.mjs
 ## [2026-10-26] - Pose pack: všech 22 póz hotových, postup pro ChatGPT ve skillu pose-pack, galerie bere i PNG
 ## [2026-10-26] - Pose pack: návrhy póz pro klienty generované přes Gemini v Chromu (skill pose-pack, světlý brandový styl, štítky typu focení, HTML galerie s filtrem v output/poses, obrázky mimo git)

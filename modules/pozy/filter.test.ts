@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterPoses, filterToQuery, uniqueValues } from "./filter";
+import { filterPoses, filterToQuery, keepAllowed, uniqueValues } from "./filter";
 
 const poses = [
   { id: "a", tags: ["portrét", "business"], shot: "headshot", label: "A" },
@@ -38,5 +38,15 @@ describe("filterToQuery", () => {
 describe("uniqueValues", () => {
   it("dedupes keeping order", () => {
     expect(uniqueValues(["b", "a", "b"])).toEqual(["b", "a"]);
+  });
+});
+
+describe("keepAllowed", () => {
+  it("keeps only allowed string ids, deduped", () => {
+    expect(keepAllowed(["a", "x", "a", 3, "c"], ["a", "b", "c"])).toEqual(["a", "c"]);
+  });
+
+  it("returns empty for non-array", () => {
+    expect(keepAllowed("a", ["a"])).toEqual([]);
   });
 });
