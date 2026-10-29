@@ -77,6 +77,11 @@ function SendPicks({ slug, ids, initialNote = "" }: { slug: string; ids: string[
   const [note, setNote] = useState(initialNote);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
+  const idsKey = ids.join(",");
+  useEffect(() => {
+    setStatus((s) => (s === "ok" ? "idle" : s));
+  }, [idsKey, note]);
+
   const send = async () => {
     setStatus("sending");
     const res = await fetch(`/api/pozy/${slug}`, {
