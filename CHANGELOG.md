@@ -1,3 +1,4 @@
+## [2026-10-29] - Nav: odstraněny mrtvé větve, NavItem a LocaleLink
 ## [2026-10-29] - DraftCard rozdělen na useStoryExport (render, MP4, schválení), StoryTemplate (jedna šablona C/D) a DraftPhotoList; přidán charakterizační test
 ## [2026-10-27] - odstraněn příznak SHOW_UNUSED_SECTIONS a skrytý editor příplatků
 ## [2026-10-27] - Výběr póz klientem: v adminu (/admin/pozy) vytvořím odkaz s podmnožinou póz pro klienta (neuhádnutelný slug, noindex), klient na /pozy/<slug> označí, co se mu líbí, přidá poznámku a pošle; výběr i poznámku vidím v adminu, jde poslat opakovaně
