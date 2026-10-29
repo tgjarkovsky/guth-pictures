@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CSS_VAR_MAP, COLOR_KEYS, type ColorSet } from "@/lib/theme-types";
 import { themePresets, defaultColors } from "@/lib/theme-presets";
+import { useSaveStatus } from "./useSaveStatus";
 
 const LABELS: Record<keyof ColorSet, string> = {
   bg:              "Pozadí",
@@ -22,7 +23,7 @@ const LABELS: Record<keyof ColorSet, string> = {
 export function ThemeEditor() {
   const router = useRouter();
   const [colors, setColors] = useState<ColorSet>(defaultColors);
-  const [status, setStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
+  const { status, run } = useSaveStatus();
 
   useEffect(() => {
     fetch("/api/admin/theme")
@@ -44,34 +45,21 @@ export function ThemeEditor() {
     }
   }
 
-  async function save() {
-    setStatus("saving");
-    try {
-      const r = await fetch("/api/admin/theme", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(colors),
-      });
-      if (!r.ok) throw new Error();
-      setStatus("ok");
-      router.refresh();
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("error");
-    }
-  }
+  const save = () => run(async () => {
+    const r = await fetch("/api/admin/theme", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(colors),
+    });
+    if (r.ok) router.refresh();
+    return r.ok;
+  }, 2000);
 
-  async function reset() {
-    try {
-      const r = await fetch("/api/admin/theme", { method: "DELETE" });
-      if (!r.ok) throw new Error();
-      applyPreset(defaultColors);
-      setStatus("ok");
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("error");
-    }
-  }
+  const reset = () => run(async () => {
+    const r = await fetch("/api/admin/theme", { method: "DELETE" });
+    if (r.ok) applyPreset(defaultColors);
+    return r.ok;
+  }, 2000);
 
   const activePresetId = themePresets.find((p) =>
     COLOR_KEYS.every((k) => p.colors[k].toLowerCase() === colors[k].toLowerCase()),

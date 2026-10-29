@@ -9,6 +9,7 @@ import type { PreviewPage, PreviewPick } from "@/modules/admin/preview/protocol"
 import { FocalPicker } from "./FocalPicker";
 import { ReferenceEditor } from "./ReferenceEditor";
 import { TreeLayout } from "./TreeLayout";
+import { useSaveStatus } from "./useSaveStatus";
 
 type Slot = {
   label: string;
@@ -93,7 +94,7 @@ export function EditorialImageEditor({ editorial, photos, references }: {
   const [savedRefs, setSavedRefs] = useState(refs);
   const refItems = references ? REF_ITEMS : [];
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [status, setStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
+  const { status, run } = useSaveStatus();
   const slots = imageSlots(data);
   const [selected, setSelected] = useState(slots[0].label);
   const [page, setPage] = useState<PreviewPage>("home");
@@ -179,9 +180,7 @@ export function EditorialImageEditor({ editorial, photos, references }: {
     return response.ok;
   }
 
-  async function save() {
-    setStatus("saving");
-    try {
+  const save = () => run(async () => {
       const response = await fetch("/api/admin/images", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -194,11 +193,8 @@ export function EditorialImageEditor({ editorial, photos, references }: {
         if (results.every(Boolean)) setSavedRefs(refs);
         ok &&= results.every(Boolean);
       }
-      setStatus(ok ? "ok" : "error");
-    } catch {
-      setStatus("error");
-    }
-  }
+      return ok;
+  });
 
   const thumb = (id: string) => (id ? cloudinaryUrl(id, "w_48,h_48,c_fill,q_auto,f_auto") : undefined);
   const groups = [...new Set(slots.map((s) => groupOf(s.label)))].map((title) => ({

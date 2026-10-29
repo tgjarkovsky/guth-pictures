@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field } from "./FormParts";
+import { useSaveStatus } from "./useSaveStatus";
 
 export function ContactEmailForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [emailStatus, setEmailStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
+  const { status: emailStatus, run } = useSaveStatus();
 
   useEffect(() => {
     fetch("/api/admin/email")
@@ -24,22 +25,14 @@ export function ContactEmailForm() {
 
   async function handleEmailSave(e: React.FormEvent) {
     e.preventDefault();
-    setEmailStatus("saving");
-    try {
+    await run(async () => {
       const res = await fetch("/api/admin/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (res.ok) {
-        setEmailStatus("ok");
-        setTimeout(() => setEmailStatus("idle"), 3000);
-      } else {
-        setEmailStatus("error");
-      }
-    } catch {
-      setEmailStatus("error");
-    }
+      return res.ok;
+    }, 3000);
   }
 
   return (

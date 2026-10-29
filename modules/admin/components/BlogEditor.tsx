@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { slugify } from "@/lib/slugify";
 import type { BlogPost } from "@/modules/blog/lib/blog";
+import { useSaveStatus } from "./useSaveStatus";
 
 type Locale = "cs" | "en";
 
@@ -21,7 +22,7 @@ export function BlogEditor() {
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [form, setForm] = useState(emptyForm());
   const [locale, setLocale] = useState<Locale>("cs");
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const { status, run, reset } = useSaveStatus();
   const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export function BlogEditor() {
   function startNew() {
     setEditing(null);
     setForm(emptyForm());
-    setStatus("idle");
+    reset();
   }
 
   function startEdit(post: BlogPost) {
@@ -46,7 +47,7 @@ export function BlogEditor() {
       cs: { ...post.cs },
       en: { ...post.en },
     });
-    setStatus("idle");
+    reset();
   }
 
   function setLocaleField(field: keyof BlogPost["cs"], value: string) {
@@ -64,7 +65,6 @@ export function BlogEditor() {
 
   async function handleSave() {
     if (!form.cs.title && !form.en.title) return;
-    setStatus("saving");
     const now = new Date().toISOString();
     const post: BlogPost = {
       id: editing?.id ?? crypto.randomUUID(),
@@ -76,23 +76,20 @@ export function BlogEditor() {
       cs: form.cs,
       en: form.en,
     };
-    try {
+    await run(async () => {
       const res = await fetch("/api/admin/blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(post),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) return false;
       setPosts((prev) => {
         const idx = prev.findIndex((p) => p.id === post.id);
         return idx >= 0 ? prev.map((p) => (p.id === post.id ? post : p)) : [...prev, post];
       });
       setEditing(post);
-      setStatus("saved");
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("error");
-    }
+      return true;
+    }, 2000);
   }
 
   async function handleDelete(id: string) {
@@ -257,7 +254,7 @@ export function BlogEditor() {
             >
               {status === "saving" ? "Ukládám…" : editing ? "Uložit změny" : "Vytvořit příspěvek"}
             </button>
-            {status === "saved" && <span className="text-sm text-green-400">Uloženo</span>}
+            {status === "ok" && <span className="text-sm text-green-400">Uloženo</span>}
             {status === "error" && <span className="text-sm text-red-400">Chyba při ukládání</span>}
           </div>
         </div>
