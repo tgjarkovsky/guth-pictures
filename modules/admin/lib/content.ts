@@ -91,7 +91,7 @@ const image = (publicId = "", cs = "", en = ""): EditorialImage => ({
 const emptyImages = (count: number): EditorialImage[] =>
   Array.from({ length: count }, () => image());
 
-function defaultEditorialImages(): EditorialImages {
+export function defaultEditorialImages(): EditorialImages {
   return {
     home: {
       hero: image(
@@ -128,55 +128,38 @@ function defaultEditorialImages(): EditorialImages {
   };
 }
 
-const normalizeImage = (value: EditorialImage | undefined, fallback: EditorialImage): EditorialImage => ({
-  publicId: value?.publicId ?? fallback.publicId,
-  alt: {
-    cs: value?.alt?.cs ?? fallback.alt.cs,
-    en: value?.alt?.en ?? fallback.alt.en,
-  },
-  focal: {
-    desktop: value?.focal?.desktop ?? fallback.focal.desktop,
-    mobile: value?.focal?.mobile ?? fallback.focal.mobile,
-  },
-});
+export const isImageNode = (node: unknown): node is EditorialImage =>
+  typeof node === "object" && node !== null && typeof (node as { publicId?: unknown }).publicId === "string";
 
-const normalizeImageList = (
-  value: EditorialImage[] | undefined,
-  fallback: EditorialImage[],
-): EditorialImage[] => (value ?? fallback).map((entry, index) =>
-  normalizeImage(entry, fallback[index] ?? image())
-);
+type Tree = { [key: string]: Tree | undefined } | undefined;
+
+function normalizeNode(template: unknown, stored: unknown): unknown {
+  if (Array.isArray(template)) {
+    const entries = Array.isArray(stored) ? stored : template;
+    return entries.map((entry, index) => normalizeNode(template[index] ?? image(), entry));
+  }
+  const value = stored as Tree;
+  if (isImageNode(template)) {
+    const v = value as Partial<EditorialImage> | undefined;
+    return {
+      publicId: v?.publicId ?? template.publicId,
+      alt: { cs: v?.alt?.cs ?? template.alt.cs, en: v?.alt?.en ?? template.alt.en },
+      focal: {
+        desktop: v?.focal?.desktop ?? template.focal.desktop,
+        mobile: v?.focal?.mobile ?? template.focal.mobile,
+      },
+    };
+  }
+  return Object.fromEntries(
+    Object.entries(template as object).map(([key, t]) => [key, normalizeNode(t, value?.[key])]),
+  );
+}
 
 export function normalizeImages(data: Partial<SiteImages> = {}): NormalizedSiteImages {
-  const fallback = defaultEditorialImages();
-  const stored = data.editorial;
   return {
     profile: data.profile ?? "",
     ...(data.heroTriptych && { heroTriptych: data.heroTriptych }),
-    editorial: {
-      home: {
-        hero: normalizeImage(stored?.home?.hero, fallback.home.hero),
-        stories: normalizeImageList(stored?.home?.stories, fallback.home.stories),
-        photographer: normalizeImage(stored?.home?.photographer, fallback.home.photographer),
-        tools: {
-          foceni101: normalizeImage(stored?.home?.tools?.foceni101, fallback.home.tools.foceni101),
-          lightPlanner: normalizeImage(stored?.home?.tools?.lightPlanner, fallback.home.tools.lightPlanner),
-        },
-      },
-      portrait: {
-        hero: normalizeImage(stored?.portrait?.hero, fallback.portrait.hero),
-        gallery: normalizeImageList(stored?.portrait?.gallery, fallback.portrait.gallery),
-      },
-      business: {
-        hero: normalizeImage(stored?.business?.hero, fallback.business.hero),
-        headshots: normalizeImageList(stored?.business?.headshots, fallback.business.headshots),
-        atWork: normalizeImageList(stored?.business?.atWork, fallback.business.atWork),
-      },
-      events: {
-        hero: normalizeImage(stored?.events?.hero, fallback.events.hero),
-        reportage: normalizeImageList(stored?.events?.reportage, fallback.events.reportage),
-      },
-    },
+    editorial: normalizeNode(defaultEditorialImages(), data.editorial) as EditorialImages,
   };
 }
 
