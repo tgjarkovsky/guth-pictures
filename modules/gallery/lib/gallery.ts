@@ -46,6 +46,41 @@ function key(slug: string) {
   return `gallery:${slug}`;
 }
 
+function selectionKey(slug: string) {
+  return `${key(slug)}:selection`;
+}
+
+function photosKey(slug: string) {
+  return `${key(slug)}:photos`;
+}
+
+// fn returns the new record, or null to skip writing
+async function updateRecord(
+  slug: string,
+  fn: (record: GalleryRecord) => GalleryRecord | null
+): Promise<void> {
+  const kv = await getKv();
+  if (!kv) return;
+  const record = await kv.get<GalleryRecord>(key(slug));
+  if (!record) return;
+  const next = fn(record);
+  if (next) await kv.set(key(slug), next);
+}
+
+// fn gets the existing selection (or null) and returns the new one, or null to skip writing.
+// Resolves to the written selection, or null when nothing was written.
+async function updateSelection(
+  slug: string,
+  fn: (existing: GallerySelection | null) => GallerySelection | null
+): Promise<GallerySelection | null> {
+  const kv = await getKv();
+  if (!kv) return null;
+  const next = fn(await kv.get<GallerySelection>(selectionKey(slug)));
+  if (!next) return null;
+  await kv.set(selectionKey(slug), next);
+  return next;
+}
+
 export async function listGalleries(): Promise<GalleryRecord[]> {
   const kv = await getKv();
   if (!kv) return [];
@@ -100,36 +135,16 @@ export async function updateGallerySyncState(
   slug: string,
   photoCount: number
 ): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const record = await kv.get<GalleryRecord>(key(slug));
-  if (!record) return;
-  await kv.set(key(slug), {
-    ...record,
-    photoCount,
-    syncedAt: new Date().toISOString(),
-  });
+  await updateRecord(slug, (r) => ({ ...r, photoCount, syncedAt: new Date().toISOString() }));
 }
 
 export async function setGalleryDelivered(slug: string, delivered: boolean): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const record = await kv.get<GalleryRecord>(key(slug));
-  if (!record) return;
-  await kv.set(key(slug), { ...record, delivered });
+  await updateRecord(slug, (r) => ({ ...r, delivered }));
 }
 
 export async function markGalleryOpened(slug: string): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const record = await kv.get<GalleryRecord>(key(slug));
-  if (!record) return;
   const now = new Date().toISOString();
-  await kv.set(key(slug), {
-    ...record,
-    firstOpenedAt: record.firstOpenedAt ?? now,
-    lastOpenedAt: now,
-  });
+  await updateRecord(slug, (r) => ({ ...r, firstOpenedAt: r.firstOpenedAt ?? now, lastOpenedAt: now }));
 }
 
 export async function deleteGallery(slug: string): Promise<void> {
@@ -137,8 +152,8 @@ export async function deleteGallery(slug: string): Promise<void> {
   if (!kv) return;
   await Promise.all([
     kv.del(key(slug)),
-    kv.del(`${key(slug)}:photos`),
-    kv.del(`${key(slug)}:selection`),
+    kv.del(photosKey(slug)),
+    kv.del(selectionKey(slug)),
     kv.srem("galleries:index", slug),
   ]);
 }
@@ -146,19 +161,19 @@ export async function deleteGallery(slug: string): Promise<void> {
 export async function setGalleryPhotos(slug: string, photos: GalleryPhoto[]): Promise<void> {
   const kv = await getKv();
   if (!kv) return;
-  await kv.set(`${key(slug)}:photos`, photos);
+  await kv.set(photosKey(slug), photos);
 }
 
 export async function getGalleryPhotos(slug: string): Promise<GalleryPhoto[]> {
   const kv = await getKv();
   if (!kv) return [];
-  return (await kv.get<GalleryPhoto[]>(`${key(slug)}:photos`)) ?? [];
+  return (await kv.get<GalleryPhoto[]>(photosKey(slug))) ?? [];
 }
 
 export async function getGallerySelection(slug: string): Promise<GallerySelection | null> {
   const kv = await getKv();
   if (!kv) return null;
-  return kv.get<GallerySelection>(`${key(slug)}:selection`);
+  return kv.get<GallerySelection>(selectionKey(slug));
 }
 
 export async function saveGallerySelection(
@@ -166,48 +181,42 @@ export async function saveGallerySelection(
   favorites: string[],
   note?: string
 ): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const existing = await kv.get<GallerySelection>(`${key(slug)}:selection`);
-  const now = new Date().toISOString();
-  // undefined = keep existing note, "" = clear it
-  const nextNote = note === undefined ? existing?.note : note || undefined;
-  await kv.set(`${key(slug)}:selection`, {
-    favorites,
-    ...(nextNote ? { note: nextNote } : {}),
-    submittedAt: existing?.submittedAt ?? now,
-    ...(existing?.confirmedAt ? { confirmedAt: existing.confirmedAt } : {}),
-    lastUpdated: now,
-  } satisfies GallerySelection);
+  await updateSelection(slug, (existing) => {
+    const now = new Date().toISOString();
+    // undefined = keep existing note, "" = clear it
+    const nextNote = note === undefined ? existing?.note : note || undefined;
+    return {
+      favorites,
+      ...(nextNote ? { note: nextNote } : {}),
+      submittedAt: existing?.submittedAt ?? now,
+      ...(existing?.confirmedAt ? { confirmedAt: existing.confirmedAt } : {}),
+      lastUpdated: now,
+    };
+  });
 }
 
 export async function pruneGallerySelection(slug: string, validIds: Set<string>): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const existing = await kv.get<GallerySelection>(`${key(slug)}:selection`);
-  if (!existing) return;
-  const favorites = existing.favorites.filter((id) => validIds.has(id));
-  if (favorites.length === existing.favorites.length) return;
-  await kv.set(`${key(slug)}:selection`, { ...existing, favorites } satisfies GallerySelection);
+  await updateSelection(slug, (existing) => {
+    if (!existing) return null;
+    const favorites = existing.favorites.filter((id) => validIds.has(id));
+    return favorites.length === existing.favorites.length ? null : { ...existing, favorites };
+  });
 }
 
 export async function confirmGallerySelection(slug: string): Promise<string | null> {
-  const kv = await getKv();
-  if (!kv) return null;
-  const existing = await kv.get<GallerySelection>(`${key(slug)}:selection`);
-  if (!existing || existing.favorites.length === 0) return null;
-  const confirmedAt = existing.confirmedAt ?? new Date().toISOString();
-  await kv.set(`${key(slug)}:selection`, { ...existing, confirmedAt } satisfies GallerySelection);
-  return confirmedAt;
+  const saved = await updateSelection(slug, (existing) => {
+    if (!existing || existing.favorites.length === 0) return null;
+    return { ...existing, confirmedAt: existing.confirmedAt ?? new Date().toISOString() };
+  });
+  return saved?.confirmedAt ?? null;
 }
 
 export async function unlockGallerySelection(slug: string): Promise<void> {
-  const kv = await getKv();
-  if (!kv) return;
-  const existing = await kv.get<GallerySelection>(`${key(slug)}:selection`);
-  if (!existing?.confirmedAt) return;
-  const { confirmedAt: _confirmedAt, ...rest } = existing;
-  await kv.set(`${key(slug)}:selection`, rest satisfies GallerySelection);
+  await updateSelection(slug, (existing) => {
+    if (!existing?.confirmedAt) return null;
+    const { confirmedAt: _confirmedAt, ...rest } = existing;
+    return rest;
+  });
 }
 
 export async function verifyGalleryPassword(
