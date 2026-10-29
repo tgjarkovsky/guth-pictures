@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { IMAGE_PAGES, revalidateLocalized } from "@/lib/revalidate";
 import { requireAdmin } from "@/lib/admin-route";
-import { getImages, setImages, type EditorialImage, type EditorialImages } from "@/modules/admin/lib/content";
+import { defaultEditorialImages, getImages, isImageNode, setImages, type EditorialImage, type EditorialImages } from "@/modules/admin/lib/content";
 
 const CLOUDINARY_ID_RE = /^[a-zA-Z0-9_\-.\/]{1,200}$/;
 const FOCAL_POINT_RE = /^(100|[0-9]{1,2})% (100|[0-9]{1,2})%$/;
@@ -31,38 +31,21 @@ function isValidImage(value: unknown): value is EditorialImage {
     && typeof focal.mobile === "string" && FOCAL_POINT_RE.test(focal.mobile);
 }
 
-function isValidImageList(value: unknown): value is EditorialImage[] {
-  return Array.isArray(value) && value.length <= MAX_IMAGES && value.every(isValidImage);
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+
+function matchesTemplate(template: unknown, value: unknown): boolean {
+  if (Array.isArray(template)) {
+    return Array.isArray(value) && value.length <= MAX_IMAGES && value.every(isValidImage);
+  }
+  if (isImageNode(template)) return isValidImage(value);
+  const keys = Object.keys(template as object);
+  return isPlainObject(value) && hasOnlyKeys(value, keys)
+    && keys.every((key) => key in value && matchesTemplate((template as Record<string, unknown>)[key], value[key]));
 }
 
-export function isValidEditorialImages(value: unknown): value is EditorialImages {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const editorial = value as Record<string, unknown>;
-  if (!hasOnlyKeys(editorial, ["home", "portrait", "business", "events"])) return false;
-  const { home, portrait, business, events } = editorial;
-  if (!home || typeof home !== "object" || Array.isArray(home)) return false;
-  if (!portrait || typeof portrait !== "object" || Array.isArray(portrait)) return false;
-  if (!business || typeof business !== "object" || Array.isArray(business)) return false;
-  if (!events || typeof events !== "object" || Array.isArray(events)) return false;
-
-  const h = home as Record<string, unknown>;
-  const p = portrait as Record<string, unknown>;
-  const b = business as Record<string, unknown>;
-  const e = events as Record<string, unknown>;
-  if (!hasOnlyKeys(h, ["hero", "stories", "photographer", "tools"])) return false;
-  if (!hasOnlyKeys(p, ["hero", "gallery"])) return false;
-  if (!hasOnlyKeys(b, ["hero", "headshots", "atWork"])) return false;
-  if (!hasOnlyKeys(e, ["hero", "reportage"])) return false;
-  if (!h.tools || typeof h.tools !== "object" || Array.isArray(h.tools)) return false;
-  const tools = h.tools as Record<string, unknown>;
-  if (!hasOnlyKeys(tools, ["foceni101", "lightPlanner"])) return false;
-
-  return isValidImage(h.hero) && isValidImageList(h.stories) && isValidImage(h.photographer)
-    && isValidImage(tools.foceni101) && isValidImage(tools.lightPlanner)
-    && isValidImage(p.hero) && isValidImageList(p.gallery)
-    && isValidImage(b.hero) && isValidImageList(b.headshots) && isValidImageList(b.atWork)
-    && isValidImage(e.hero) && isValidImageList(e.reportage);
-}
+export const isValidEditorialImages = (value: unknown): value is EditorialImages =>
+  matchesTemplate(defaultEditorialImages(), value);
 
 export function isValidImagesPayload(value: unknown): boolean {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
