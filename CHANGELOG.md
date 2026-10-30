@@ -1,3 +1,4 @@
+## [2026-10-30] - Pose pack: osm samostatných business póz (business-06 až business-13)
 ## [2026-10-30] - Oprava buildu: do commitu chyběl soubor ToolShell.tsx
 ## [2026-10-30] - Nástroje (Focení 101, Light Tester) a fallbacky (404, chyba, načítání) v editorial shellu; smazán starý Nav, odsazení pt-16/margin-top a body:has hacky; tokeny přes [data-world]; footer samostatný tmavý pruh
 ## [2026-10-30] - Brandové focení přepsáno do editorialu (EditorialSubpage); Admin › Návrhy zamčené; test hlídá, že každá stránka má jednu navigaci

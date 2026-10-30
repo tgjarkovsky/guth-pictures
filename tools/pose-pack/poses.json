@@ -77,6 +77,86 @@
     "label": "Upravuje manžetu nebo hodinky, detail rukou"
   },
   {
+    "id": "business-06",
+    "shot": "headshot",
+    "direction": "Head-and-shoulders portrait of an adult man in an open-collar shirt and blazer. Shoulders turned 45 degrees away, face turned toward camera, chin slightly forward and down. Red detail on collar.",
+    "label": "Ramena šikmo, tvář k fotoaparátu, brada mírně dolů",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-07",
+    "shot": "three-quarter",
+    "direction": "Knees-up adult woman in a blazer and trousers, one hand in trouser pocket, other arm relaxed, weight on back foot, shoulders relaxed. Tiny red lapel tab.",
+    "label": "Ruka v kapse, váha na zadní noze",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-08",
+    "shot": "three-quarter",
+    "direction": "Waist-up adult man in a blazer, arms loosely folded low, shoulders dropped, relaxed upright posture, face toward camera. Tiny red pocket-square edge.",
+    "label": "Paže volně zkřížené, ramena uvolněná",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-09",
+    "shot": "three-quarter",
+    "direction": "Waist-up adult woman in a blazer, gently adjusting one cuff with the opposite hand, elbows relaxed close to torso, head slightly angled toward camera. Tiny red cuff edge.",
+    "label": "Úprava manžety, hlava mírně natočená",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-10",
+    "shot": "seated",
+    "direction": "Adult man seated on the front edge of a simple stool, slight forward lean from hips, forearms on thighs, hands separate and relaxed. Entire seated figure including shoes visible with margins. Tiny red cuff edge. Only minimal stool lines.",
+    "label": "Na kraji stoličky, předklon, předloktí na stehnech",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-11",
+    "shot": "seated",
+    "direction": "Adult woman seated sideways on a simple chair, one forearm resting on chair backrest, relaxed upright spine, face turned toward camera. Entire seated figure and both feet visible with margins. Tiny red lapel detail. Minimal chair lines.",
+    "label": "Bokem na židli, předloktí na opěradle",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-12",
+    "shot": "three-quarter",
+    "direction": "Adult man framed knees-up, gently leaning one hip against minimal desk edge, one hand resting on desk and other hand in trouser pocket, shoulders open toward camera. Tiny red pocket detail. Only a few lines suggesting desk.",
+    "label": "Bokem opřený o stůl, druhá ruka v kapse",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
+    "id": "business-13",
+    "shot": "headshot",
+    "direction": "Chest-up business portrait of an adult woman in blazer, torso nearly frontal, head gently angled, chin neutral, relaxed shoulders. Small red collar edge.",
+    "label": "Čelem k fotoaparátu, lehké natočení hlavy",
+    "tags": [
+      "business",
+      "portrét"
+    ]
+  },
+  {
     "id": "portret-04",
     "tags": [
       "portrét",
