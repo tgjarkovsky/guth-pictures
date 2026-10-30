@@ -1,9 +1,11 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { track } from "@vercel/analytics";
 import { contactEmail } from "@/lib/config";
+import { readLeadSource } from "@/lib/lead-source";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -24,6 +26,7 @@ function ContactFormFields() {
   const t = useTranslations("kontakt");
   const [status, setStatus] = useState<Status>("idle");
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const packageName = searchParams.get("package");
   const serviceName = searchParams.get("service");
   const topicParam = searchParams.get("topic");
@@ -49,6 +52,18 @@ function ContactFormFields() {
 
     const form = e.currentTarget;
     const data = new FormData(form);
+    // Shown in the inquiry email next to the message, so each inquiry says where it came from
+    const lead = readLeadSource();
+    data.set("page", pathname);
+    if (packageName) data.set("package", packageName);
+    if (lead) {
+      data.set("source", lead.source);
+      if (lead.medium) data.set("medium", lead.medium);
+      if (lead.campaign) data.set("campaign", lead.campaign);
+      if (lead.term) data.set("term", lead.term);
+      if (lead.content) data.set("ad_content", lead.content);
+      data.set("landing_page", lead.landingPage);
+    }
 
     try {
       const res = await fetch(`https://formspree.io/f/${process.env.NEXT_PUBLIC_FORMSPREE_FORM_ID}`, {
@@ -62,6 +77,14 @@ function ContactFormFields() {
         return;
       }
 
+      track("lead", {
+        topic: topic || "none",
+        page: pathname,
+        package: packageName,
+        source: lead?.source ?? "unknown",
+        medium: lead?.medium ?? null,
+        campaign: lead?.campaign ?? null,
+      });
       setStatus("success");
       form.reset();
     } catch {

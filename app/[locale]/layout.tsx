@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Footer } from "@/components/Footer";
+import { LeadSourceCapture } from "@/components/LeadSourceCapture";
 import { Analytics } from "@vercel/analytics/next";
 import { siteUrl, ogImage } from "@/lib/config";
 import { getThemeColors, buildThemeStyle } from "@/lib/theme";
@@ -128,6 +129,7 @@ export default async function LocaleLayout({
           </div>
         </NextIntlClientProvider>
         <Analytics />
+        <LeadSourceCapture />
       </body>
     </html>
   );
