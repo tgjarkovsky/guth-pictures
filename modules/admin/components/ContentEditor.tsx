@@ -15,6 +15,7 @@ import { PageCopyEditor } from "./PageCopyEditor";
 import { ProfilePhotoUploader } from "./ProfilePhotoUploader";
 import { ServiceFields } from "./ServiceFields";
 import { TreeLayout, focusField } from "./TreeLayout";
+import { useSaveStatus } from "./useSaveStatus";
 
 type Locale = "cs" | "en";
 const LOCALES: Locale[] = ["cs", "en"];
@@ -43,7 +44,7 @@ export function ContentEditor() {
   const [locale, setLocale] = useState<Locale>("cs");
   const [data, setData] = useState(emptyBoth);
   const [saved, setSaved] = useState(emptyBoth);
-  const [status, setStatus] = useState<"idle" | "saving" | "ok" | "error">("idle");
+  const { status, run, reset } = useSaveStatus();
   const [selected, setSelected] = useState(SECTIONS[0].section.id);
   const [query, setQuery] = useState("");
   const [pendingFocus, setPendingFocus] = useState<string | null>(null);
@@ -129,7 +130,7 @@ export function ContentEditor() {
 
   function switchLocale(next: Locale) {
     setLocale(next);
-    setStatus("idle");
+    reset();
   }
 
   function patch(updater: (d: ContentData) => void) {
@@ -156,15 +157,10 @@ export function ContentEditor() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("saving");
-    try {
+    await run(async () => {
       const results = await Promise.all(LOCALES.filter((l) => dirty[l].size > 0).map(saveLocale));
-      const ok = results.every(Boolean);
-      setStatus(ok ? "ok" : "error");
-      if (ok) setTimeout(() => setStatus("idle"), 3000);
-    } catch {
-      setStatus("error");
-    }
+      return results.every(Boolean);
+    }, 3000);
   }
 
   function renderField(path: string) {

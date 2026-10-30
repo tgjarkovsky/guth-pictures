@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cloudinaryUrl } from "@/lib/cloudinary-utils";
 import type { SiteImages } from "@/modules/admin/lib/content";
+import { useSaveStatus } from "./useSaveStatus";
 
 export function ProfilePhotoUploader() {
   const router = useRouter();
   const [images, setImages] = useState<SiteImages>({ profile: "" });
-  const [profileUploadStatus, setProfileUploadStatus] = useState<"idle" | "uploading" | "ok" | "error">("idle");
+  const { status: profileUploadStatus, run } = useSaveStatus();
   const profileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -27,26 +28,24 @@ export function ProfilePhotoUploader() {
   async function handleProfileFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setProfileUploadStatus("uploading");
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("folder", "site");
-      const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!uploadRes.ok) throw new Error("upload failed");
-      const { publicId } = await uploadRes.json();
-      const newImages = { ...images, profile: publicId };
-      const saveRes = await fetch("/api/admin/images", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newImages),
-      });
-      if (!saveRes.ok) throw new Error("save failed");
-      setImages(newImages);
-      setProfileUploadStatus("ok");
-      setTimeout(() => setProfileUploadStatus("idle"), 3000);
-    } catch {
-      setProfileUploadStatus("error");
+      await run(async () => {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("folder", "site");
+        const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        if (!uploadRes.ok) return false;
+        const { publicId } = await uploadRes.json();
+        const newImages = { ...images, profile: publicId };
+        const saveRes = await fetch("/api/admin/images", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newImages),
+        });
+        if (!saveRes.ok) return false;
+        setImages(newImages);
+        return true;
+      }, 3000);
     } finally {
       if (profileInputRef.current) profileInputRef.current.value = "";
     }
@@ -76,11 +75,11 @@ export function ProfilePhotoUploader() {
             />
             <button
               type="button"
-              disabled={profileUploadStatus === "uploading"}
+              disabled={profileUploadStatus === "saving"}
               onClick={() => profileInputRef.current?.click()}
               className="px-6 py-2 bg-white text-black font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
-              {profileUploadStatus === "uploading" ? "Nahrávám…" : "Vybrat fotku"}
+              {profileUploadStatus === "saving" ? "Nahrávám…" : "Vybrat fotku"}
             </button>
             {profileUploadStatus === "ok" && <span className="text-green-400 text-sm">Uloženo</span>}
             {profileUploadStatus === "error" && <span className="text-red-400 text-sm">Chyba při nahrávání</span>}
