@@ -1,3 +1,4 @@
+## [2026-10-30] - Brandové focení přepsáno do editorialu (EditorialSubpage); Admin › Návrhy zamčené; test hlídá, že každá stránka má jednu navigaci
 ## [2026-10-29] - Nav: odstraněny mrtvé větve, NavItem a LocaleLink
 ## [2026-10-29] - Admin editory: stav ukládání (idle/saving/ok/error a návrat do idle) drží sdílený hook useSaveStatus; přidány charakterizační testy ThemeEditor, ContactEmailForm, BlogEditor, ProfilePhotoUploader
 ## [2026-10-29] - DraftCard rozdělen na useStoryExport (render, MP4, schválení), StoryTemplate (jedna šablona C/D) a DraftPhotoList; přidán charakterizační test

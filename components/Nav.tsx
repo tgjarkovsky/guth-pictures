@@ -25,7 +25,7 @@ const EDITORIAL_EXACT = [
   "/vop",
   "/privacy",
 ];
-const EDITORIAL_PREFIXES = ["/blog", "/nahled/"];
+const EDITORIAL_PREFIXES = ["/blog", "/nahled/", "/sluzby/"];
 
 const isEditorialPath = (pathname: string) =>
   EDITORIAL_EXACT.includes(pathname) ||
