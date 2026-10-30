@@ -2244,3 +2244,14 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
   .ed-business-hero h1, :is(.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
   .ed-article h1, .ed-legal > h1 { font-size: 12vw; font-weight: 700; line-height: .9; overflow-wrap: break-word; }
 }
+
+/* Service detail pages built on EditorialSubpage (brandové focení) */
+.ed-cta { display: flex; width: fit-content; min-height: 2.75rem; align-items: center; margin-top: 2rem; padding: 0 1.5rem; background: var(--editorial-ink); color: var(--editorial-paper); text-decoration: none; font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.ed-prose { display: block; max-width: 44rem; margin: 0 0 1.5rem; color: var(--color-text-muted); font-size: 1.05rem; line-height: 1.75; }
+.ed-secondary-faq__next { margin-top: 3rem; }
+.ed-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 0; padding: 0; list-style: none; }
+.ed-steps li { border-top: 1px solid var(--color-border); padding-top: 1rem; }
+.ed-steps span { font-family: var(--font-dm-mono), monospace; font-size: .75rem; color: var(--editorial-accent); }
+.ed-steps p { margin: 1rem 0 0; color: var(--color-text-muted); line-height: 1.6; }
+@media (max-width: 760px) { .ed-steps { grid-template-columns: 1fr; } }
+.ed-secondary-service .ed-secondary-faq h2 { font-size: clamp(2rem, 4.5cqi, 3.75rem); }

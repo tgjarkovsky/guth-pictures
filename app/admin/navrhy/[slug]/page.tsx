@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/modules/admin/components/AdminShell";
+import { LOCKED } from "@/modules/admin/lib/locked";
 import { AdminProposalReview } from "@/modules/brand-shoot/components/AdminProposalReview";
 import { getProposal, markReviewed } from "@/modules/brand-shoot/lib/proposals";
 
@@ -10,6 +11,7 @@ export default async function NavrhReviewPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (LOCKED.has("/admin/navrhy")) return <AdminShell><p className="text-sm text-gray-400">Návrhy jsou zatím zamčené.</p></AdminShell>;
   const { slug } = await params;
   const proposal = await getProposal(slug);
   if (!proposal) notFound();

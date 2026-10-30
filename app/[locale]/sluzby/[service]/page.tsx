@@ -7,6 +7,7 @@ import { siteUrl, ogImage } from "@/lib/config";
 import { getGalleryPhotos } from "@/lib/cloudinary";
 import { getContent, getImages } from "@/modules/admin/lib/content";
 import { PortraitEditorial } from "@/modules/editorial/components/PortraitEditorial";
+import { EditorialSubpage } from "@/modules/editorial/components/EditorialSubpage";
 import { PhotoGrid } from "@/modules/gallery/components/PhotoGrid";
 import { ServiceLinks } from "@/modules/homepage/components/ServiceLinks";
 import { isServiceSlug, serviceSlugs } from "@/modules/homepage/lib/service-pages";
@@ -72,54 +73,60 @@ export default async function ServicePage({ params }: Props) {
   }
   const brand = content.pages.brand;
   return (
-    <main className="max-w-5xl mx-auto px-6 pt-28 pb-24">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />
-      <nav aria-label={cs ? "Drobečková navigace" : "Breadcrumb"} className="text-sm text-[var(--color-text-muted)] mb-10">
-        <Link href="/">{cs ? "Domů" : "Home"}</Link> / <Link href="/sluzby">{cs ? "Služby" : "Services"}</Link> / <span>{brand.title}</span>
-      </nav>
-      <header className="max-w-3xl">
-        <p className="text-sm tracking-widest uppercase text-[var(--color-accent)] mb-4">{brand.kicker}</p>
-        <h1 className="text-4xl sm:text-6xl font-bold leading-tight">{brand.title}</h1>
-        <p className="mt-8 text-lg leading-relaxed text-[var(--color-text-muted)]">{brand.intro}</p>
-        <a href="#kontakt" className="inline-block mt-8 px-6 py-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-xl">{brand.cta} →</a>
-      </header>
-      <section className="mt-20 max-w-3xl">
-        <h2 className="text-3xl font-bold">{brand.audienceTitle}</h2>
-        <p className="mt-5 text-[var(--color-text-muted)] leading-relaxed">{brand.audience}</p>
+    <EditorialSubpage active="services" className="ed-secondary-service">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\u003c") }} />
+      <section className="ed-secondary-hero">
+        <p>{brand.kicker}</p>
+        <h1>{brand.title}</h1>
+        <p>{brand.intro}<a href="#kontakt" className="ed-cta">{brand.cta} →</a></p>
+      </section>
+      <section className="ed-secondary-faq">
+        <h2>{brand.audienceTitle}</h2>
+        <p className="ed-prose">{brand.audience}</p>
       </section>
       {portraits.length > 0 && (
-        <section className="mt-20">
-          <h2 className="text-3xl font-bold mb-6">{brand.workTitle}</h2>
+        <section className="ed-secondary-faq">
+          <h2>{brand.workTitle}</h2>
           <PhotoGrid photos={portraits} locale={locale} />
-          <Link href="/portfolio" className="inline-block mt-6 underline">{brand.workLink} →</Link>
+          <Link href="/portfolio" className="ed-prose underline">{brand.workLink} →</Link>
         </section>
       )}
-      <section className="mt-20">
-        <h2 className="text-3xl font-bold">{brand.stepsTitle}</h2>
-        <ol className="mt-8 grid sm:grid-cols-3 gap-8">
-          {brand.steps.map((step, i) => <li key={step} className="border-t border-[var(--color-border)] pt-5"><span className="font-mono text-[var(--color-accent)]">0{i + 1}</span><p className="mt-4 leading-relaxed text-[var(--color-text-muted)]">{step}</p></li>)}
+      <section className="ed-secondary-faq">
+        <h2>{brand.stepsTitle}</h2>
+        <ol className="ed-steps">
+          {brand.steps.map((step, i) => <li key={step}><span>0{i + 1}</span><p>{step}</p></li>)}
         </ol>
       </section>
-      <section className="mt-20 max-w-3xl">
-        <h2 className="text-3xl font-bold">{brand.preparationTitle}</h2>
-        <p className="mt-5 text-[var(--color-text-muted)] leading-relaxed">{brand.preparation}</p>
-        <h2 className="mt-12 text-3xl font-bold">{brand.deliveryTitle}</h2>
-        <p className="mt-5 text-[var(--color-text-muted)] leading-relaxed">{brand.delivery}</p>
+      <section className="ed-secondary-faq">
+        <h2>{brand.preparationTitle}</h2>
+        <p className="ed-prose">{brand.preparation}</p>
+        <h2 className="ed-secondary-faq__next">{brand.deliveryTitle}</h2>
+        <p className="ed-prose">{brand.delivery}</p>
       </section>
-      <section className="mt-20 max-w-3xl">
-        <h2 className="text-3xl font-bold">{brand.pricing}</h2>
-        <p className="mt-5 text-[var(--color-text-muted)] leading-relaxed">{brand.questions[2]?.a}</p>
+      <section className="ed-secondary-faq">
+        <h2>{brand.pricing}</h2>
+        <p className="ed-prose">{brand.questions[2]?.a}</p>
       </section>
-      <section className="mt-20 max-w-3xl">
-        <h2 className="text-3xl font-bold">{brand.faqTitle}</h2>
-        {brand.questions.map(({ q, a }) => <div key={q} className="mt-8"><h3 className="text-xl font-semibold">{q}</h3><p className="mt-3 text-[var(--color-text-muted)] leading-relaxed">{a}</p></div>)}
+      <section className="ed-secondary-faq">
+        <h2>{brand.faqTitle}</h2>
+        <div className="divide-y divide-[var(--color-border)]">
+          {brand.questions.map(({ q, a }) => (
+            <details key={q} className="py-4 group">
+              <summary className="cursor-pointer text-lg font-semibold list-none flex justify-between items-center">
+                {q}
+                <span aria-hidden className="ml-4 text-[var(--color-text-muted)] transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-[var(--color-text-muted)] leading-relaxed">{a}</p>
+            </details>
+          ))}
+        </div>
         <ServiceLinks locale={locale} pages={content.pages} />
       </section>
-      <section id="kontakt" className="mt-20 max-w-xl scroll-mt-24">
-        <h2 className="text-3xl font-bold mb-6">{brand.contactTitle}</h2>
+      <section id="kontakt" className="ed-secondary-contact">
+        <h2>{brand.contactTitle}</h2>
         <ContactForm />
-        <Link href="/o-mne" className="inline-block mt-8 underline">{brand.aboutLink}: Tomáš Guth Jarkovský</Link>
+        <Link href="/o-mne" className="ed-prose underline">{brand.aboutLink}: Tomáš Guth Jarkovský</Link>
       </section>
-    </main>
+    </EditorialSubpage>
   );
 }
