@@ -44,7 +44,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
   const work = workItems(content, images);
 
   return (
-    <main className="editorial-home">
+    <main className="editorial-home" data-world="home">
       <EditorialNav tone="dark" active="home" />
       <section className="ed-home-hero">
         <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />

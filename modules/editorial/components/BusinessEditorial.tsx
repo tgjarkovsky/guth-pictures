@@ -21,7 +21,7 @@ export function BusinessEditorial({ locale, copy, business, images, testimonials
   const schema = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: copy.faq.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
   const placeholder = copy.placeholder;
   const work = workItems(testimonials, images);
-  return <main className="editorial-business">
+  return <main className="editorial-business" data-world="business">
     <EditorialNav tone="dark" active="business" />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
     <header className="ed-business-hero"><div><p className="ed-kicker">{copy.eyebrow}</p><h1>{copy.heroTitle}</h1><p>{copy.heroSubtitle}</p><a className="ed-biz-button" href="#kontakt">{copy.heroCta}</a></div><figure><EditorialImageView image={images.editorial.business.hero} locale={locale} priority sizes="(max-width:760px) 100vw, 50vw" placeholderLabel={placeholder} /></figure></header>

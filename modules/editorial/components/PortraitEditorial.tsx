@@ -11,7 +11,7 @@ export function PortraitEditorial({ locale, content, images }: Props) {
   const copy = content.pages.portrait;
   const gallery = images.editorial.portrait.gallery;
   return (
-    <main className="editorial-portrait">
+    <main className="editorial-portrait" data-world="portrait">
       <EditorialNav tone="dark" active="portrait" />
       <header className="ed-portrait-hero">
         <div className="ed-portrait-hero__image"><EditorialImageView image={images.editorial.portrait.hero} locale={locale} priority quality="best" sizes="100vw" placeholderLabel={cs ? "Portrétní fotografie bude doplněna" : "Portrait coming soon"} /></div>

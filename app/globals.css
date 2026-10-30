@@ -1875,14 +1875,8 @@ a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), 
 }
 
 /* Editorial redesign — scoped so admin, tools, blog and galleries keep their theme. */
-/* body:has() carries the homepage palette to the layout's footer. */
-body:has(.editorial-home),
-body:has(.editorial-business),
-.editorial-home,
-.editorial-portrait,
-.editorial-business,
-.editorial-events,
-.editorial-secondary {
+/* Every editorial page root carries data-world; the world classes below override the tokens. */
+[data-world] {
   --editorial-ink: #191315;
   --editorial-paper: #f3efe7;
   --editorial-accent: #8f2b24;
@@ -1894,22 +1888,11 @@ body:has(.editorial-business),
   --color-border: color-mix(in srgb, var(--editorial-ink) 28%, transparent);
 }
 
-body:has(.editorial-home) {
-  --color-accent: var(--editorial-accent);
-  --color-accent-secondary: var(--editorial-accent);
-  --color-grain: var(--editorial-ink);
-}
-
-.editorial-home,
-.editorial-portrait,
-.editorial-business,
-.editorial-events,
-.editorial-secondary {
+[data-world] {
   color: var(--editorial-ink);
   background: var(--editorial-paper);
   font-family: var(--font-editorial-sans), sans-serif;
   min-height: 100vh;
-  margin-top: -4rem;
   position: relative;
   width: 100%;
   /* 1440px content column; the nav spans the padding box edge to edge */
@@ -1919,11 +1902,9 @@ body:has(.editorial-home) {
 }
 
 .editorial-portrait { --editorial-ink: #eeeae2; --editorial-paper: #0a0a09; --editorial-accent: #eeeae2; }
-body:has(.editorial-business), .editorial-business { --editorial-ink: #12201b; --editorial-paper: #f1efe8; --editorial-accent: #2e5a45; }
+.editorial-business { --editorial-ink: #12201b; --editorial-paper: #f1efe8; --editorial-accent: #2e5a45; }
 .editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f5f2ec; --editorial-accent: #0b0b0a; }
 .editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f4f1ea; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
-/* Footer lives in the layout, outside the editorial scope. */
-body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editorial-events, .editorial-secondary)) footer { font-family: var(--font-editorial-sans), sans-serif; }
 
 .editorial-nav {
   position: absolute;
@@ -1955,22 +1936,18 @@ body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editori
 .editorial-image { object-fit: cover; object-position: var(--focus-desktop); }
 .editorial-image-placeholder { width: 100%; height: 100%; min-height: 12rem; display: grid; place-items: end start; padding: 1rem; background: repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, currentColor 7%, transparent) 12px 13px); border: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
 .editorial-image-placeholder span { font-size: .72rem; opacity: .62; }
-.editorial-home :focus-visible,
-.editorial-portrait :focus-visible,
-.editorial-business :focus-visible,
-.editorial-events :focus-visible,
-.editorial-secondary :focus-visible { outline: 2px solid var(--editorial-accent); outline-offset: 4px; }
+[data-world] :focus-visible { outline: 2px solid var(--editorial-accent); outline-offset: 4px; }
 
 @media (max-width: 760px) {
   .editorial-nav { height: 4rem; }
-  :is(.editorial-home, .editorial-portrait, .editorial-business, .editorial-events, .editorial-secondary) { padding-top: 4rem; }
+  [data-world] { padding-top: 4rem; }
   .editorial-nav__desktop, .editorial-nav__locale { display: none; }
   .editorial-nav__trigger { display: block; min-width: 2.75rem; min-height: 2.75rem; }
   .editorial-image { object-position: var(--focus-mobile); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .editorial-home *, .editorial-portrait *, .editorial-business *, .editorial-events *, .editorial-secondary * {
+  [data-world] * {
     scroll-behavior: auto !important;
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
@@ -2038,9 +2015,9 @@ body:has(:is(.editorial-home, .editorial-portrait, .editorial-business, .editori
    one framed object; photos below sit on the same dark mats. The headline's baseline rests on the photo. */
 .editorial-home { --home-dark: #232120; --home-dark-ink: #f1eee9; --home-dark-accent: #c4574a; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --gutter: clamp(1.25rem, 5cqi, 5rem); overflow-x: clip; }
 /* Cream nudged away from yellow; body scope so the footer follows. */
-body:has(.editorial-home), .editorial-home { --editorial-paper: #f4f2ee; }
+.editorial-home { --editorial-paper: #f4f2ee; }
 /* The site-wide fixed accent hairline would float over the cream gap above the card. */
-body:has(:is(.editorial-home, .editorial-business))::before { display: none; }
+body:has([data-world])::before { display: none; }
 /* The nav's containing block is the full-width main, the card sits in the 1440px column: inset by both. */
 .editorial-home > .editorial-nav { inset: var(--card-gap) calc(max(0px, (100% - 1440px) / 2) + var(--card-gap)) auto; color: var(--home-dark-ink); }
 .ed-home-hero { --editorial-ink: var(--home-dark-ink); --editorial-paper: var(--home-dark); position: relative; isolation: isolate; margin: 0 var(--card-gap); padding-bottom: var(--mat); display: grid; grid-template-columns: 1fr minmax(16rem, 30%); grid-template-areas: "title title" "image side"; color: var(--editorial-ink); }
@@ -2255,3 +2232,29 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-steps p { margin: 1rem 0 0; color: var(--color-text-muted); line-height: 1.6; }
 @media (max-width: 760px) { .ed-steps { grid-template-columns: 1fr; } }
 .ed-secondary-service .ed-secondary-faq h2 { font-size: clamp(2rem, 4.5cqi, 3.75rem); }
+
+/* Tools (Focení 101, Light Tester): editorial tokens, nav in flow above a full-viewport app */
+.editorial-tool { container-type: normal; padding: 0; }
+.editorial-tool .editorial-nav { position: relative; }
+.editorial-tool .lt-page { height: calc(100svh - 4.5rem); }
+@media (max-width: 760px) { .editorial-tool .lt-page { height: calc(100svh - 4rem); } }
+/* The top-down floor draws with light-on-dark colours; keep it a dark panel like the 3D scenes. */
+.editorial-tool .lt-stage {
+  --color-bg: #0e0d0c; --color-bg-elevated: #171513; --color-text: #eeeae2;
+  --color-text-muted: #b9b4aa; --color-text-ghost: #8a857b;
+  --color-border: rgba(238, 234, 226, .16); --color-border-sub: rgba(238, 234, 226, .09);
+  background: var(--color-bg); color: var(--color-text);
+}
+.editorial-tool .f101-card { background: var(--editorial-paper); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.ed-center { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; padding-inline: 1rem; text-align: center; }
+.ed-center h1 { margin: 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(2rem, 6cqi, 3.5rem); font-weight: 800; letter-spacing: -.04em; }
+.ed-center p { margin: 0; max-width: 28rem; color: var(--color-text-muted); }
+.ed-center .ed-cta { margin-top: 0; border: 0; font-family: inherit; cursor: pointer; }
+.ed-center__code { font-family: var(--font-editorial-serif), serif; font-size: clamp(5rem, 16cqi, 9rem); font-weight: 800; line-height: .9; color: var(--color-text-ghost); }
+
+/* Site footer: a dark closing band on every public page, independent of the page world. */
+.site-footer {
+  --color-bg: #11100e; --color-text: #f4f1ea; --color-text-muted: #b9b4aa; --color-text-ghost: #8a857b;
+  --color-border: rgba(244, 241, 234, .16);
+  font-family: var(--font-editorial-sans), sans-serif;
+}

@@ -1,3 +1,4 @@
+## [2026-10-30] - Nástroje (Focení 101, Light Tester) a fallbacky (404, chyba, načítání) v editorial shellu; smazán starý Nav, odsazení pt-16/margin-top a body:has hacky; tokeny přes [data-world]; footer samostatný tmavý pruh
 ## [2026-10-30] - Brandové focení přepsáno do editorialu (EditorialSubpage); Admin › Návrhy zamčené; test hlídá, že každá stránka má jednu navigaci
 ## [2026-10-29] - Nav: odstraněny mrtvé větve, NavItem a LocaleLink
 ## [2026-10-29] - Admin editory: stav ukládání (idle/saving/ok/error a návrat do idle) drží sdílený hook useSaveStatus; přidány charakterizační testy ThemeEditor, ContactEmailForm, BlogEditor, ProfilePhotoUploader

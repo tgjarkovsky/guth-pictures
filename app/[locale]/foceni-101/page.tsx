@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { ToolShell } from "@/modules/editorial/components/ToolShell";
 import { Foceni101App } from "@/modules/foceni-101/components/Foceni101App";
 import { siteUrl } from "@/lib/config";
 
@@ -42,7 +43,7 @@ export default async function Foceni101Page({ params }: { params: Promise<{ loca
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <Foceni101App />
+      <ToolShell><Foceni101App /></ToolShell>
     </>
   );
 }
