@@ -4,7 +4,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { siteUrl, ogImage } from "@/lib/config";
@@ -123,8 +122,7 @@ export default async function LocaleLayout({
       </head>
       <body className={`${dmSans.variable} ${dmMono.variable} ${editorialSerif.variable} ${editorialSans.variable} ${editorialCondensed.variable} font-sans antialiased bg-[var(--color-bg)] text-[var(--color-text)]`}>
         <NextIntlClientProvider messages={messages}>
-          <Nav />
-          <div className="relative pt-16 min-h-screen flex flex-col">
+          <div className="relative min-h-screen flex flex-col">
             {children}
             <Footer title={content.home.title} subtitle={content.home.subtitle} email={email} />
           </div>

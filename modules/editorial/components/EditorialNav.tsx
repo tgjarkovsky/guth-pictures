@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "portfolio" | "about" | "blog" | "legal" | null;
+export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "portfolio" | "about" | "blog" | "legal" | "tools" | null;
 
 type Props = {
   tone: "light" | "dark";
@@ -23,7 +23,7 @@ const hrefs = {
   legal: "/vop",
 } as const;
 
-const secondaryPages = new Set<ActivePage>(["services", "portfolio", "about", "blog", "legal"]);
+const secondaryPages = new Set<ActivePage>(["services", "portfolio", "about", "blog", "legal", "tools"]);
 
 export function EditorialNav({ tone, active }: Props) {
   const locale = useLocale();

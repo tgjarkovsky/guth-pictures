@@ -12,7 +12,7 @@ export function Footer({ title, subtitle, email }: Props) {
   const tNav = useTranslations("nav");
 
   return (
-    <footer className="bg-[var(--color-bg)] border-t border-[var(--color-border)] py-12 mt-auto">
+    <footer className="site-footer bg-[var(--color-bg)] text-[var(--color-text)] border-t border-[var(--color-border)] py-12 mt-auto">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
           {/* Brand + tagline */}

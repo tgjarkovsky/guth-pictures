@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ToolShell } from "@/modules/editorial/components/ToolShell";
 import { LightTesterApp } from "@/modules/light-tester/components/LightTesterApp";
 
 export const metadata: Metadata = {
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
 
 export default function LightTesterPage() {
   return (
+    <ToolShell>
     <div className="lt-page">
       <div className="lt-mobile-unavailable">
         <p>Light Tester není dostupný na mobilních zařízeních a malých obrazovkách.</p>
@@ -18,5 +20,6 @@ export default function LightTesterPage() {
         <LightTesterApp />
       </div>
     </div>
+    </ToolShell>
   );
 }
