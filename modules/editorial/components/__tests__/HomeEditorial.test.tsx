@@ -45,6 +45,12 @@ describe("HomeEditorial call to action", () => {
     "text/html",
   );
 
+  it("fills the hero with a photo trail instead of one big photo", () => {
+    const document = parse("cs");
+    expect(document.querySelectorAll(".ed-home-hero .ed-trail img").length).toBeGreaterThanOrEqual(3);
+    expect(document.querySelector(".ed-home-hero__image")).toBeNull();
+  });
+
   it("puts a primary booking link in the hero", () => {
     const cta = parse("cs").querySelector('.ed-home-hero a.ed-cta[href="/#kontakt"]');
     expect(cta?.textContent).toBe("Domluvit focení");
