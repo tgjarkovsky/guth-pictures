@@ -96,7 +96,7 @@ export default async function BlogPostPage({
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     inLanguage: locale,
-    author: { "@type": "Person", name: "Tomáš Guth Jarkovský", url: `${siteUrl}/${locale}/o-mne` },
+    author: { "@type": "Person", name: "Tomáš Guth Jarkovský" },
     publisher: { "@id": `${siteUrl}/#business` },
     mainEntityOfPage: `${siteUrl}/${locale}/blog/${slug}`,
   };
@@ -130,7 +130,7 @@ export default async function BlogPostPage({
 
         <h1>{loc.title}</h1>
         <p className="ed-article__author">
-          {locale === "cs" ? "Autor" : "Author"}: <Link href="/o-mne">Tomáš Guth Jarkovský</Link>
+          {locale === "cs" ? "Autor" : "Author"}: Tomáš Guth Jarkovský
         </p>
 
         {loc.excerpt && <p className="ed-article__excerpt">{loc.excerpt}</p>}

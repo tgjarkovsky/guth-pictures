@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "portfolio" | "about" | "blog" | "legal" | "tools" | null;
+export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "blog" | "legal" | "tools" | null;
 
 type Props = {
   tone: "light" | "dark";
@@ -17,13 +17,11 @@ const hrefs = {
   business: "/firemni-portrety",
   events: "/sluzby/eventy-a-svatby",
   services: "/sluzby",
-  portfolio: "/portfolio",
-  about: "/o-mne",
   blog: "/blog",
   legal: "/vop",
 } as const;
 
-const secondaryPages = new Set<ActivePage>(["services", "portfolio", "about", "blog", "legal", "tools"]);
+const secondaryPages = new Set<ActivePage>(["services", "blog", "legal", "tools"]);
 
 export function EditorialNav({ tone, active }: Props) {
   const locale = useLocale();
@@ -39,8 +37,6 @@ export function EditorialNav({ tone, active }: Props) {
   ];
   const secondaryLinks = [
     { key: "services" as const, href: hrefs.services, label: cs ? "Služby" : "Services" },
-    { key: "portfolio" as const, href: hrefs.portfolio, label: "Portfolio" },
-    { key: "about" as const, href: hrefs.about, label: cs ? "O mně" : "About" },
     { key: "blog" as const, href: hrefs.blog, label: "Blog" },
   ];
   const homeLink = { key: "home" as const, href: hrefs.home, label: cs ? "Domů" : "Home" };

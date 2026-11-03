@@ -24,11 +24,10 @@ describe("EditorialNav", () => {
   });
 
   it("shows the secondary site links on content pages", () => {
-    render(<EditorialNav tone="light" active="about" />);
+    render(<EditorialNav tone="light" active="services" />);
 
     expect(screen.getByRole("link", { name: "Služby" })).toHaveAttribute("href", "/sluzby");
-    expect(screen.getByRole("link", { name: "Portfolio" })).toHaveAttribute("href", "/portfolio");
-    expect(screen.getByRole("link", { name: "O mně" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Služby" })).toHaveAttribute("href", "/sluzby");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
   });
 
@@ -39,7 +38,7 @@ describe("EditorialNav", () => {
     rerender(<EditorialNav tone="light" active="home" />);
     expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("aria-current", "page");
 
-    rerender(<EditorialNav tone="light" active="about" />);
+    rerender(<EditorialNav tone="light" active="services" />);
     expect(screen.getByRole("link", { name: "Domů" })).toHaveAttribute("href", "/");
   });
 

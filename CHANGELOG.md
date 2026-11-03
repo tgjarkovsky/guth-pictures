@@ -1,3 +1,4 @@
+## [2026-11-03] - Smazané stránky O mně a Portfolio (odkazy z navigace, patičky, sitemapy a služeb pryč, 301 na homepage); kontrast tlačítka Domluvit focení v navigaci na stránce portrétů
 ## [2026-11-03] - Homepage hero: tlačítko Domluvit focení pod nadpisem, popis a služby v pruhu na spodku, pás se při najetí už nezastavuje
 ## [2026-11-03] - Homepage hero: místo stopy fotek za kurzorem pomalu plynoucí pás portrétů (čisté CSS, černobílý, barva po najetí), nadpis vlevo přes pás
 ## [2026-11-03] - Hero stopa fotek: bez mix-blend-mode (zahazoval ~12 % snímků), fotka se znovu použije až po úplném zmizení (dřív poskakovala), levnější měření pohybu myši

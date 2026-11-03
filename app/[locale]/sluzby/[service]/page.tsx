@@ -88,7 +88,6 @@ export default async function ServicePage({ params }: Props) {
         <section className="ed-secondary-faq">
           <h2>{brand.workTitle}</h2>
           <PhotoGrid photos={portraits} locale={locale} />
-          <Link href="/portfolio" className="ed-prose underline">{brand.workLink} →</Link>
         </section>
       )}
       <section className="ed-secondary-faq">
@@ -125,7 +124,6 @@ export default async function ServicePage({ params }: Props) {
       <section id="kontakt" className="ed-secondary-contact">
         <h2>{brand.contactTitle}</h2>
         <ContactForm />
-        <Link href="/o-mne" className="ed-prose underline">{brand.aboutLink}: Tomáš Guth Jarkovský</Link>
       </section>
     </EditorialSubpage>
   );

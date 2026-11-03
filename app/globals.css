@@ -2049,6 +2049,7 @@ body:has([data-world])::before { display: none; }
 .ed-home-cta p { margin: 0; font-family: var(--font-editorial-serif), serif; font-weight: 800; font-size: clamp(2rem, 4cqi, 4rem); line-height: 1; letter-spacing: -.04em; }
 .ed-home-cta .ed-book { margin: 0; }
 .editorial-nav .editorial-nav__cta { padding: .6rem 1rem; background: var(--cta-bg, var(--editorial-accent)); color: #fff; border-radius: 2px; letter-spacing: .1em; }
+.editorial-portrait .editorial-nav .editorial-nav__cta { color: var(--editorial-paper); }
 .ed-service-index { display: grid; border-top: 1px solid currentColor; }
 .ed-service-index a { display: grid; grid-template-columns: 2.25rem 1fr; padding: .75rem 0; color: inherit; border-bottom: 1px solid color-mix(in srgb, currentColor 55%, transparent); text-decoration: none; font-family: var(--font-editorial-sans), sans-serif; font-size: 1.05rem; }
 .ed-service-index span { font-family: var(--font-editorial-sans), sans-serif; font-size: .67rem; }

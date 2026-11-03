@@ -25,9 +25,7 @@ export function Footer({ title, subtitle, email }: Props) {
 
           {/* Quick nav */}
           <nav className="flex flex-wrap gap-x-6 text-sm text-[var(--color-text-muted)] [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
-            <Link href="/portfolio" className="hover:text-[var(--color-text)] transition-colors">{tNav("portfolio")}</Link>
             <Link href="/sluzby" className="hover:text-[var(--color-text)] transition-colors">{tNav("sluzby")}</Link>
-            <Link href="/o-mne" className="hover:text-[var(--color-text)] transition-colors">{tNav("o-mne")}</Link>
             <Link href="/blog" className="hover:text-[var(--color-text)] transition-colors">{tNav("blog")}</Link>
             <Link href="/foceni-101" className="hover:text-[var(--color-text)] transition-colors">{tNav("foceni-101")}</Link>
             <a href="/#kontakt" className="hover:text-[var(--color-text)] transition-colors">{tNav("kontakt")}</a>

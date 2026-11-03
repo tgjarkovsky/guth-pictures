@@ -19,10 +19,9 @@ vi.mock("@/modules/homepage/components/ServiceLinks", () => ({ ServiceLinks: () 
 
 import { generateMetadata as firemniPortrety } from "@/app/[locale]/firemni-portrety/page";
 import { generateMetadata as sluzby } from "@/app/[locale]/sluzby/page";
-import { generateMetadata as oMne } from "@/app/[locale]/o-mne/page";
 import { generateMetadata as eventy } from "@/app/[locale]/sluzby/eventy-a-svatby/page";
 
-const pages = { "firemni-portrety": firemniPortrety, sluzby, "o-mne": oMne, "eventy-a-svatby": eventy };
+const pages = { "firemni-portrety": firemniPortrety, sluzby, "eventy-a-svatby": eventy };
 
 describe.each(Object.entries(pages))("generateMetadata %s", (_name, generateMetadata) => {
   it.each(["cs", "en"])("vrací og obrázek, titulek a twitter kartu pro %s", async (locale) => {
