@@ -15,7 +15,7 @@ vi.mock("@/modules/admin/lib/content", async () => {
     ...actual,
     getImages: async () => {
       const images = actual.normalizeImages({ profile: "profile-id" });
-      images.editorial.home.hero.publicId = "used-hero";
+      images.editorial.home.belt[0].publicId = "used-hero";
       return images;
     },
   };
@@ -32,10 +32,10 @@ describe("DELETE /api/admin/delete", () => {
     revalidatePath.mockReset();
   });
 
-  it("vrátí 409 a nemaže fotku použitou v editorial.home.hero", async () => {
+  it("vrátí 409 a nemaže fotku použitou v editorial.home.belt", async () => {
     const res = await DELETE(req(JSON.stringify({ publicId: "used-hero" })));
     expect(res.status).toBe(409);
-    expect((await res.json()).error).toContain("editorial.home.hero");
+    expect((await res.json()).error).toContain("editorial.home.belt");
     expect(destroy).not.toHaveBeenCalled();
   });
 

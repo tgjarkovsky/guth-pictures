@@ -13,7 +13,7 @@ const emptyImage = (): EditorialImage => ({
 });
 
 const editorial = (): EditorialImages => ({
-  home: { hero: emptyImage(), stories: [emptyImage(), emptyImage(), emptyImage()], photographer: emptyImage(), tools: { foceni101: emptyImage(), lightPlanner: emptyImage() } },
+  home: { belt: [emptyImage(), emptyImage()], stories: [emptyImage(), emptyImage(), emptyImage()], photographer: emptyImage(), tools: { foceni101: emptyImage(), lightPlanner: emptyImage() } },
   portrait: { hero: emptyImage(), gallery: [emptyImage(), emptyImage(), emptyImage()] },
   business: { hero: emptyImage(), headshots: [emptyImage(), emptyImage(), emptyImage()], atWork: [emptyImage(), emptyImage(), emptyImage()] },
   events: { hero: emptyImage(), reportage: [emptyImage(), emptyImage(), emptyImage(), emptyImage()] },
@@ -98,10 +98,10 @@ describe("EditorialImageEditor", () => {
   it("ukazuje jen vybraný slot", async () => {
     const user = userEvent.setup();
     render(<EditorialImageEditor editorial={editorial()} photos={[]} />);
-    expect(screen.getByRole("button", { name: "Změnit fotku: Homepage — hero" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Změnit fotku: Homepage — pás 1" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Změnit fotku: Eventy — hero" })).not.toBeInTheDocument();
     await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — hero");
-    expect(screen.queryByRole("button", { name: "Změnit fotku: Homepage — hero" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Změnit fotku: Homepage — pás 1" })).not.toBeInTheDocument();
   });
 
   it("nabízí jen sloty, které web vykresluje, a reference u jejich stránky", () => {

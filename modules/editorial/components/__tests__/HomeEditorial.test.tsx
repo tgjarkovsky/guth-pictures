@@ -40,6 +40,16 @@ describe("HomeEditorial", () => {
   });
 });
 
+describe("HomeEditorial belt", () => {
+  it("uses only the admin-picked belt, not the stories", () => {
+    const images = normalizeImages({ profile: "" });
+    images.editorial.home.belt = [];
+    const html = renderToStaticMarkup(<HomeEditorial locale="cs" content={content} images={images} />);
+    const document = new DOMParser().parseFromString(html, "text/html");
+    expect(document.querySelectorAll(".ed-home-hero .ed-belt img")).toHaveLength(0);
+  });
+});
+
 describe("HomeEditorial call to action", () => {
   const parse = (locale: string) => new DOMParser().parseFromString(
     renderToStaticMarkup(<HomeEditorial locale={locale} content={content} images={normalizeImages({ profile: "" })} />),

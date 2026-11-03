@@ -41,7 +41,7 @@ const list = (
 // shows only while no client reference has a photo; they stay in KV but are not edited here.
 function imageSlots(data: EditorialImages): Slot[] {
   return [
-    single("Homepage — hero", (v) => v.home.hero, (v, image) => { v.home.hero = image; }),
+    ...list("Homepage — pás", data, (v) => v.home.belt, true),
     single("Homepage — fotograf", (v) => v.home.photographer, (v, image) => { v.home.photographer = image; }),
     single("Portréty — hero", (v) => v.portrait.hero, (v, image) => { v.portrait.hero = image; }),
     // The portrait gallery grid takes any count; other lists have a fixed layout.
@@ -54,7 +54,7 @@ function imageSlots(data: EditorialImages): Slot[] {
 
 // Where each slot lives on the site (first matching label prefix wins).
 const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
-  ["Homepage — hero", "home", ".ed-home-hero"],
+  ["Homepage — pás", "home", ".ed-home-hero"],
   ["Homepage — vybrané příběhy", "home", ".ed-home-work"],
   ["Homepage — fotograf", "home", ".ed-home-about"],
   ["Portréty — hero", "portrety", ".ed-portrait-hero"],
@@ -69,8 +69,8 @@ const groupLabel = (label: string) => label.replace(/ \d+$/, "");
 const targetOf = (label: string) => TARGETS.find(([prefix]) => label.startsWith(prefix))!;
 
 // Client photos with reviews, listed in the tree right after the page's hero.
-const REF_ITEMS: { id: string; service: TestimonialService; after: string }[] = [
-  { id: "Homepage — vybrané příběhy", service: "creative", after: "Homepage — hero" },
+const refItemsFor = (data: EditorialImages): { id: string; service: TestimonialService; after: string }[] => [
+  { id: "Homepage — vybrané příběhy", service: "creative", after: `Homepage — pás ${data.home.belt.length}` },
   { id: "Business — headshoty", service: "business", after: "Business — hero" },
 ];
 const LOCALES = ["cs", "en"] as const;
@@ -92,7 +92,7 @@ export function EditorialImageEditor({ editorial, photos, references }: {
   const [saved, setSaved] = useState(editorial);
   const [refs, setRefs] = useState<Reference[]>(() => references ? mergeReferences(references.cs, references.en) : []);
   const [savedRefs, setSavedRefs] = useState(refs);
-  const refItems = references ? REF_ITEMS : [];
+  const refItems = references ? refItemsFor(data) : [];
   const [pickerOpen, setPickerOpen] = useState(false);
   const { status, run } = useSaveStatus();
   const slots = imageSlots(data);

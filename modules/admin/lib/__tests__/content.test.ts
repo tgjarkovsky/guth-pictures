@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizeContent, normalizeImages, type ContentData } from "@/modules/admin/lib/content";
+import { defaultEditorialImages, normalizeContent, normalizeImages, type ContentData } from "@/modules/admin/lib/content";
 
 function baseContent(): ContentData {
   return {
@@ -74,9 +74,26 @@ describe("editorial data normalization", () => {
 
     expect(result.profile).toBe("site/me");
     expect(result.heroTriptych).toEqual([["a"], ["b"], ["c"]]);
-    expect(result.editorial.home.hero.publicId).toBe("portfolio/scppmskdespdikncpzhz");
+    expect(result.editorial.home.belt[0].publicId).toBe("portfolio/scppmskdespdikncpzhz");
     expect(result.editorial.business.hero.publicId).toBe("");
     expect(result.editorial.events.reportage).toHaveLength(4);
+  });
+
+  it("migrates a stored home.hero into the belt, followed by stories, without repeats", () => {
+    const photo = (publicId: string) => ({ publicId, alt: { cs: "", en: "" }, focal: { desktop: "50% 50%", mobile: "50% 50%" } });
+    const { belt: _belt, ...home } = defaultEditorialImages().home;
+    const legacy = { ...defaultEditorialImages(), home: { ...home, hero: photo("a"), stories: [photo("b"), photo("a"), photo("")] } };
+
+    const result = normalizeImages({ profile: "", editorial: legacy as never });
+
+    expect(result.editorial.home.belt.map((p) => p.publicId)).toEqual(["a", "b"]);
+    expect("hero" in result.editorial.home).toBe(false);
+  });
+
+  it("keeps a stored belt as is", () => {
+    const stored = defaultEditorialImages();
+    stored.home.belt = [];
+    expect(normalizeImages({ profile: "", editorial: stored }).editorial.home.belt).toEqual([]);
   });
 
   it("returns fresh editorial defaults for every image normalization", () => {

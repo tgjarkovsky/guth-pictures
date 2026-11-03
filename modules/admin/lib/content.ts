@@ -39,7 +39,7 @@ export type EditorialImageSlot = EditorialImage | EditorialImage[];
 
 export type EditorialImages = {
   home: {
-    hero: EditorialImage;
+    belt: EditorialImage[];
     stories: EditorialImage[];
     photographer: EditorialImage;
     tools: { foceni101: EditorialImage; lightPlanner: EditorialImage };
@@ -94,11 +94,11 @@ const emptyImages = (count: number): EditorialImage[] =>
 export function defaultEditorialImages(): EditorialImages {
   return {
     home: {
-      hero: image(
-        "portfolio/scppmskdespdikncpzhz",
-        "Kreativní portrét s výrazným světlem",
-        "Creative portrait with expressive light",
-      ),
+      belt: [
+        image("portfolio/scppmskdespdikncpzhz", "Kreativní portrét s výrazným světlem", "Creative portrait with expressive light"),
+        image("portfolio/z1tvyvvw0kg6tga3iwef", "Portrét v červených šatech", "Portrait in a red dress"),
+        image("portfolio/p55ackdjary2vyt0dalj", "Portrét ve slunečním světle", "Portrait in sunlight"),
+      ],
       stories: [
         image("portfolio/z1tvyvvw0kg6tga3iwef", "Portrét v červených šatech", "Portrait in a red dress"),
         image("portfolio/p55ackdjary2vyt0dalj", "Portrét ve slunečním světle", "Portrait in sunlight"),
@@ -155,11 +155,20 @@ function normalizeNode(template: unknown, stored: unknown): unknown {
   );
 }
 
+// KV saved before the belt existed has home.hero and the belt was hero + stories.
+function migrateLegacyBelt(editorial: SiteImages["editorial"]): SiteImages["editorial"] {
+  const home = editorial?.home as (Partial<EditorialImages["home"]> & { hero?: EditorialImage }) | undefined;
+  if (!editorial || !home || home.belt || !home.hero) return editorial;
+  const { hero, ...rest } = home;
+  const belt = [hero, ...(home.stories ?? [])].filter((photo) => photo.publicId);
+  return { ...editorial, home: { ...rest, belt: [...new Map(belt.map((photo) => [photo.publicId, photo])).values()] } as EditorialImages["home"] };
+}
+
 export function normalizeImages(data: Partial<SiteImages> = {}): NormalizedSiteImages {
   return {
     profile: data.profile ?? "",
     ...(data.heroTriptych && { heroTriptych: data.heroTriptych }),
-    editorial: normalizeNode(defaultEditorialImages(), data.editorial) as EditorialImages,
+    editorial: normalizeNode(defaultEditorialImages(), migrateLegacyBelt(data.editorial)) as EditorialImages,
   };
 }
 
