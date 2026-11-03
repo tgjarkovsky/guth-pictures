@@ -1,5 +1,5 @@
 ## [2026-11-03] - Homepage: hero B (fotka pod nadpisem přes celou šířku), CTA „Domluvit focení" v hero, nav a za galerií tvorby
-
+## [2026-10-30] - Zásady zpracování osobních údajů: doplněn zdroj návštěvy (sessionStorage, příloha ke zprávě) a událost lead ve Vercel Analytics, cs i en; doplněno IČO
 ## [2026-10-30] - Pose pack: osm samostatných business póz (business-06 až business-13)
 ## [2026-10-30] - Oprava buildu: do commitu chyběl soubor ToolShell.tsx
 ## [2026-10-30] - Nástroje (Focení 101, Light Tester) a fallbacky (404, chyba, načítání) v editorial shellu; smazán starý Nav, odsazení pt-16/margin-top a body:has hacky; tokeny přes [data-world]; footer samostatný tmavý pruh

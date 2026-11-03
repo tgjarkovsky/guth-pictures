@@ -35,7 +35,7 @@ function CsVersion() {
 
       <Section title="1. Správce osobních údajů">
         <p>
-          Správcem osobních údajů je Tomáš Guth Jarkovský, IČO: [doplnit], se sídlem Praha, Česká republika,
+          Správcem osobních údajů je Tomáš Guth Jarkovský, IČO: 01948253, se sídlem Praha, Česká republika,
           e-mail: {contactEmail} (dále jen „Fotograf").
         </p>
       </Section>
@@ -45,13 +45,15 @@ function CsVersion() {
           <li><strong>Kontaktní a smluvní údaje:</strong> jméno a příjmení, e-mailová adresa, telefonní číslo, fakturační adresa.</li>
           <li><strong>Komunikace:</strong> obsah zpráv zaslaných prostřednictvím kontaktního formuláře nebo e-mailu.</li>
           <li><strong>Fotografie:</strong> vizuální záznamy vzniklé při fotografování, které mohou zachycovat podobu fyzické osoby.</li>
+          <li><strong>Zdroj návštěvy:</strong> při prvním otevření webu si prohlížeč uloží do úložiště sezení (sessionStorage), odkud jste přišli: UTM parametry z odkazu, u kliknutí z reklamy Google nebo Facebooku označení zdroje, jinak adresu odkazujícího webu, a stránku, na které jste web otevřeli. Údaj zmizí po zavření karty a nepoužívají se k němu cookies. Pokud odešlete kontaktní formulář, připojí se k vaší zprávě.</li>
+          <li><strong>Měření poptávek:</strong> po odeslání formuláře se do statistik Vercel Analytics zapíše událost „lead“ s typem služby, balíčkem, stránkou, na které jste formulář odeslali, a zdrojem návštěvy. Jméno, e-mail ani text zprávy se do statistik neposílají.</li>
         </ul>
       </Section>
 
       <Section title="3. Účel a právní základ zpracování">
         <ul>
           <li><strong>Plnění smlouvy (čl. 6 odst. 1 písm. b) GDPR):</strong> zpracování objednávky, komunikace, vystavení faktury, dodání fotografií.</li>
-          <li><strong>Oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR):</strong> prezentace portfolia na webových stránkách a sociálních sítích (u standardních zakázek, pokud klient nevznese námitku).</li>
+          <li><strong>Oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR):</strong> prezentace portfolia na webových stránkách a sociálních sítích (u standardních zakázek, pokud klient nevznese námitku); zjištění, který příspěvek, reklama nebo web přivedl poptávku.</li>
           <li><strong>Plnění právní povinnosti (čl. 6 odst. 1 písm. c) GDPR):</strong> uchovávání daňových dokladů po dobu stanovenou zákonem.</li>
         </ul>
       </Section>
@@ -61,6 +63,7 @@ function CsVersion() {
           <li>Smluvní dokumenty a faktury: 10 let od vystavení (daňová povinnost).</li>
           <li>Kontaktní a komunikační údaje: po dobu trvání smluvního vztahu a 3 roky po jeho ukončení.</li>
           <li>Fotografie v portfoliu: do vznesení námitky nebo odvolání souhlasu.</li>
+          <li>Zdroj návštěvy v prohlížeči: do zavření karty. Pokud jste formulář odeslali, zůstává ve zprávě po stejnou dobu jako ostatní komunikace.</li>
         </ul>
       </Section>
 
@@ -116,7 +119,7 @@ function EnVersion() {
 
       <Section title="1. Data Controller">
         <p>
-          The data controller is Tomáš Guth Jarkovský, ID: [fill in], Prague, Czech Republic,
+          The data controller is Tomáš Guth Jarkovský, ID: 01948253, Prague, Czech Republic,
           e-mail: {contactEmail} (the "Photographer").
         </p>
       </Section>
@@ -126,13 +129,15 @@ function EnVersion() {
           <li><strong>Contact & contract data:</strong> name, e-mail address, phone number, billing address.</li>
           <li><strong>Communication:</strong> messages sent via the contact form or e-mail.</li>
           <li><strong>Photographs:</strong> visual recordings made during the shoot, which may depict the client&apos;s likeness.</li>
+          <li><strong>Visit source:</strong> when you first open the site, your browser stores in session storage where you came from: the UTM parameters of the link, a source label for clicks from Google or Facebook ads, otherwise the address of the referring site, and the page you landed on. It disappears when you close the tab and no cookies are used for it. If you send the contact form, it is attached to your message.</li>
+          <li><strong>Inquiry measurement:</strong> after the form is sent, a &quot;lead&quot; event is recorded in Vercel Analytics with the type of service, the package, the page the form was sent from and the visit source. Your name, e-mail and the text of your message are not sent to analytics.</li>
         </ul>
       </Section>
 
       <Section title="3. Purpose and legal basis">
         <ul>
           <li><strong>Performance of a contract (Art. 6(1)(b) GDPR):</strong> processing your order, invoicing, delivering photos.</li>
-          <li><strong>Legitimate interest (Art. 6(1)(f) GDPR):</strong> portfolio presentation on the website and social media (standard paid shoots, unless you object).</li>
+          <li><strong>Legitimate interest (Art. 6(1)(f) GDPR):</strong> portfolio presentation on the website and social media (standard paid shoots, unless you object); finding out which post, ad or site brought an inquiry.</li>
           <li><strong>Legal obligation (Art. 6(1)(c) GDPR):</strong> retention of tax documents as required by law.</li>
         </ul>
       </Section>
@@ -142,6 +147,7 @@ function EnVersion() {
           <li>Contracts and invoices: 10 years (tax law).</li>
           <li>Contact and communication data: for the duration of the contract and 3 years thereafter.</li>
           <li>Portfolio photographs: until you object or withdraw consent.</li>
+          <li>Visit source in your browser: until you close the tab. If you sent the form, it stays in the message for as long as the rest of the communication.</li>
         </ul>
       </Section>
 
