@@ -7,7 +7,7 @@ import { normalizeContent, normalizeImages } from "@/modules/admin/lib/content";
 vi.mock("@/components/ContactForm", () => ({ ContactForm: () => <form aria-label="Kontakt" /> }));
 vi.mock("../EditorialNav", () => ({ EditorialNav: () => <nav aria-label="Hlavní navigace" /> }));
 vi.mock("@/i18n/navigation", () => ({
-  Link: ({ children, href }: React.PropsWithChildren<{ href: string }>) => <a href={href}>{children}</a>,
+  Link: ({ children, href, className }: React.PropsWithChildren<{ href: string; className?: string }>) => <a href={href} className={className}>{children}</a>,
 }));
 
 const content = normalizeContent({
@@ -36,6 +36,27 @@ describe("HomeEditorial", () => {
     expect(document.querySelectorAll("#o-mne ol li")).toHaveLength(4);
     expect(document.querySelector("#foto-nastroje")).toBeNull();
     expect(document.querySelector("#kontakt form")).not.toBeNull();
+  });
+});
+
+describe("HomeEditorial call to action", () => {
+  const parse = (locale: string) => new DOMParser().parseFromString(
+    renderToStaticMarkup(<HomeEditorial locale={locale} content={content} images={normalizeImages({ profile: "" })} />),
+    "text/html",
+  );
+
+  it("puts a primary booking link in the hero", () => {
+    const cta = parse("cs").querySelector('.ed-home-hero a.ed-cta[href="/#kontakt"]');
+    expect(cta?.textContent).toBe("Domluvit focení");
+  });
+
+  it("repeats the booking link right after the work grid", () => {
+    const cta = parse("cs").querySelector('#tvorba ~ .ed-home-cta a.ed-cta[href="/#kontakt"]');
+    expect(cta?.textContent).toBe("Domluvit focení →");
+  });
+
+  it("translates the call to action", () => {
+    expect(parse("en").querySelector(".ed-home-hero a.ed-cta")?.textContent).toBe("Book a shoot");
   });
 });
 

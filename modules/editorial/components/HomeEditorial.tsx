@@ -40,6 +40,7 @@ function Headline({ text, shift, shiftMobile }: { text: string; shift: string; s
 
 export function HomeEditorial({ locale, content, images }: Props) {
   const cs = locale !== "en";
+  const ctaLabel = cs ? "Domluvit focení" : "Book a shoot";
   const copy = content.pages.home;
   const work = workItems(content, images);
 
@@ -50,6 +51,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
         <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />
         <div className="ed-home-hero__meta">
           {copy.intro && <p>{copy.intro}</p>}
+          <Link href="/#kontakt" className="ed-cta">{ctaLabel}</Link>
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
             <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
             <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>          </nav>
@@ -62,6 +64,11 @@ export function HomeEditorial({ locale, content, images }: Props) {
       <section id="tvorba" className="ed-home-work">
         {copy.work && <h2>{copy.work}</h2>}
         <WorkGrid items={work} locale={locale} sizes={work.map((_, i) => storySizes(i))} placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} />
+      </section>
+
+      <section className="ed-home-cta">
+        <p>{cs ? "Líbí se ti, co vidíš?" : "Like what you see?"}</p>
+        <Link href="/#kontakt" className="ed-cta">{ctaLabel} →</Link>
       </section>
 
       <section id="o-mne" className="ed-home-about">

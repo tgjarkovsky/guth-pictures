@@ -32,6 +32,7 @@ export function EditorialNav({ tone, active }: Props) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const cs = locale !== "en";
+  const ctaLabel = cs ? "Domluvit focení" : "Book a shoot";
   const serviceLinks = [
     { key: "portrait" as const, href: hrefs.portrait, label: cs ? "Portréty" : "Portraits" },
     { key: "business" as const, href: hrefs.business, label: "Business" },
@@ -67,7 +68,7 @@ export function EditorialNav({ tone, active }: Props) {
         {links.map((link) => (
           <Link key={link.key} href={link.href} aria-current={active === link.key ? "page" : undefined}>{link.label}</Link>
         ))}
-        <Link href="/#kontakt">{cs ? "Kontakt" : "Contact"}</Link>
+        <Link href="/#kontakt" className="editorial-nav__cta">{ctaLabel}</Link>
       </nav>
       <div className="editorial-nav__tools">
         <Link href={pathname} locale={cs ? "en" : "cs"} className="editorial-nav__locale">
@@ -92,7 +93,7 @@ export function EditorialNav({ tone, active }: Props) {
             {links.map((link) => (
               <Link key={link.key} href={link.href} onClick={close} aria-current={active === link.key ? "page" : undefined}>{link.label}</Link>
             ))}
-            <Link href="/#kontakt" onClick={close}>{cs ? "Kontakt" : "Contact"}</Link>
+            <Link href="/#kontakt" onClick={close}>{ctaLabel}</Link>
           </nav>
           <Link href={pathname} locale={cs ? "en" : "cs"} onClick={close} className="editorial-nav__mobile-locale">
             {cs ? "English" : "Čeština"}
