@@ -1,9 +1,10 @@
 import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
-import type { NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
+import type { EditorialImage, NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
+import { HeroTrail } from "./HeroTrail";
 import { WorkGrid } from "./WorkGrid";
 import { reviewedWork, type WorkItem } from "./work-items";
 
@@ -23,6 +24,14 @@ const storySizes = (index: number) => {
   const [vw, px] = STORY_WIDTHS[index % 6];
   return `(max-width: 760px) 160vw, (min-width: 1440px) ${px}px, ${vw}vw`;
 };
+
+// The hero photo and the admin-picked stories, once each, feed the cursor trail.
+const TRAIL_SIZE = 7;
+function trailImages(images: NormalizedSiteImages): EditorialImage[] {
+  const { hero, stories } = images.editorial.home;
+  const withPhoto = [hero, ...stories].filter((image) => image.publicId);
+  return [...new Map(withPhoto.map((image) => [image.publicId, image])).values()].slice(0, TRAIL_SIZE);
+}
 
 const em = (value: string) => `${Number.isFinite(Number(value)) ? Number(value) : 0}em`;
 
@@ -48,6 +57,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
     <main className="editorial-home" data-world="home">
       <EditorialNav tone="dark" active="home" />
       <section className="ed-home-hero">
+        <HeroTrail images={trailImages(images)} />
         <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />
         <div className="ed-home-hero__meta">
           {copy.intro && <p>{copy.intro}</p>}
@@ -55,9 +65,6 @@ export function HomeEditorial({ locale, content, images }: Props) {
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
             <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
             <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>          </nav>
-        </div>
-        <div className="ed-home-hero__image">
-          <EditorialImageView image={images.editorial.home.hero} locale={locale} priority sizes="(max-width: 760px) 100vw, 70vw" placeholderLabel={cs ? "Úvodní fotografie bude doplněna" : "Hero photograph coming soon"} />
         </div>
       </section>
 
