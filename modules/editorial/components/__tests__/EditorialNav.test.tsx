@@ -15,7 +15,12 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Portréty" })).toHaveAttribute("href", "/sluzby/portretni-foceni");
     expect(screen.getByRole("link", { name: "Business" })).toHaveAttribute("aria-current", "page");
     expect(screen.queryByRole("link", { name: "Eventy a svatby" })).toBeNull();
-    expect(screen.getByRole("link", { name: "Kontakt" })).toHaveAttribute("href", "/#kontakt");
+    expect(screen.getByRole("link", { name: "Domluvit focení" })).toHaveAttribute("href", "/#kontakt");
+  });
+
+  it("offers the booking call to action as a button-styled link", () => {
+    render(<EditorialNav tone="light" active="home" />);
+    expect(screen.getByRole("link", { name: "Domluvit focení" })).toHaveClass("editorial-nav__cta");
   });
 
   it("shows the secondary site links on content pages", () => {
