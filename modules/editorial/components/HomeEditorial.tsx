@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import type { EditorialImage, NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
-import { HeroTrail } from "./HeroTrail";
+import { PhotoBelt } from "./PhotoBelt";
 import { WorkGrid } from "./WorkGrid";
 import { reviewedWork, type WorkItem } from "./work-items";
 
@@ -25,12 +25,12 @@ const storySizes = (index: number) => {
   return `(max-width: 760px) 160vw, (min-width: 1440px) ${px}px, ${vw}vw`;
 };
 
-// The hero photo and the admin-picked stories, once each, feed the cursor trail.
-const TRAIL_SIZE = 7;
-function trailImages(images: NormalizedSiteImages): EditorialImage[] {
+// The hero photo and the admin-picked stories, once each, make up the hero belt.
+const BELT_SIZE = 8;
+function beltImages(images: NormalizedSiteImages): EditorialImage[] {
   const { hero, stories } = images.editorial.home;
   const withPhoto = [hero, ...stories].filter((image) => image.publicId);
-  return [...new Map(withPhoto.map((image) => [image.publicId, image])).values()].slice(0, TRAIL_SIZE);
+  return [...new Map(withPhoto.map((image) => [image.publicId, image])).values()].slice(0, BELT_SIZE);
 }
 
 const em = (value: string) => `${Number.isFinite(Number(value)) ? Number(value) : 0}em`;
@@ -57,7 +57,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
     <main className="editorial-home" data-world="home">
       <EditorialNav tone="dark" active="home" />
       <section className="ed-home-hero">
-        <HeroTrail images={trailImages(images)} />
+        <PhotoBelt images={beltImages(images)} />
         <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />
         <div className="ed-home-hero__meta">
           {copy.intro && <p>{copy.intro}</p>}
