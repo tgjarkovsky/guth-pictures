@@ -14,7 +14,7 @@ const image = (publicId = "portfolio/example"): EditorialImage => ({
 function validEditorialImages(): EditorialImages {
   return {
     home: {
-      hero: image(),
+      belt: [image("portfolio/belt")],
       stories: [image("portfolio/story")],
       photographer: image("site/photographer"),
       tools: { foceni101: image("site/foceni"), lightPlanner: image("site/light") },
@@ -43,7 +43,7 @@ describe("editorial image validation", () => {
 
   it("rejects oversized alt text", () => {
     const data = validEditorialImages();
-    data.home.hero.alt.cs = "x".repeat(201);
+    data.home.belt[0].alt.cs = "x".repeat(201);
     expect(isValidEditorialImages(data)).toBe(false);
   });
 

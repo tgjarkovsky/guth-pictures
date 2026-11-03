@@ -25,12 +25,10 @@ const storySizes = (index: number) => {
   return `(max-width: 760px) 160vw, (min-width: 1440px) ${px}px, ${vw}vw`;
 };
 
-// The hero photo and the admin-picked stories, once each, make up the hero belt.
-const BELT_SIZE = 8;
+// The belt is exactly what the admin picked, empty slots and repeats dropped.
 function beltImages(images: NormalizedSiteImages): EditorialImage[] {
-  const { hero, stories } = images.editorial.home;
-  const withPhoto = [hero, ...stories].filter((image) => image.publicId);
-  return [...new Map(withPhoto.map((image) => [image.publicId, image])).values()].slice(0, BELT_SIZE);
+  const withPhoto = images.editorial.home.belt.filter((image) => image.publicId);
+  return [...new Map(withPhoto.map((image) => [image.publicId, image])).values()];
 }
 
 const em = (value: string) => `${Number.isFinite(Number(value)) ? Number(value) : 0}em`;
