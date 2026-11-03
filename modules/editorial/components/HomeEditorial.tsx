@@ -59,13 +59,14 @@ export function HomeEditorial({ locale, content, images }: Props) {
       <section className="ed-home-hero">
         <PhotoBelt images={beltImages(images)} />
         <Headline text={copy.title} shift={copy.titleShift} shiftMobile={copy.titleShiftMobile} />
-        <div className="ed-home-hero__meta">
-          {copy.intro && <p>{copy.intro}</p>}
-          <Link href="/#kontakt" className="ed-cta">{ctaLabel}</Link>
+        <div className="ed-home-hero__cta">
+          <Link href="/#kontakt" className="ed-book">{ctaLabel}</Link>
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
             <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
-            <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>          </nav>
+            <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>
+          </nav>
         </div>
+        {copy.intro && <div className="ed-home-hero__bar"><p>{copy.intro}</p></div>}
       </section>
 
       <section id="tvorba" className="ed-home-work">
@@ -75,7 +76,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
 
       <section className="ed-home-cta">
         <p>{cs ? "Líbí se ti, co vidíš?" : "Like what you see?"}</p>
-        <Link href="/#kontakt" className="ed-cta">{ctaLabel} →</Link>
+        <Link href="/#kontakt" className="ed-book">{ctaLabel} →</Link>
       </section>
 
       <section id="o-mne" className="ed-home-about">

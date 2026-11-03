@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { EditorialImage } from "@/modules/admin/lib/content";
@@ -48,6 +49,14 @@ describe("PhotoBelt", () => {
     const [first, second] = [...container.querySelectorAll(".ed-belt__group")];
     expect(first.querySelector("img")).toHaveAttribute("loading", "eager");
     expect(second.querySelector("img")).toHaveAttribute("loading", "lazy");
+  });
+
+  it("never stops moving on hover (the belt keeps flowing, only the colour comes back)", () => {
+    expect(readFileSync("app/globals.css", "utf8")).not.toMatch(/animation-play-state/);
+  });
+
+  it("keeps the photos at their own height, otherwise flex stretch cancels the staggered offset", () => {
+    expect(readFileSync("app/globals.css", "utf8")).toMatch(/\.ed-belt__group \{[^}]*align-items: flex-start/);
   });
 
   it("renders nothing without photos", () => {
