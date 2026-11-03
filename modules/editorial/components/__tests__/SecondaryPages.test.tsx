@@ -2,8 +2,6 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import ServicesPage from "@/app/[locale]/sluzby/page";
-import AboutPage from "@/app/[locale]/o-mne/page";
-import PortfolioPage from "@/app/[locale]/portfolio/page";
 import BlogPage from "@/app/[locale]/blog/page";
 import BlogPostPage from "@/app/[locale]/blog/[slug]/page";
 import TermsPage from "@/app/[locale]/vop/page";
@@ -56,23 +54,6 @@ describe("secondary editorial pages", () => {
     expect(doc.querySelector("main.editorial-secondary.ed-secondary-services")).not.toBeNull();
     expect(doc.querySelector(".ed-secondary-hero h1")?.textContent).toBe("Služby");
     expect(doc.querySelectorAll("details")).toHaveLength(9);
-  });
-
-  it("renders the admin-managed profile without an empty image frame", async () => {
-    const html = renderToStaticMarkup(await AboutPage({ params: Promise.resolve({ locale: "cs" }) }));
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    expect(doc.querySelector("main.editorial-secondary.ed-secondary-about")).not.toBeNull();
-    expect(doc.querySelector("h1")?.textContent).toBe("Tomáš");
-    expect(doc.querySelector("img")).toBeNull();
-  });
-
-  it("renders an intentional portfolio error state in the editorial shell", async () => {
-    const html = renderToStaticMarkup(await PortfolioPage({ params: Promise.resolve({ locale: "cs" }) }));
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    expect(doc.querySelector("main.editorial-secondary.ed-secondary-portfolio")).not.toBeNull();
-    expect(doc.querySelector("[role=status]")?.textContent).toContain("Galerii se nepodařilo načíst");
   });
 
   it("renders an intentional empty blog state in the editorial shell", async () => {

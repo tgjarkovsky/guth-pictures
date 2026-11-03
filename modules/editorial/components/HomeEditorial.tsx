@@ -92,7 +92,6 @@ export function HomeEditorial({ locale, content, images }: Props) {
               <li key={step.title}><span>0{i + 1}</span><h3>{step.title}</h3><p>{step.desc}</p></li>
             ))}
           </ol>
-          <Link href="/o-mne" className="ed-home-about__link">{copy.aboutLink}</Link>
         </div>
       </section>
 

@@ -30,6 +30,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/:locale(cs|en)/portfolio", destination: "/:locale", permanent: true },
+      { source: "/:locale(cs|en)/o-mne", destination: "/:locale", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

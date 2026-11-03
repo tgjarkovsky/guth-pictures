@@ -31,7 +31,6 @@ it("renders an events and weddings reportage with managed placeholders", () => {
   expect(html).toContain("Eventy a svatby");
   expect(html).toContain("15 000 Kč");
   expect(html).toContain("Poptat termín");
-  expect(html).toContain("Larp");
   expect(html).toContain("<form");
 });
 

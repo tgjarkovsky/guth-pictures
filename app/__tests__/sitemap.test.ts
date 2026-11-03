@@ -19,11 +19,9 @@ vi.mock("@/modules/blog/lib/blog", () => ({ getBlogPosts: async () => posts }));
 const locales = ["cs", "en"] as const;
 const staticPaths = [
   "",
-  "/portfolio",
   "/sluzby",
   "/sluzby/eventy-a-svatby",
   "/firemni-portrety",
-  "/o-mne",
   "/blog",
   "/foceni-101",
   ...serviceSlugs.map((slug) => `/sluzby/${slug}`),
