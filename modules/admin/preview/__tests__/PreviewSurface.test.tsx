@@ -9,6 +9,7 @@ vi.mock("@/modules/editorial/components/HomeEditorial", () => ({
   HomeEditorial: ({ content }: { content: ContentData }) => <h1>{content.pages!.home.title}</h1>,
 }));
 vi.mock("@/modules/editorial/components/PortraitEditorial", () => ({ PortraitEditorial: () => null }));
+vi.mock("@/modules/editorial/components/BrandEditorial", () => ({ BrandEditorial: () => null }));
 vi.mock("@/modules/editorial/components/BusinessEditorial", () => ({ BusinessEditorial: () => null }));
 vi.mock("@/modules/editorial/components/EventsEditorial", () => ({ EventsEditorial: () => null }));
 

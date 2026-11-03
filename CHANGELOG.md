@@ -1,3 +1,4 @@
+## [2026-11-03] - Brandové focení: hero fotka a vybraná práce nastavitelné v adminu (nové sloty Brandové focení, náhled v adminu); sekce Moje práce už neukazuje automaticky portréty z Cloudinary, bez výběru se skryje
 ## [2026-11-03] - Admin: slot Homepage hero nahrazen seznamem Homepage pás (libovolný počet fotek, řazení); pás už nebere fotky ze stories; staré hero se při načtení převede do pásu
 ## [2026-11-03] - Smazané stránky O mně a Portfolio (odkazy z navigace, patičky, sitemapy a služeb pryč, 301 na homepage); kontrast tlačítka Domluvit focení v navigaci na stránce portrétů
 ## [2026-11-03] - Homepage hero: tlačítko Domluvit focení pod nadpisem, popis a služby v pruhu na spodku, pás se při najetí už nezastavuje

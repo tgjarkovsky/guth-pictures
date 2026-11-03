@@ -5,6 +5,7 @@ export const PREVIEW_PAGES = {
   portrety: "Portréty",
   business: "Business",
   eventy: "Eventy",
+  brand: "Brandové focení",
 } as const;
 
 export type PreviewPage = keyof typeof PREVIEW_PAGES;
