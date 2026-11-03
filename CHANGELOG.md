@@ -1,3 +1,4 @@
+## [2026-11-03] - Hero stopa fotek: bez mix-blend-mode (zahazoval ~12 % snímků), fotka se znovu použije až po úplném zmizení (dřív poskakovala), levnější měření pohybu myši
 ## [2026-11-03] - Homepage hero: obří nadpis s fotkami za kurzorem (na dotyku automaticky a po klepnutí), místo jedné velké fotky; sekce tvorby beze změny
 ## [2026-11-03] - Homepage: hero B (fotka pod nadpisem přes celou šířku), CTA „Domluvit focení" v hero, nav a za galerií tvorby
 ## [2026-10-30] - Zásady zpracování osobních údajů: doplněn zdroj návštěvy (sessionStorage, příloha ke zprávě) a událost lead ve Vercel Analytics, cs i en; doplněno IČO

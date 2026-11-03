@@ -71,6 +71,29 @@ describe("HeroTrail", () => {
     expect(shown()).toBe(2);
   });
 
+  it("never moves a photo that is still visible, it skips the spawn instead", () => {
+    const { hero, shown, container } = setup(images.slice(0, 2));
+    act(() => { vi.advanceTimersByTime(5000); });
+    const [first] = [...container.querySelectorAll("img")];
+    fireEvent.mouseMove(hero, { clientX: 300, clientY: 300 });
+    fireEvent.mouseMove(hero, { clientX: 600, clientY: 300 });
+    fireEvent.mouseMove(hero, { clientX: 900, clientY: 300 });
+    expect(shown()).toBe(2);
+    expect(first.style.left).toBe("300px");
+  });
+
+  it("reuses a photo only after it has finished fading out", () => {
+    const { hero, shown } = setup(images.slice(0, 1));
+    act(() => { vi.advanceTimersByTime(5000); });
+    fireEvent.mouseMove(hero, { clientX: 300, clientY: 300 });
+    act(() => { vi.advanceTimersByTime(1000); });
+    fireEvent.mouseMove(hero, { clientX: 700, clientY: 300 });
+    expect(shown()).toBe(0);
+    act(() => { vi.advanceTimersByTime(1000); });
+    fireEvent.mouseMove(hero, { clientX: 1100, clientY: 300 });
+    expect(shown()).toBe(1);
+  });
+
   it("lets each photo fade out again", () => {
     const { hero, shown } = setup();
     act(() => { vi.advanceTimersByTime(5000); });
@@ -93,7 +116,7 @@ describe("HeroTrail", () => {
   it("on touch screens keeps cycling photos by itself", () => {
     media({ fine: false });
     const { shown } = setup();
-    act(() => { vi.advanceTimersByTime(4000); });
+    act(() => { vi.advanceTimersByTime(3500); });
     expect(shown()).toBeGreaterThan(0);
   });
 
