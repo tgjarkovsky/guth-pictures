@@ -8,7 +8,8 @@ type Point = { x: number; y: number };
 
 const THUMB = "c_fill,ar_4:5,g_auto,w_420,q_auto,f_auto";
 const MIN_DISTANCE = 150;
-const VISIBLE_MS = 1100;
+const VISIBLE_MS = 900;
+const FADE_MS = 700; // keep in sync with the opacity transition in globals.css
 const CYCLE_MS = 1500;
 // Where the first photos land (share of the hero), so it isn't just text before the visitor moves.
 const INTRO: [number, number][] = [[0.2, 0.42], [0.52, 0.64], [0.8, 0.4]];
@@ -27,18 +28,35 @@ export function HeroTrail({ images }: { images: EditorialImage[] }) {
     const hero = layer?.parentElement;
     if (!layer || !hero) return;
     const photos = [...layer.querySelectorAll("img")];
-    const hideTimers = new Map<HTMLImageElement, ReturnType<typeof setTimeout>>();
-    const timers: ReturnType<typeof setTimeout>[] = [];
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const busy = new Set<HTMLImageElement>();
     let next = 0;
     let last: Point = { x: -999, y: -999 };
 
+    const later = (fn: () => void, ms: number) => {
+      const timer = setTimeout(() => { timers.delete(timer); fn(); }, ms);
+      timers.add(timer);
+    };
+    // A photo is reused only once it has faded out completely, otherwise it would jump while still visible.
+    const pick = () => {
+      for (let i = 0; i < photos.length; i++) {
+        const photo = photos[(next + i) % photos.length];
+        if (!busy.has(photo)) {
+          next = (next + i + 1) % photos.length;
+          return photo;
+        }
+      }
+    };
     const show = (x: number, y: number) => {
-      const photo = photos[next++ % photos.length];
-      clearTimeout(hideTimers.get(photo));
+      const photo = pick();
+      if (!photo) return false;
+      busy.add(photo);
       photo.style.left = `${x}px`;
       photo.style.top = `${y}px`;
       photo.classList.add("on");
-      hideTimers.set(photo, setTimeout(() => photo.classList.remove("on"), VISIBLE_MS));
+      later(() => photo.classList.remove("on"), VISIBLE_MS);
+      later(() => busy.delete(photo), VISIBLE_MS + FADE_MS);
+      return true;
     };
     const local = (e: MouseEvent): Point => {
       const rect = hero.getBoundingClientRect();
@@ -46,11 +64,12 @@ export function HeroTrail({ images }: { images: EditorialImage[] }) {
     };
     const spot = (fx: number, fy: number) => show(hero.clientWidth * fx, hero.clientHeight * fy);
 
+    // The distance check uses client coordinates, so the layout is only measured when a photo is shown.
     const onMove = (e: MouseEvent) => {
-      const point = local(e);
+      const point = { x: e.clientX, y: e.clientY };
       if (!farEnough(last, point, MIN_DISTANCE)) return;
-      last = point;
-      show(point.x, point.y);
+      const at = local(e);
+      if (show(at.x, at.y)) last = point;
     };
     const onTap = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") show(local(e).x, local(e).y);
@@ -65,7 +84,7 @@ export function HeroTrail({ images }: { images: EditorialImage[] }) {
       return;
     }
 
-    INTRO.forEach(([fx, fy], i) => timers.push(setTimeout(() => spot(fx, fy), 500 + i * 450)));
+    INTRO.forEach(([fx, fy], i) => later(() => spot(fx, fy), 500 + i * 450));
     const fine = query("(pointer: fine)");
     if (fine) hero.addEventListener("mousemove", onMove);
     const cycle = fine ? undefined : setInterval(() => spot(0.2 + Math.random() * 0.6, 0.35 + Math.random() * 0.4), CYCLE_MS);
@@ -76,7 +95,6 @@ export function HeroTrail({ images }: { images: EditorialImage[] }) {
       hero.removeEventListener("pointerdown", onTap);
       clearInterval(cycle);
       timers.forEach(clearTimeout);
-      hideTimers.forEach(clearTimeout);
     };
   }, [images]);
 
