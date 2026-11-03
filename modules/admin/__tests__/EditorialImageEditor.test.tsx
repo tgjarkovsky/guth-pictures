@@ -17,6 +17,7 @@ const editorial = (): EditorialImages => ({
   portrait: { hero: emptyImage(), gallery: [emptyImage(), emptyImage(), emptyImage()] },
   business: { hero: emptyImage(), headshots: [emptyImage(), emptyImage(), emptyImage()], atWork: [emptyImage(), emptyImage(), emptyImage()] },
   events: { hero: emptyImage(), reportage: [emptyImage(), emptyImage(), emptyImage(), emptyImage()] },
+  brand: { hero: emptyImage(), work: [emptyImage()] },
 });
 
 describe("EditorialImageEditor", () => {
@@ -86,6 +87,16 @@ describe("EditorialImageEditor", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     const body = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(body.editorial.portrait.gallery.map((image: EditorialImage) => image.publicId)).toEqual(["portfolio/first", "", "", ""]);
+  });
+
+  it("brandové focení má hero a seznam práce s přidáním fotek", async () => {
+    const user = userEvent.setup();
+    render(<EditorialImageEditor editorial={editorial()} photos={[]} />);
+    const options = [...(screen.getByLabelText("Vybrat sekci") as HTMLSelectElement).options].map((o) => o.value);
+    expect(options).toEqual(expect.arrayContaining(["Brandové focení — hero", "Brandové focení — práce 1"]));
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Brandové focení — práce 1");
+    await user.click(screen.getByRole("button", { name: "Přidat fotku: Brandové focení — práce" }));
+    expect(screen.getByRole("heading", { name: /Práce 2/ })).toBeTruthy();
   });
 
   it("u reportáže eventů přidání nenabízí (pevný layout)", async () => {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { ContentData, NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { contactEmail } from "@/lib/config";
 import { normalizePageCopy } from "@/modules/admin/lib/page-copy";
+import { BrandEditorial } from "@/modules/editorial/components/BrandEditorial";
 import { BusinessEditorial } from "@/modules/editorial/components/BusinessEditorial";
 import { EventsEditorial } from "@/modules/editorial/components/EventsEditorial";
 import { HomeEditorial } from "@/modules/editorial/components/HomeEditorial";
@@ -71,6 +72,7 @@ export function PreviewSurface({ page, locale, content: initialContent, images: 
   }, [initialContent, initialImages, locale]);
 
   if (page === "home") return <HomeEditorial locale={locale} content={content} images={images} />;
+  if (page === "brand") return <BrandEditorial locale={locale} content={content} images={images} />;
   if (page === "portrety") return <PortraitEditorial locale={locale} content={content} images={images} />;
   if (page === "business") {
     return <BusinessEditorial locale={locale} copy={content.pages.business} business={content.sluzby.business} images={images} testimonials={content.testimonials} email={contactEmail} />;

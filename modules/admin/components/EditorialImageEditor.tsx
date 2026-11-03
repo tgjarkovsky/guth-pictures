@@ -49,6 +49,8 @@ function imageSlots(data: EditorialImages): Slot[] {
     single("Business — hero", (v) => v.business.hero, (v, image) => { v.business.hero = image; }),
     single("Eventy — hero", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
     ...list("Eventy — reportáž", data, (v) => v.events.reportage),
+    single("Brandové focení — hero", (v) => v.brand.hero, (v, image) => { v.brand.hero = image; }),
+    ...list("Brandové focení — práce", data, (v) => v.brand.work, true),
   ];
 }
 
@@ -61,6 +63,8 @@ const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
   ["Portréty —", "portrety", ".ed-portrait-gallery"],
   ["Business — hero", "business", ".ed-business-hero"],
   ["Business —", "business", ".ed-business-headshots"],
+  ["Brandové focení — hero", "brand", ".ed-brand-hero-image"],
+  ["Brandové focení —", "brand", ".ed-brand-work"],
   ["Eventy — hero", "eventy", ".ed-events-hero"],
   ["Eventy — reportáž 4", "eventy", ".ed-events-wide"],
   ["Eventy —", "eventy", ".ed-events-strip"],
