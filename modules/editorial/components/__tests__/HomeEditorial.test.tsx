@@ -45,9 +45,10 @@ describe("HomeEditorial call to action", () => {
     "text/html",
   );
 
-  it("fills the hero with a photo trail instead of one big photo", () => {
+  it("fills the hero with a belt of portraits instead of one big photo", () => {
     const document = parse("cs");
-    expect(document.querySelectorAll(".ed-home-hero .ed-trail img").length).toBeGreaterThanOrEqual(3);
+    expect(document.querySelectorAll(".ed-home-hero .ed-belt img").length).toBeGreaterThanOrEqual(6);
+    expect(document.querySelector(".ed-trail")).toBeNull();
     expect(document.querySelector(".ed-home-hero__image")).toBeNull();
   });
 

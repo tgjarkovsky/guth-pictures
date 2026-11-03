@@ -1,3 +1,4 @@
+## [2026-11-03] - Homepage hero: místo stopy fotek za kurzorem pomalu plynoucí pás portrétů (čisté CSS, černobílý, barva po najetí), nadpis vlevo přes pás
 ## [2026-11-03] - Hero stopa fotek: bez mix-blend-mode (zahazoval ~12 % snímků), fotka se znovu použije až po úplném zmizení (dřív poskakovala), levnější měření pohybu myši
 ## [2026-11-03] - Homepage hero: obří nadpis s fotkami za kurzorem (na dotyku automaticky a po klepnutí), místo jedné velké fotky; sekce tvorby beze změny
 ## [2026-11-03] - Homepage: hero B (fotka pod nadpisem přes celou šířku), CTA „Domluvit focení" v hero, nav a za galerií tvorby
