@@ -18,7 +18,7 @@ const mergeContent = (base: NormalizedContentData, draft: ContentData, locale: s
   home: draft.home ?? base.home,
   lightTesterPromo: draft.lightTesterPromo ?? base.lightTesterPromo,
   editorial: draft.editorial ?? base.editorial,
-  sluzby: { ...base.sluzby, ...draft.sluzby, business: draft.sluzby?.business ?? base.sluzby.business },
+  sluzby: { ...base.sluzby, ...draft.sluzby, business: draft.sluzby?.business ?? base.sluzby.business, conferences: draft.sluzby?.conferences ?? base.sluzby.conferences },
   pages: normalizePageCopy(draft.pages, locale),
 });
 

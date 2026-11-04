@@ -48,8 +48,9 @@ function imageSlots(data: EditorialImages): Slot[] {
     ...list("Portréty — galerie", data, (v) => v.portrait.gallery, true),
     single("Business — hero", (v) => v.business.hero, (v, image) => { v.business.hero = image; }),
     single("Eventy — hero konference", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
+    ...list("Eventy — konference", data, (v) => v.events.reportage, true),
     single("Eventy — hero svatby", (v) => v.events.weddingHero, (v, image) => { v.events.weddingHero = image; }),
-    ...list("Eventy — reportáž", data, (v) => v.events.reportage),
+    ...list("Eventy — svatby", data, (v) => v.events.weddingGallery, true),
     single("Brandové focení — hero", (v) => v.brand.hero, (v, image) => { v.brand.hero = image; }),
     ...list("Brandové focení — práce", data, (v) => v.brand.work, true),
   ];
@@ -67,8 +68,8 @@ const TARGETS: [prefix: string, page: PreviewPage, selector: string][] = [
   ["Brandové focení — hero", "brand", ".ed-brand-hero-image"],
   ["Brandové focení —", "brand", ".ed-brand-work"],
   ["Eventy — hero", "eventy", ".ed-events-hero"],
-  ["Eventy — reportáž 4", "eventy", ".ed-events-wide"],
-  ["Eventy —", "eventy", ".ed-events-strip"],
+  ["Eventy — konference", "eventy", "#konference"],
+  ["Eventy — svatby", "eventy", "#svatby"],
 ];
 const groupLabel = (label: string) => label.replace(/ \d+$/, "");
 const targetOf = (label: string) => TARGETS.find(([prefix]) => label.startsWith(prefix))!;

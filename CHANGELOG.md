@@ -1,3 +1,4 @@
+## [2026-11-04] - Eventy a svatby: pod hero dvě kapitoly Konference / Svatby (sticky lišta, text, co fotím, ceník, galerie); nový konferenční ceník (sluzby.conferences: 4 500 / 6 000 / 12 000 Kč), texty hero i kapitol editovatelné v adminu, galerie konferencí a svateb s libovolným počtem fotek; pryč nepoužívaná pole Atmosféra a odkaz na larpy
 ## [2026-11-04] - Eventy a svatby: nový hero jako diptych konference / svatby, slovo v nadpisu se přepíná podle půlky pod myší (nebo samo každé 4 s), nový slot v adminu Eventy — hero svatby
 ## [2026-11-04] - Eventy a svatby znovu viditelné: odkaz v navigaci a v hero na homepage (03), pryč štítek Připravujeme na stránce eventů i v kartě na /sluzby
 ## [2026-11-03] - Stránka Brandové focení skrytá: 301 na homepage, pryč z odkazů na službách, sitemapy, llms.txt a revalidace (kód stránky a sloty v adminu zůstávají)
