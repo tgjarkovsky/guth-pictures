@@ -2169,7 +2169,18 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-events-half .editorial-image-placeholder { color: var(--editorial-paper); }
 .ed-events-half figcaption { position: absolute; z-index: 1; bottom: 1.75rem; left: 2rem; color: #fff; font-family: var(--font-mono); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
 .ed-events-half--wedding figcaption { left: auto; right: 2rem; }
-.ed-events-half figcaption span { opacity: .6; }
+.ed-events-half figcaption button { display: inline-flex; align-items: center; gap: .5rem; padding: .55rem .9rem; color: inherit; background: none; border: 0; border-radius: 999px; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; transition: background-color .4s ease, color .4s ease; }
+.ed-events-half figcaption button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.ed-events-hint-index { opacity: .6; }
+.ed-events-hint-arrow { display: none; }
+/* Hint: until the visitor reaches the dimmed half once, its label becomes a pulsing pill with an arrow. */
+.ed-events-hero:not([data-explored])[data-active="conference"] .ed-events-half--wedding figcaption button,
+.ed-events-hero:not([data-explored])[data-active="wedding"] .ed-events-half--conference figcaption button { color: var(--editorial-ink); background: var(--editorial-paper); animation: ed-events-pulse 2.4s ease-out infinite; }
+.ed-events-hero:not([data-explored])[data-active="conference"] .ed-events-half--wedding .ed-events-hint-arrow:last-child { display: inline; animation: ed-events-nudge-right 1.2s ease-in-out infinite; }
+.ed-events-hero:not([data-explored])[data-active="wedding"] .ed-events-half--conference .ed-events-hint-arrow:first-child { display: inline; animation: ed-events-nudge-left 1.2s ease-in-out infinite; }
+@keyframes ed-events-pulse { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--editorial-paper) 60%, transparent); } to { box-shadow: 0 0 0 .9rem transparent; } }
+@keyframes ed-events-nudge-right { 50% { translate: .3rem 0; } }
+@keyframes ed-events-nudge-left { 50% { translate: -.3rem 0; } }
 .ed-events-hero-card { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(40rem, calc(100% - 2.5rem)); padding: clamp(1.75rem, 3cqi, 2.75rem); color: var(--editorial-ink); background: var(--editorial-paper); }
 .ed-events-kicker { display: block; margin-bottom: 1rem; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
 .ed-events-word { display: grid; }
@@ -2183,6 +2194,7 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
   .ed-events-hero[data-active] .ed-events-half { flex-grow: 1; }
   .ed-events-hero[data-active] .ed-events-half .editorial-image { transform: none; filter: none; }
   .ed-events-word > [data-side] { display: none; }
+  .ed-events-half figcaption button, .ed-events-hint-arrow { animation: none !important; }
   .ed-events-word > .ed-events-word-static { display: block; }
 }
 .ed-events-hero h1 { margin: 0 0 1rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(2.5rem, 4cqi, 4rem); font-weight: 800; line-height: .95; letter-spacing: -.04em; }
