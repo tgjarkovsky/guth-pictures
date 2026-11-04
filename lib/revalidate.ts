@@ -11,7 +11,7 @@ export function revalidateLocalized(paths: string[]) {
 
 export const CONTENT_PAGES = [
   "", "/sluzby", "/firemni-portrety", "/sluzby/portretni-foceni",
-  "/sluzby/brandove-foceni", "/sluzby/eventy-a-svatby",
+  "/sluzby/eventy-a-svatby",
 ];
 
 export const IMAGE_PAGES = [

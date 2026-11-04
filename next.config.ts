@@ -34,6 +34,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:locale(cs|en)/portfolio", destination: "/:locale", permanent: true },
       { source: "/:locale(cs|en)/o-mne", destination: "/:locale", permanent: true },
+      { source: "/:locale(cs|en)/sluzby/brandove-foceni", destination: "/:locale", permanent: true },
     ];
   },
   async headers() {

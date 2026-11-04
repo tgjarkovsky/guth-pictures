@@ -30,7 +30,7 @@ describe("HomeEditorial", () => {
     expect(document.querySelectorAll("h1")).toHaveLength(1);
     expect(document.querySelector('a[href="/sluzby/portretni-foceni"]')).not.toBeNull();
     expect(document.querySelector('a[href="/firemni-portrety"]')).not.toBeNull();
-    expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')).toBeNull();
+    expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')).not.toBeNull();
     expect(document.querySelector("#tvorba ~ #o-mne")).not.toBeNull();
     expect(document.querySelector("#tvorba blockquote")?.textContent).toBe("Focení působí spíš jako hra.");
     expect(document.querySelector("#tvorba figcaption span")?.textContent).toBe("Apolena");
@@ -68,7 +68,7 @@ describe("HomeEditorial call to action", () => {
     const row = hero.querySelector("h1")!.nextElementSibling!;
     expect(row.classList.contains("ed-home-hero__cta")).toBe(true);
     expect([...row.querySelectorAll("a")].map((a) => a.getAttribute("href"))).toEqual([
-      "/#kontakt", "/sluzby/portretni-foceni", "/firemni-portrety",
+      "/#kontakt", "/sluzby/portretni-foceni", "/firemni-portrety", "/sluzby/eventy-a-svatby",
     ]);
     expect(row.querySelector("a")!.classList.contains("ed-book")).toBe(true);
   });

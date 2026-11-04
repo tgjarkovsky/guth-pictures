@@ -62,6 +62,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
             <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
             <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>
+            <Link href="/sluzby/eventy-a-svatby"><span>03</span>{copy.events}</Link>
           </nav>
         </div>
         {copy.intro && <div className="ed-home-hero__bar"><p>{copy.intro}</p></div>}
