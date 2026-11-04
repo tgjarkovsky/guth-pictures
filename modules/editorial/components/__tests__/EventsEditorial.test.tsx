@@ -40,3 +40,11 @@ it("no longer marks the page as coming soon", () => {
   expect(cs).not.toContain("Připravujeme");
   expect(en).not.toContain("Coming soon");
 });
+
+it("shows conferences and weddings side by side in the hero", () => {
+  const html = renderToStaticMarkup(<EventsEditorial locale="cs" content={base()} images={normalizeImages()} />);
+  const hero = html.slice(html.indexOf("ed-events-hero"), html.indexOf("ed-events-strip"));
+  expect(hero).toContain("Fotím konference a svatby");
+  expect(hero).toContain("Konferenční fotografie bude doplněna");
+  expect(hero).toContain("Svatební fotografie bude doplněna");
+});

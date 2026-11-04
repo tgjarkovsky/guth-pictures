@@ -47,7 +47,8 @@ function imageSlots(data: EditorialImages): Slot[] {
     // The portrait gallery grid takes any count; other lists have a fixed layout.
     ...list("Portréty — galerie", data, (v) => v.portrait.gallery, true),
     single("Business — hero", (v) => v.business.hero, (v, image) => { v.business.hero = image; }),
-    single("Eventy — hero", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
+    single("Eventy — hero konference", (v) => v.events.hero, (v, image) => { v.events.hero = image; }),
+    single("Eventy — hero svatby", (v) => v.events.weddingHero, (v, image) => { v.events.weddingHero = image; }),
     ...list("Eventy — reportáž", data, (v) => v.events.reportage),
     single("Brandové focení — hero", (v) => v.brand.hero, (v, image) => { v.brand.hero = image; }),
     ...list("Brandové focení — práce", data, (v) => v.brand.work, true),

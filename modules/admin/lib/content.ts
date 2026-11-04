@@ -46,7 +46,7 @@ export type EditorialImages = {
   };
   portrait: { hero: EditorialImage; gallery: EditorialImage[] };
   business: { hero: EditorialImage; headshots: EditorialImage[]; atWork: EditorialImage[] };
-  events: { hero: EditorialImage; reportage: EditorialImage[] };
+  events: { hero: EditorialImage; weddingHero: EditorialImage; reportage: EditorialImage[] };
   brand: { hero: EditorialImage; work: EditorialImage[] };
 };
 
@@ -125,7 +125,7 @@ export function defaultEditorialImages(): EditorialImages {
       ],
     },
     business: { hero: image(), headshots: emptyImages(3), atWork: emptyImages(3) },
-    events: { hero: image(), reportage: emptyImages(4) },
+    events: { hero: image(), weddingHero: image(), reportage: emptyImages(4) },
     brand: { hero: image(), work: emptyImages(1) },
   };
 }

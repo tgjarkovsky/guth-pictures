@@ -1,3 +1,4 @@
+## [2026-11-04] - Eventy a svatby: nový hero jako diptych konference / svatby, slovo v nadpisu se přepíná podle půlky pod myší (nebo samo každé 4 s), nový slot v adminu Eventy — hero svatby
 ## [2026-11-04] - Eventy a svatby znovu viditelné: odkaz v navigaci a v hero na homepage (03), pryč štítek Připravujeme na stránce eventů i v kartě na /sluzby
 ## [2026-11-03] - Stránka Brandové focení skrytá: 301 na homepage, pryč z odkazů na službách, sitemapy, llms.txt a revalidace (kód stránky a sloty v adminu zůstávají)
 ## [2026-11-03] - Brandové focení: hero fotka a vybraná práce nastavitelné v adminu (nové sloty Brandové focení, náhled v adminu); sekce Moje práce už neukazuje automaticky portréty z Cloudinary, bez výběru se skryje

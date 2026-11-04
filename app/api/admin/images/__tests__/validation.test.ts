@@ -21,7 +21,7 @@ function validEditorialImages(): EditorialImages {
     },
     portrait: { hero: image(), gallery: [image()] },
     business: { hero: image(""), headshots: [image("")], atWork: [image("")] },
-    events: { hero: image(""), reportage: [image("")] },
+    events: { hero: image(""), weddingHero: image(""), reportage: [image("")] },
     brand: { hero: image("portfolio/brand"), work: [image("")] },
   };
 }
