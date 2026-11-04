@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import sitemap from "@/app/sitemap";
 import { siteUrl } from "@/lib/config";
 import type { BlogPost } from "@/modules/blog/lib/blog";
-import { serviceSlugs } from "@/modules/homepage/lib/service-pages";
 
 const { posts } = vi.hoisted(() => {
   const copy = { title: "t", excerpt: "e", content: "c" };
@@ -20,11 +19,11 @@ const locales = ["cs", "en"] as const;
 const staticPaths = [
   "",
   "/sluzby",
+  "/sluzby/portretni-foceni",
   "/sluzby/eventy-a-svatby",
   "/firemni-portrety",
   "/blog",
   "/foceni-101",
-  ...serviceSlugs.map((slug) => `/sluzby/${slug}`),
 ];
 
 const expectedAlternates = (path: string) => ({

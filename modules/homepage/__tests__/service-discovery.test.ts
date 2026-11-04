@@ -16,13 +16,14 @@ describe("service discovery", () => {
   it("lists both languages and keeps standalone services in the sitemap", async () => {
     const entries = await sitemap();
     for (const locale of ["cs", "en"] as const) {
-      for (const slug of serviceSlugs) {
+      for (const slug of serviceSlugs.filter((slug) => slug !== "brandove-foceni")) {
         const entry = entries.find(({ url }) => url === `${siteUrl}/${locale}/sluzby/${slug}`);
         expect(entry?.alternates?.languages?.cs).toBe(`${siteUrl}/cs/sluzby/${slug}`);
         expect(entry?.alternates?.languages?.en).toBe(`${siteUrl}/en/sluzby/${slug}`);
         expect(servicePages[slug][locale].title).toBeTruthy();
         expect(servicePages[slug][locale].description).toBeTruthy();
       }
+      expect(entries.some(({ url }) => url === `${siteUrl}/${locale}/sluzby/brandove-foceni`)).toBe(false);
       expect(entries.some(({ url }) => url === `${siteUrl}/${locale}/firemni-portrety`)).toBe(true);
       const events = entries.find(({ url }) => url === `${siteUrl}/${locale}/sluzby/eventy-a-svatby`);
       expect(events?.alternates?.languages?.cs).toBe(`${siteUrl}/cs/sluzby/eventy-a-svatby`);

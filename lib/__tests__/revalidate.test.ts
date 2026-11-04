@@ -21,7 +21,6 @@ describe("revalidateLocalized", () => {
       "/cs", "/en", "/cs/sluzby", "/en/sluzby",
       "/cs/firemni-portrety", "/en/firemni-portrety",
       "/cs/sluzby/portretni-foceni", "/en/sluzby/portretni-foceni",
-      "/cs/sluzby/brandove-foceni", "/en/sluzby/brandove-foceni",
       "/cs/sluzby/eventy-a-svatby", "/en/sluzby/eventy-a-svatby",
     ].sort());
   });

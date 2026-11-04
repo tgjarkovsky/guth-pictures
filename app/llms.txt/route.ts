@@ -28,7 +28,6 @@ Ceník a balíčky: ${siteUrl}/cs/sluzby
 - [Domů / Home](${siteUrl}/cs)
 - [Služby / Services](${siteUrl}/cs/sluzby)
 - [Portrétní focení / Portrait sessions](${siteUrl}/cs/sluzby/portretni-foceni)
-- [Brandové focení / Personal brand photography](${siteUrl}/cs/sluzby/brandove-foceni)
 - [Firemní portréty / Business portraits](${siteUrl}/cs/firemni-portrety)
 - [Blog](${siteUrl}/cs/blog), RSS: ${siteUrl}/feed.xml
 - [Focení 101](${siteUrl}/cs/foceni-101): interaktivní průvodce, co dělá fotku (clona, čas, ISO, ohnisko)
