@@ -26,6 +26,12 @@ export function EventsHero({ locale, copy, title, tags, conference, wedding }: P
   const placeholder = locale === "en" ? PLACEHOLDER.en : PLACEHOLDER.cs;
   const [active, setActive] = useState<Side>("conference");
   const [hovering, setHovering] = useState(false);
+  // The dimmed half's label pulses as a hint until the visitor reaches that half once.
+  const [explored, setExplored] = useState(false);
+  const choose = (side: Side) => {
+    if (side !== active) setExplored(true);
+    setActive(side);
+  };
 
   // Without a pointer resting on a half, the word alternates on its own (touch screens, idle desktop).
   useEffect(() => {
@@ -35,14 +41,20 @@ export function EventsHero({ locale, copy, title, tags, conference, wedding }: P
   }, [hovering]);
 
   const half = (side: Side, image: EditorialImage, index: string) => (
-    <figure className={`ed-events-half ed-events-half--${side}`} onPointerEnter={() => { setHovering(true); setActive(side); }}>
+    <figure className={`ed-events-half ed-events-half--${side}`} onPointerEnter={() => { setHovering(true); choose(side); }}>
       <EditorialImageView image={image} locale={locale} priority sizes="(max-width: 760px) 100vw, 70vw" placeholderLabel={placeholder[side]} />
-      <figcaption><span>{index}</span> {tags[side]}</figcaption>
+      <figcaption>
+        <button type="button" aria-pressed={active === side} onClick={() => choose(side)}>
+          <span aria-hidden="true" className="ed-events-hint-arrow">←</span>
+          <span className="ed-events-hint-index">{index}</span> {tags[side]}
+          <span aria-hidden="true" className="ed-events-hint-arrow">→</span>
+        </button>
+      </figcaption>
     </figure>
   );
 
   return (
-    <header className="ed-events-hero" data-active={active} onPointerLeave={() => setHovering(false)}>
+    <header className="ed-events-hero" data-active={active} data-explored={explored || undefined} onPointerLeave={() => setHovering(false)}>
       {half("conference", conference, "01")}
       {half("wedding", wedding, "02")}
       <div className="ed-events-hero-card">
