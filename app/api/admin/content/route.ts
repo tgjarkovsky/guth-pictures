@@ -79,7 +79,8 @@ export function isValidContentData(d: unknown): d is ContentData {
   const s = o.sluzby as Record<string, unknown>;
   // business is optional for backward compat with KV data saved before the business page existed
   return isServiceContent(s.portraits) && isServiceContent(s.weddings)
-    && (s.business === undefined || isServiceContent(s.business));
+    && (s.business === undefined || isServiceContent(s.business))
+    && (s.conferences === undefined || isServiceContent(s.conferences));
 }
 
 export async function GET(req: NextRequest) {

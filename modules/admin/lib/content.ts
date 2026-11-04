@@ -46,7 +46,8 @@ export type EditorialImages = {
   };
   portrait: { hero: EditorialImage; gallery: EditorialImage[] };
   business: { hero: EditorialImage; headshots: EditorialImage[]; atWork: EditorialImage[] };
-  events: { hero: EditorialImage; reportage: EditorialImage[] };
+  // reportage = conference gallery (key predates the wedding gallery)
+  events: { hero: EditorialImage; weddingHero: EditorialImage; reportage: EditorialImage[]; weddingGallery: EditorialImage[] };
   brand: { hero: EditorialImage; work: EditorialImage[] };
 };
 
@@ -61,6 +62,7 @@ export type ContentData = {
     portraits: ServiceContent;
     weddings: ServiceContent;
     business: ServiceContent;
+    conferences?: ServiceContent; // missing in KV saved before the events chapters
   };
   lightTesterPromo: { title: string; desc: string };
   testimonials: Testimonial[];
@@ -68,9 +70,10 @@ export type ContentData = {
   pages?: PageCopy;
 };
 
-export type NormalizedContentData = Omit<ContentData, "editorial" | "pages"> & {
+export type NormalizedContentData = Omit<ContentData, "editorial" | "pages" | "sluzby"> & {
   editorial: EditorialCopy;
   pages: PageCopy;
+  sluzby: Required<ContentData["sluzby"]>;
 };
 
 export type SiteImages = {
@@ -125,7 +128,7 @@ export function defaultEditorialImages(): EditorialImages {
       ],
     },
     business: { hero: image(), headshots: emptyImages(3), atWork: emptyImages(3) },
-    events: { hero: image(), reportage: emptyImages(4) },
+    events: { hero: image(), weddingHero: image(), reportage: emptyImages(4), weddingGallery: emptyImages(3) },
     brand: { hero: image(), work: emptyImages(1) },
   };
 }
@@ -209,6 +212,17 @@ const defaults: Record<string, ContentData> = {
         ],
         note: "Možná záloha 30 % při rezervaci termínu.",
       },
+      // Only packages and note render; the chapter heading and text live in pages.events.
+      conferences: {
+        title: "Konference",
+        desc: "",
+        packages: [
+          { name: "Krátká akce", price: "4 500 Kč", duration: "do 3 hod", includes: ["cca 60 upravených fotek", "tisková konference, večer, křest", "online galerie"] },
+          { name: "Půl dne", price: "6 000 Kč", duration: "4–6 hod", includes: ["cca 100 upravených fotek", "online galerie"] },
+          { name: "Celý den", price: "12 000 Kč", duration: "celý den", includes: ["cca 200 upravených fotek", "online galerie"] },
+        ],
+        note: "Vícedenní akce a více fotografů na dotaz.",
+      },
       business: {
         title: "Firemní portréty",
         desc: "Headshoty pro celý tým přímo u vás ve firmě. Jednotný styl, rychlé dodání a licence pro web, sociální sítě i média.",
@@ -263,6 +277,16 @@ const defaults: Record<string, ContentData> = {
         ],
         note: "30% deposit available when booking.",
       },
+      conferences: {
+        title: "Conferences",
+        desc: "",
+        packages: [
+          { name: "Short event", price: "4 500 CZK", duration: "up to 3 hrs", includes: ["~60 edited photos", "press conference, evening, launch", "online gallery"] },
+          { name: "Half day", price: "6 000 CZK", duration: "4–6 hrs", includes: ["~100 edited photos", "online gallery"] },
+          { name: "Full day", price: "12 000 CZK", duration: "full day", includes: ["~200 edited photos", "online gallery"] },
+        ],
+        note: "Multi-day events and extra photographers on request.",
+      },
       business: {
         title: "Business portraits",
         desc: "Headshots for your whole team, shot on site at your office. Consistent style, fast delivery and a licence for web, social media and press.",
@@ -295,7 +319,10 @@ export function normalizeContent(data: ContentData, locale = "cs"): NormalizedCo
     ...(svc.extras && { extras: withIds(svc.extras) }),
   });
   // KV data saved before the business page existed has no business service
-  const business = data.sluzby.business ?? (defaults[locale] ?? defaults.cs).sluzby.business;
+  const fallback = (defaults[locale] ?? defaults.cs).sluzby as Required<ContentData["sluzby"]>;
+  const business = data.sluzby.business ?? fallback.business;
+  // KV data saved before the events page had conference pricing
+  const conferences = data.sluzby.conferences ?? fallback.conferences;
   return {
     ...data,
     editorial: data.editorial ?? (defaults[locale] ?? defaults.cs).editorial ?? { eventsTitle: "Až budete u toho." },
@@ -305,6 +332,7 @@ export function normalizeContent(data: ContentData, locale = "cs"): NormalizedCo
       portraits: normalizeService(data.sluzby.portraits),
       weddings: normalizeService(data.sluzby.weddings),
       business: normalizeService(business),
+      conferences: normalizeService(conferences),
     },
     testimonials: (data.testimonials ?? []).map((t) => ({
       ...t,

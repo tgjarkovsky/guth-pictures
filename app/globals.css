@@ -1825,7 +1825,7 @@ body::after {
 .ed-business-hero::before { content: ""; position: absolute; inset: calc(var(--card-gap) - var(--nav-h)) 0 0; z-index: -1; background: var(--card); }
 .ed-business-hero > div { padding: clamp(3rem, 6cqi, 6rem) clamp(1rem, 4cqi, 4rem) clamp(3rem, 6cqi, 6rem) calc(var(--biz-gutter) - var(--card-gap) - var(--mat)); display: flex; flex-direction: column; justify-content: center; align-items: start; }
 .ed-business-hero .ed-kicker { margin: 0; color: var(--editorial-accent); font-weight: 600; text-transform: uppercase; }
-.ed-business-hero h1 { max-width: 12ch; margin: 1.25rem 0 1.5rem; font-size: clamp(2.75rem, 4.6cqi, 4.5rem); font-weight: 700; line-height: .92; }
+.ed-business-hero h1 { max-width: 12ch; margin: 1.25rem 0 1.5rem; font-size: clamp(2.5rem, 4cqi, 4rem); font-weight: 700; line-height: .92; }
 .ed-business-hero > div > p:nth-of-type(2) { max-width: 34ch; margin: 0 0 2.25rem; color: var(--biz-muted); font-size: 1.25rem; line-height: 1.5; }
 .ed-business-hero .ed-biz-button { color: var(--card); background: var(--card-ink); }
 .ed-business-hero .ed-biz-button:hover { background: var(--card-accent); }
@@ -2157,33 +2157,82 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 }
 
 
-.ed-events-hero { min-height: calc(100svh - 4.5rem); display: grid; grid-template-columns: .85fr 1.15fr; }
-.ed-events-hero > div { padding: clamp(3rem, 7cqi, 7rem); display: flex; flex-direction: column; justify-content: end; align-items: start; }
-.ed-events-hero figure, .ed-events-strip figure, .ed-events-wide figure { position: relative; min-height: 28rem; margin: 0; }
-.ed-events-hero h1 { margin: 0 0 1rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(4rem, 8cqi, 8.5rem); font-weight: 800; line-height: .95; letter-spacing: -.04em; }
-.ed-events-hero a, .ed-events-info a { display: inline-block; margin-top: 1.5rem; color: inherit; text-underline-offset: .35rem; }
-.ed-events-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; padding: .75rem; }
-.ed-events-wide { padding: 0 .75rem; }
-.ed-events-wide figure { height: 70svh; }
-.ed-events-info, .ed-events-pricing, .ed-events-contact { padding: clamp(4rem, 9cqi, 9rem) clamp(1.25rem, 6cqi, 6rem); }
-.ed-events-info h2, .ed-events-pricing h2, .ed-events-contact h2 { max-width: 12ch; font-family: var(--font-editorial-serif), serif; font-size: clamp(3rem, 6cqi, 6rem); font-weight: 800; line-height: .95; }
-.ed-events-info p { max-width: 42rem; margin: 0; color: var(--color-text-muted); font-size: clamp(1.2rem, 2cqi, 1.7rem); line-height: 1.45; }
-.ed-events-hero > div > p { max-width: 34ch; margin: 0; color: var(--color-text-muted); font-size: 1.25rem; line-height: 1.5; }
-.ed-events-pricing { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; }
-.ed-events-pricing h2, .ed-events-pricing > p { grid-column: 1 / -1; }
-.ed-events-pricing article { padding-top: 1.25rem; border-top: 1px solid currentColor; }
-.ed-events-pricing > p { margin: 1rem 0 0; color: var(--color-text-muted); }
-.ed-events-pricing strong { font-family: var(--font-editorial-serif), serif; font-size: 2rem; }
-.ed-events-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+/* Events hero: conference / wedding diptych. The hovered (or auto-alternating) half widens and the
+   card word follows it; data-active on the header drives both. */
+.ed-events-hero { position: relative; height: calc(100svh - 4.5rem); min-height: 36rem; display: flex; overflow: hidden; background: var(--editorial-ink); }
+.ed-events-half { position: relative; flex: 1 1 0; margin: 0; overflow: hidden; transition: flex-grow .9s cubic-bezier(.7, 0, .2, 1); }
+.ed-events-half .editorial-image { transform: scale(1.06); transition: transform 1.4s cubic-bezier(.2, .7, .2, 1), filter .9s ease; }
+.ed-events-hero[data-active="conference"] .ed-events-half--conference, .ed-events-hero[data-active="wedding"] .ed-events-half--wedding { flex-grow: 1.7; }
+.ed-events-hero[data-active="conference"] .ed-events-half--conference .editorial-image, .ed-events-hero[data-active="wedding"] .ed-events-half--wedding .editorial-image { transform: scale(1); }
+.ed-events-hero[data-active="conference"] .ed-events-half--wedding .editorial-image, .ed-events-hero[data-active="wedding"] .ed-events-half--conference .editorial-image { filter: grayscale(.7) brightness(.55); }
+.ed-events-half::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgb(0 0 0 / .55)); pointer-events: none; }
+.ed-events-half .editorial-image-placeholder { color: var(--editorial-paper); }
+.ed-events-half figcaption { position: absolute; z-index: 1; bottom: 1.75rem; left: 2rem; color: #fff; font-family: var(--font-mono); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
+.ed-events-half--wedding figcaption { left: auto; right: 2rem; }
+.ed-events-half figcaption span { opacity: .6; }
+.ed-events-hero-card { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(40rem, calc(100% - 2.5rem)); padding: clamp(1.75rem, 3cqi, 2.75rem); color: var(--editorial-ink); background: var(--editorial-paper); }
+.ed-events-kicker { display: block; margin-bottom: 1rem; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
+.ed-events-word { display: grid; }
+.ed-events-word > span { grid-area: 1 / 1; transition: opacity .5s ease, translate .6s cubic-bezier(.7, 0, .2, 1); }
+.ed-events-hero[data-active="conference"] .ed-events-word > [data-side="wedding"] { opacity: 0; translate: 0 .5em; }
+.ed-events-hero[data-active="wedding"] .ed-events-word > [data-side="conference"] { opacity: 0; translate: 0 -.5em; }
+.ed-events-word > .ed-events-word-static { display: none; }
+.ed-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .ed-events-half, .ed-events-half .editorial-image { transition: none; }
+  .ed-events-hero[data-active] .ed-events-half { flex-grow: 1; }
+  .ed-events-hero[data-active] .ed-events-half .editorial-image { transform: none; filter: none; }
+  .ed-events-word > [data-side] { display: none; }
+  .ed-events-word > .ed-events-word-static { display: block; }
+}
+.ed-events-hero h1 { margin: 0 0 1rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(2.5rem, 4cqi, 4rem); font-weight: 800; line-height: .95; letter-spacing: -.04em; }
+.ed-events-hero a { display: inline-block; margin-top: 1.5rem; color: inherit; text-underline-offset: .35rem; }
+.ed-events-contact { padding: clamp(4rem, 9cqi, 9rem) clamp(1.25rem, 6cqi, 6rem); }
+.ed-events-contact h2 { max-width: 12ch; font-family: var(--font-editorial-serif), serif; font-size: clamp(3rem, 6cqi, 6rem); font-weight: 800; line-height: .95; }
+.ed-events-hero-card > p { max-width: 34ch; margin: 0; color: var(--color-text-muted); font-size: 1.25rem; line-height: 1.5; }
+
+/* Events chapters: conferences (light) and weddings (dark), each text + prices beside a gallery. */
+.ed-events-chapters { position: sticky; top: 0; z-index: 10; display: flex; color: var(--editorial-ink); background: var(--editorial-paper); border-bottom: 1px solid var(--editorial-ink); }
+.ed-events-chapters a { flex: 1; padding: 1rem clamp(1.25rem, 6cqi, 6rem); color: inherit; font-family: var(--font-editorial-serif), serif; font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em; text-decoration: none; transition: background-color .2s ease-out; }
+.ed-events-chapters a + a { border-left: 1px solid var(--editorial-ink); }
+.ed-events-chapters a:hover { background: color-mix(in srgb, var(--editorial-ink) 6%, transparent); }
+.ed-events-chapters span { margin-right: .5rem; font-family: var(--font-mono); font-size: .75rem; font-weight: 400; opacity: .6; }
+.ed-events-chapter { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5cqi, 5rem); align-items: start; padding: clamp(4rem, 8cqi, 8rem) clamp(1.25rem, 6cqi, 6rem); scroll-margin-top: 3.5rem; }
+.ed-events-chapter--svatby { color: var(--editorial-paper); background: var(--editorial-ink); }
+.ed-events-chapter--svatby .ed-events-chapter-text { order: 2; }
+.ed-events-chapter-text { position: sticky; top: 6rem; }
+.ed-events-chapter h2 { max-width: 14ch; margin: 0 0 1.25rem; font-family: var(--font-editorial-serif), serif; font-size: clamp(2.6rem, 5cqi, 5rem); font-weight: 800; line-height: .95; letter-spacing: -.04em; }
+.ed-events-chapter-text > p, .ed-events-chapter li, .ed-events-prices p { color: color-mix(in srgb, currentColor 72%, transparent); }
+.ed-events-chapter-text > p { max-width: 40ch; margin: 0; font-size: clamp(1.1rem, 1.6cqi, 1.3rem); line-height: 1.5; }
+.ed-events-chapter ul { display: grid; gap: .5rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.ed-events-chapter li::before { content: "— "; opacity: .5; }
+.ed-events-prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
+.ed-events-prices > div { padding-top: 1rem; border-top: 1px solid currentColor; }
+.ed-events-prices strong { display: block; margin: .35rem 0; font-family: var(--font-editorial-serif), serif; font-size: 1.75rem; line-height: 1.1; font-variant-numeric: tabular-nums; overflow-wrap: break-word; }
+.ed-events-prices p { margin: 0; font-size: .875rem; line-height: 1.45; }
+.ed-events-chapter-text > .ed-events-note { margin-top: 1.25rem; font-size: .875rem; }
+.ed-events-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.ed-events-gallery figure { position: relative; margin: 0; aspect-ratio: 4 / 5; overflow: hidden; }
+.ed-events-gallery figure:first-child { grid-column: 1 / -1; aspect-ratio: 3 / 2; }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .ed-events-gallery figure { animation: ed-events-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  }
+}
+@keyframes ed-events-rise { from { opacity: 0; translate: 0 3rem; } }
+.ed-events-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; scroll-margin-top: 3.5rem; }
 
 @media (max-width: 760px) {
-  .ed-events-hero { min-height: auto; grid-template-columns: 1fr; }
-  .ed-events-hero > div { min-height: 48svh; padding: 2rem 1.25rem 3rem; }
-  .ed-events-hero figure { min-height: 62svh; }
-  .ed-events-strip { grid-template-columns: 1fr; }
-  .ed-events-strip figure { min-height: 34rem; }
-  .ed-events-wide figure { height: 55svh; }
-  .ed-events-pricing, .ed-events-contact { grid-template-columns: 1fr; }
+  .ed-events-hero { height: calc(100svh - 4.5rem); min-height: 34rem; flex-direction: column; }
+  .ed-events-half figcaption { bottom: auto; top: 1.25rem; left: 1.25rem; }
+  .ed-events-half--wedding figcaption { top: auto; bottom: 1.25rem; left: auto; right: 1.25rem; }
+  .ed-events-hero-card { padding: 1.5rem 1.25rem; }
+  .ed-events-hero .ed-events-hero-card > p { font-size: 1rem; }
+  .ed-events-hero .ed-events-hero-card h1 { font-size: 9vw; line-height: .95; }
+  .ed-events-chapters a { padding: .9rem 1rem; font-size: .95rem; white-space: nowrap; }
+  .ed-events-chapter, .ed-events-contact { grid-template-columns: 1fr; }
+  .ed-events-chapter-text { position: static; }
+  .ed-events-chapter--svatby .ed-events-chapter-text { order: 0; }
 }
 
 .ed-portrait-hero { position: relative; min-height: calc(100svh - 4.5rem); }
@@ -2213,9 +2262,9 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 /* Shared section typography: portrait + events */
 :is(.editorial-portrait, .editorial-events) h2 { margin: 0 0 1.5rem; text-wrap: balance; }
 :is(.editorial-portrait, .editorial-events) h3 { margin: 0 0 .5rem; font-size: 1.25rem; font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
-:is(.ed-portrait-pricing, .ed-events-pricing) :is(strong, h3) { overflow-wrap: break-word; }
-:is(.ed-portrait-pricing, .ed-events-pricing) strong { display: block; line-height: 1.1; font-variant-numeric: tabular-nums; }
-:is(.ed-portrait-pricing, .ed-events-pricing) article p { margin: .5rem 0 0; color: var(--color-text-muted); font-size: .9375rem; }
+.ed-portrait-pricing :is(strong, h3) { overflow-wrap: break-word; }
+.ed-portrait-pricing strong { display: block; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.ed-portrait-pricing article p { margin: .5rem 0 0; color: var(--color-text-muted); font-size: .9375rem; }
 .ed-portrait-pricing ul { margin: 1.25rem 0 0; padding: 0; list-style: none; color: var(--color-text-muted); font-size: .9375rem; }
 .ed-portrait-pricing ul li { padding: .5rem 0; border-top: 1px solid var(--color-border); }
 
@@ -2231,8 +2280,8 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 
 /* Standalone editorial CTAs share the business button look — Tailwind's preflight strips
    link underlines, so these otherwise read as plain body text. */
-:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
-:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero, .ed-events-info) a:hover { background: color-mix(in srgb, var(--editorial-accent) 80%, var(--editorial-paper)); }
+:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero) a { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0 1.5rem; color: var(--editorial-paper); background: var(--editorial-ink); font-weight: 600; text-decoration: none; transition: background-color .2s ease-out; }
+:is(.ed-home-about, .ed-portrait-hero, .ed-events-hero) a:hover { background: color-mix(in srgb, var(--editorial-accent) 80%, var(--editorial-paper)); }
 /* Inline link inside a sentence — stays a link, just visibly underlined. */
 .ed-portrait-process a { text-decoration: underline; }
 
@@ -2245,7 +2294,7 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
   .ed-home-hero h1 { max-width: none; font-size: 21vw; font-weight: 700; line-height: .85; }
   :is(.ed-secondary-hero, .ed-about-layout) h1 { font-size: 16vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
   :is(.ed-home-work, .ed-home-about, .ed-home-contact, .ed-secondary-faq, .ed-secondary-contact) h2 { max-width: none; font-size: 15vw; font-weight: 700; line-height: .85; overflow-wrap: break-word; }
-  :is(.ed-events-hero, .ed-portrait-hero) h1, :is(.ed-events-info, .ed-events-pricing, .ed-events-contact, .ed-portrait-process, .ed-portrait-pricing, .ed-portrait-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
+  :is(.ed-events-hero, .ed-portrait-hero) h1, :is(.ed-events-chapter, .ed-events-contact, .ed-portrait-process, .ed-portrait-pricing, .ed-portrait-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
   .ed-business-hero h1, :is(.ed-business-headshots, .ed-business-process, .ed-business-pricing, .ed-business-faq, .ed-business-contact) h2 { font-size: 12.5vw; font-weight: 700; line-height: .88; overflow-wrap: break-word; }
   .ed-article h1, .ed-legal > h1 { font-size: 12vw; font-weight: 700; line-height: .9; overflow-wrap: break-word; }
 }

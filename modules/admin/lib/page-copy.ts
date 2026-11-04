@@ -56,10 +56,18 @@ export type PageCopy = {
     metaDescription: string;
     kicker: string;
     cta: string;
-    infoTitle: string;
-    infoText: string;
-    larpLink: string;
-    pricingTitle: string;
+    heroLead: string;
+    heroConference: string;
+    heroWedding: string;
+    heroBoth: string;
+    conferenceTag: string;
+    conferenceHeading: string;
+    conferenceText: string;
+    conferenceList: string[];
+    weddingTag: string;
+    weddingHeading: string;
+    weddingText: string;
+    contactTitle: string;
   };
   services: {
     kicker: string;
@@ -161,10 +169,18 @@ const DEFAULTS: Record<Locale, PageCopy> = {
       metaDescription: "Reportážní focení eventů a svateb v Praze a celé ČR.",
       kicker: "Eventy a svatby",
       cta: "Poptat termín",
-      infoTitle: "Lidé. Dění. Atmosféra.",
-      infoText: "Skutečné momenty tak, jak se dějí. Bez aranžmá a bez přetvářky.",
-      larpLink: "Larpové projekty v portfoliu",
-      pricingTitle: "Svatby a oslavy",
+      heroLead: "Fotím",
+      heroConference: "konference.",
+      heroWedding: "svatby.",
+      heroBoth: "konference a svatby",
+      conferenceTag: "Konference",
+      conferenceHeading: "Řečníci, sály, kuloáry.",
+      conferenceText: "Konference, veletrhy a firemní večery. Řečníci, hosté, expozice i detaily.",
+      conferenceList: ["Řečníci a panely", "Networking a hosté", "Expozice, detaily, branding", "Fotky pro web, tiskové zprávy i sociální sítě"],
+      weddingTag: "Svatby",
+      weddingHeading: "Váš den, jak se skutečně stal.",
+      weddingText: "Celý den od příprav po večer. Fotím reportážně, bez nucených póz.",
+      contactTitle: "Napište mi o své akci",
     },
     services: {
       kicker: "Fotografické služby",
@@ -232,10 +248,18 @@ const DEFAULTS: Record<Locale, PageCopy> = {
       metaDescription: "Documentary event and wedding photography in Prague and across the Czech Republic.",
       kicker: "Events & weddings",
       cta: "Ask about a date",
-      infoTitle: "People. Action. Atmosphere.",
-      infoText: "Real moments as they happen. Unstaged and honest.",
-      larpLink: "Larp projects in the portfolio",
-      pricingTitle: "Weddings and celebrations",
+      heroLead: "I photograph",
+      heroConference: "conferences.",
+      heroWedding: "weddings.",
+      heroBoth: "conferences and weddings",
+      conferenceTag: "Conferences",
+      conferenceHeading: "Speakers, stages, hallways.",
+      conferenceText: "Conferences, trade fairs and corporate evenings. Speakers, guests, booths and details.",
+      conferenceList: ["Speakers and panels", "Networking and guests", "Booths, details, branding", "Photos for the web, press releases and social media"],
+      weddingTag: "Weddings",
+      weddingHeading: "Your day, as it really happened.",
+      weddingText: "Full day coverage from preparations to the evening. I shoot documentary style, without forced poses.",
+      contactTitle: "Tell me about your event",
     },
     services: {
       kicker: "Photography services",

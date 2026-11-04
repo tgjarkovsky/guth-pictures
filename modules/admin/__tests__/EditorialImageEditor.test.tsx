@@ -16,7 +16,7 @@ const editorial = (): EditorialImages => ({
   home: { belt: [emptyImage(), emptyImage()], stories: [emptyImage(), emptyImage(), emptyImage()], photographer: emptyImage(), tools: { foceni101: emptyImage(), lightPlanner: emptyImage() } },
   portrait: { hero: emptyImage(), gallery: [emptyImage(), emptyImage(), emptyImage()] },
   business: { hero: emptyImage(), headshots: [emptyImage(), emptyImage(), emptyImage()], atWork: [emptyImage(), emptyImage(), emptyImage()] },
-  events: { hero: emptyImage(), reportage: [emptyImage(), emptyImage(), emptyImage(), emptyImage()] },
+  events: { hero: emptyImage(), weddingHero: emptyImage(), weddingGallery: [emptyImage()], reportage: [emptyImage(), emptyImage(), emptyImage(), emptyImage()] },
   brand: { hero: emptyImage(), work: [emptyImage()] },
 });
 
@@ -34,8 +34,8 @@ describe("EditorialImageEditor", () => {
       category: "svatby",
     }]} />);
 
-    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — hero");
-    await user.click(screen.getByRole("button", { name: "Změnit fotku: Eventy — hero" }));
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — hero konference");
+    await user.click(screen.getByRole("button", { name: "Změnit fotku: Eventy — hero konference" }));
     await user.click(screen.getByRole("button", { name: "Vybrat Atmosféra eventu" }));
     await user.click(screen.getByRole("button", { name: "Uložit editorialové fotky" }));
 
@@ -99,19 +99,21 @@ describe("EditorialImageEditor", () => {
     expect(screen.getByRole("heading", { name: /Práce 2/ })).toBeTruthy();
   });
 
-  it("u reportáže eventů přidání nenabízí (pevný layout)", async () => {
+  it("galerie konferencí i svateb jdou rozšiřovat", async () => {
     const user = userEvent.setup();
     render(<EditorialImageEditor editorial={editorial()} photos={[]} />);
-    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — reportáž 1");
-    expect(screen.queryByRole("button", { name: /Přidat fotku/ })).toBeNull();
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — konference 1");
+    expect(screen.getByRole("button", { name: "Přidat fotku: Eventy — konference" })).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — svatby 1");
+    expect(screen.getByRole("button", { name: "Přidat fotku: Eventy — svatby" })).toBeInTheDocument();
   });
 
   it("ukazuje jen vybraný slot", async () => {
     const user = userEvent.setup();
     render(<EditorialImageEditor editorial={editorial()} photos={[]} />);
     expect(screen.getByRole("button", { name: "Změnit fotku: Homepage — pás 1" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Změnit fotku: Eventy — hero" })).not.toBeInTheDocument();
-    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — hero");
+    expect(screen.queryByRole("button", { name: "Změnit fotku: Eventy — hero konference" })).not.toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Vybrat sekci"), "Eventy — hero konference");
     expect(screen.queryByRole("button", { name: "Změnit fotku: Homepage — pás 1" })).not.toBeInTheDocument();
   });
 

@@ -77,6 +77,7 @@ describe("editorial data normalization", () => {
     expect(result.editorial.home.belt[0].publicId).toBe("portfolio/scppmskdespdikncpzhz");
     expect(result.editorial.business.hero.publicId).toBe("");
     expect(result.editorial.events.reportage).toHaveLength(4);
+    expect(result.editorial.events.weddingGallery).toHaveLength(3);
   });
 
   it("migrates a stored home.hero into the belt, followed by stories, without repeats", () => {

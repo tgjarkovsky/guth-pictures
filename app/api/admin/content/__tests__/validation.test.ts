@@ -125,3 +125,14 @@ describe("isValidContentData — editorial copy", () => {
     expect(isValidContentData(data)).toBe(false);
   });
 });
+
+describe("isValidContentData — conferences", () => {
+  it("accepts conference pricing and data saved before it existed", () => {
+    const d = valid() as { sluzby: Record<string, unknown> };
+    expect(isValidContentData(d)).toBe(true);
+    d.sluzby.conferences = { title: "t", desc: "d", packages: [] };
+    expect(isValidContentData(d)).toBe(true);
+    d.sluzby.conferences = "nope";
+    expect(isValidContentData(d)).toBe(false);
+  });
+});
