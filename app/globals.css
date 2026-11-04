@@ -2181,7 +2181,7 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 @keyframes ed-events-pulse { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--editorial-paper) 60%, transparent); } to { box-shadow: 0 0 0 .9rem transparent; } }
 @keyframes ed-events-nudge-right { 50% { translate: .3rem 0; } }
 @keyframes ed-events-nudge-left { 50% { translate: -.3rem 0; } }
-.ed-events-hero-card { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(40rem, calc(100% - 2.5rem)); padding: clamp(1.75rem, 3cqi, 2.75rem); color: var(--editorial-ink); background: var(--editorial-paper); }
+.ed-events-hero-card { position: absolute; z-index: 2; left: 50%; top: 50%; translate: -50% -50%; width: min(40rem, calc(100% - 2.5rem)); padding: clamp(1.75rem, 3cqi, 2.75rem); color: var(--editorial-ink); background: color-mix(in srgb, var(--editorial-paper) 68%, transparent); backdrop-filter: blur(12px); }
 .ed-events-kicker { display: block; margin-bottom: 1rem; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
 .ed-events-word { display: grid; }
 .ed-events-word > span { grid-area: 1 / 1; transition: opacity .5s ease, translate .6s cubic-bezier(.7, 0, .2, 1); }
