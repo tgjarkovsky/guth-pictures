@@ -16,7 +16,7 @@ export type BlogPostInput = {
 export function loadEnvLocal() {
   try {
     const content = readFileSync(".env.local", "utf-8");
-    for (const line of content.split("\n")) {
+    for (const line of content.split(/\r?\n/)) {
       const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.+)$/);
       if (m && !process.env[m[1]]) {
         process.env[m[1]] = m[2].replace(/^["']|["']$/g, "").trim();
