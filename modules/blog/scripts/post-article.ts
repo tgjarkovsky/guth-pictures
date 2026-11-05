@@ -19,8 +19,8 @@ function readInput(): BlogPostInput {
   if (fileArg !== -1 && process.argv[fileArg + 1]) {
     return JSON.parse(readFileSync(process.argv[fileArg + 1], "utf-8"));
   }
-  // stdin
-  return JSON.parse(readFileSync("/dev/stdin", "utf-8"));
+  // stdin (fd 0 works on Windows too, unlike /dev/stdin)
+  return JSON.parse(readFileSync(0, "utf-8"));
 }
 
 async function main() {
