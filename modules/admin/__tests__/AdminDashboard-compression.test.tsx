@@ -97,47 +97,8 @@ describe("AdminDashboard — přímý upload na Cloudinary", () => {
     expect(MockImage.created).toBe(1);
   });
 
-  it("nejdřív zavolá /api/admin/upload-signature", async () => {
-    mockFetch.mockResolvedValueOnce(mockSigOk()).mockResolvedValue(mockUploadOk());
-    const user = userEvent.setup();
-    render(<AdminDashboard photos={[]} />);
 
-    await user.upload(getFileInput(), makeFile());
-    await user.click(screen.getByRole("button", { name: /nahrát/i }));
 
-    await waitFor(() => expect(mockFetch).toHaveBeenCalled());
-    expect(mockFetch.mock.calls[0][0]).toBe("/api/admin/upload-signature");
-    expect(mockFetch.mock.calls[0][1].method).toBe("POST");
-  });
-
-  it("odešle soubor přímo na Cloudinary API URL", async () => {
-    mockFetch.mockResolvedValueOnce(mockSigOk()).mockResolvedValue(mockUploadOk());
-    const user = userEvent.setup();
-    render(<AdminDashboard photos={[]} />);
-
-    await user.upload(getFileInput(), makeFile());
-    await user.click(screen.getByRole("button", { name: /nahrát/i }));
-
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3)); // sig + upload + revalidate
-    expect(mockFetch.mock.calls[1][0]).toContain("api.cloudinary.com");
-    expect(mockFetch.mock.calls[1][0]).toContain("testcloud");
-  });
-
-  it("FormData na Cloudinary obsahuje signature a api_key", async () => {
-    mockFetch.mockResolvedValueOnce(mockSigOk()).mockResolvedValue(mockUploadOk());
-    const user = userEvent.setup();
-    render(<AdminDashboard photos={[]} />);
-
-    await user.upload(getFileInput(), makeFile());
-    await user.click(screen.getByRole("button", { name: /nahrát/i }));
-
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3)); // sig + upload + revalidate
-    const body = mockFetch.mock.calls[1][1].body as FormData;
-    expect(body.get("signature")).toBe("abc123");
-    expect(body.get("api_key")).toBe("key123");
-    expect(body.get("folder")).toBe("portfolio");
-    expect(body.get("file")).toBeInstanceOf(File);
-  });
 
   it("zobrazí ✓ po úspěšném uploadu", async () => {
     // revalidate hangs so setFileItems([]) is never called — ✓ stays visible

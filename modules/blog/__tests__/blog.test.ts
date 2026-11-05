@@ -149,20 +149,7 @@ describe("saveBlogPost", () => {
     });
   });
 
-  it("používá publishedAt timestamp jako score pro sorted set", async () => {
-    const post = makePost({ publishedAt: "2024-01-15T12:00:00.000Z" });
-    await saveBlogPost(post);
-    expect(mockKv.zadd).toHaveBeenCalledWith("blog:index", {
-      score: new Date("2024-01-15T12:00:00.000Z").getTime(),
-      member: post.id,
-    });
-  });
 
-  it("provede všechny 3 zápisy (set ×2, zadd ×1)", async () => {
-    await saveBlogPost(makePost());
-    expect(mockKv.set).toHaveBeenCalledTimes(2);
-    expect(mockKv.zadd).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe("deleteBlogPost", () => {

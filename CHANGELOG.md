@@ -1,3 +1,5 @@
+## [2026-11-05] - Pryč kód, který používaly jen testy: PortfolioFilter, PhotoGrid, Lightbox (od smazání Portfolia #88 nikde na webu), vlastnost badge v ServiceCards, getAlt a závislost framer-motion
+## [2026-11-05] - Audit testů: pryč duplikáty (login/rate-limit, upload request, časování „Uloženo“ ve 4 komponentách → jeden test useSaveStatus) a testy detailů (CSS hodnoty, Tailwind třídy, zadrátované výchozí ID a texty, zrcadla konstant, testy mrtvých PortfolioFilter/Lightbox/badge); 637 → 566 testů, 105 → 100 souborů
 ## [2026-11-05] - Úklid mrtvého kódu: pryč nepoužívané PROFILE_TRANSFORM, HEADSHOT_IDS/AT_WORK_IDS, redirect/useRouter z i18n navigace, proměnná capturesPerSlide a devDependency @types/bcryptjs (bcryptjs 3 má vlastní typy)
 ## [2026-11-05] - Eventy hero: plynulejší přepínání půlek; místo flex-grow se animuje jen posun (translate), takže se při každém snímku nepřepočítává layout a nepřekreslují fotky
 ## [2026-11-05] - Eventy hero: rámeček s nadpisem poloprůsvitný s rozmazáním, fotky pod ním prosvítají

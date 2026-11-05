@@ -18,16 +18,6 @@ describe("buildThemeStyle", () => {
     COLOR_KEYS.map((k, i) => [k, `#0000${String(i).padStart(2, "0")}`]),
   ) as ColorSet;
 
-  it("wraps declarations in :root{}", () => {
-    const css = buildThemeStyle(colors);
-    expect(css.startsWith(":root{")).toBe(true);
-    expect(css.endsWith("}")).toBe(true);
-  });
-
-  it.each(COLOR_KEYS)("declares %s through CSS_VAR_MAP", (k) => {
-    expect(buildThemeStyle(colors)).toContain(`${CSS_VAR_MAP[k]}:${colors[k]};`);
-  });
-
   it("emits exactly one declaration per key, in order", () => {
     const expected = `:root{${COLOR_KEYS.map((k) => `${CSS_VAR_MAP[k]}:${colors[k]};`).join("")}}`;
     expect(buildThemeStyle(colors)).toBe(expected);

@@ -21,7 +21,7 @@ const render = (items: Testimonial[], images = normalizeImages()) => {
 
 it("keeps business pricing, FAQ schema, form and a direct e-mail", () => {
   const doc = render(testimonials);
-  expect(doc.querySelector("h1")?.textContent).toBe("Tvoje práce. Tvoje tvář.");
+  expect(doc.querySelector("h1")?.textContent).toBe(defaultPageCopy("cs").business.heroTitle);
   expect(doc.body.textContent).toContain("950 Kč / osoba");
   expect(doc.querySelector('script[type="application/ld+json"]')?.textContent).toContain("FAQPage");
   expect(doc.querySelector("#kontakt form")).not.toBeNull();
@@ -43,8 +43,4 @@ it("falls back to headshots that have a photo, never to empty placeholders", () 
 
 it("drops the headshots section when there is nothing to show", () => {
   expect(render([]).querySelector(".ed-business-headshots")).toBeNull();
-});
-
-it("no longer renders the use-cases section", () => {
-  expect(render(testimonials).body.textContent).not.toContain(defaultPageCopy("cs").business.useCasesTitle);
 });

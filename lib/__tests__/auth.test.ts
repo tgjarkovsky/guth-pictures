@@ -1,12 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
-const { get, cookies, verifyToken, signTokenMock } = vi.hoisted(() => {
+const { get, cookies, verifyToken } = vi.hoisted(() => {
   const get = vi.fn();
   return {
     get,
     cookies: vi.fn(async () => ({ get })),
     verifyToken: vi.fn(),
-    signTokenMock: vi.fn(),
   };
 });
 
@@ -15,10 +14,9 @@ vi.mock("next/headers", () => ({ cookies }));
 vi.mock("../auth-edge", () => ({
   COOKIE: "admin_auth",
   verifyToken,
-  signToken: signTokenMock,
 }));
 
-import { isAuthenticated, authCookieConfig, signToken } from "../auth";
+import { isAuthenticated, authCookieConfig } from "../auth";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -76,8 +74,3 @@ describe("authCookieConfig", () => {
   });
 });
 
-describe("signToken re-export", () => {
-  it("je stejná funkce jako v auth-edge", () => {
-    expect(signToken).toBe(signTokenMock);
-  });
-});

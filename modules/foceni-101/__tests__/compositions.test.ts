@@ -22,11 +22,6 @@ describe("COMPOSITIONS", () => {
   it("each overlay is a known kind", () => {
     for (const c of COMPOSITIONS) expect(KINDS).toContain(c.overlay);
   });
-  it("has the six expected compositions", () => {
-    expect(COMPOSITIONS.map((c) => c.id)).toEqual([
-      "thirds", "center", "golden", "leading", "space", "frame",
-    ]);
-  });
   it("every composition has its own orb layout", () => {
     for (const c of COMPOSITIONS) expect(ORB_LAYOUTS[c.id]).toBeDefined();
   });

@@ -18,15 +18,10 @@ describe("EditorialNav", () => {
     expect(screen.getByRole("link", { name: "Domluvit focení" })).toHaveAttribute("href", "/#kontakt");
   });
 
-  it("offers the booking call to action as a button-styled link", () => {
-    render(<EditorialNav tone="light" active="home" />);
-    expect(screen.getByRole("link", { name: "Domluvit focení" })).toHaveClass("editorial-nav__cta");
-  });
 
   it("shows the secondary site links on content pages", () => {
     render(<EditorialNav tone="light" active="services" />);
 
-    expect(screen.getByRole("link", { name: "Služby" })).toHaveAttribute("href", "/sluzby");
     expect(screen.getByRole("link", { name: "Služby" })).toHaveAttribute("href", "/sluzby");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
   });

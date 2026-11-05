@@ -107,13 +107,6 @@ describe("ContactForm", () => {
     expect((mockFetch.mock.calls[0][1].body as FormData).get("topic")).toBe("business");
   });
 
-  it("renderuje všechna pole a tlačítko", () => {
-    render(<ContactForm />);
-    expect(screen.getByLabelText("name")).toBeInTheDocument();
-    expect(screen.getByLabelText("email")).toBeInTheDocument();
-    expect(screen.getByLabelText("message")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "send" })).toBeInTheDocument();
-  });
 
   it("po odeslání zavolá Formspree s daty z formuláře", async () => {
     mockFetch.mockResolvedValueOnce({ ok: true });

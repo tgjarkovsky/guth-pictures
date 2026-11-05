@@ -37,7 +37,7 @@ describe("service pages", () => {
         expect(schema["@graph"][1]["@type"]).toBe("BreadcrumbList");
         if (service === "portretni-foceni") {
           expect(html).toContain("3 000 Kč");
-          expect(doc.querySelector("main.editorial-portrait")).not.toBeNull();
+          expect(doc.querySelector("h1")?.textContent).toBe(defaultPageCopy(locale).portrait.heroTitle);
         } else {
           expect(doc.querySelector('a[href="/firemni-portrety"]')).not.toBeNull();
         }

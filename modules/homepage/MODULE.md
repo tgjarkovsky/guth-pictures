@@ -15,11 +15,8 @@ Hlavní stránka webu — landing page, portfolio showcase, kontakt. Propojuje o
 ```
 modules/homepage/
 ├── components/
-│   ├── ServiceCards.tsx         # karty služeb (typy focení)
-│   └── PortfolioFilter.tsx      # filtrování portfolio fotek
+│   └── ServiceCards.tsx         # karty služeb (typy focení)
 ├── __tests__/
-│   ├── PortfolioFilter.test.tsx
-│   └── visual-components.test.tsx
 └── MODULE.md
 ```
 
@@ -35,7 +32,6 @@ modules/homepage/
 - `@/lib/config` — siteUrl, ogImage
 
 **Závilost na jiném modulu:**
-- `@/modules/gallery/components/PhotoGrid` — PortfolioFilter používá PhotoGrid pro zobrazení fotek
 
 **Importován z:**
 - `app/[locale]/page.tsx`

@@ -74,10 +74,7 @@ describe("editorial data normalization", () => {
 
     expect(result.profile).toBe("site/me");
     expect(result.heroTriptych).toEqual([["a"], ["b"], ["c"]]);
-    expect(result.editorial.home.belt[0].publicId).toBe("portfolio/scppmskdespdikncpzhz");
-    expect(result.editorial.business.hero.publicId).toBe("");
-    expect(result.editorial.events.reportage).toHaveLength(4);
-    expect(result.editorial.events.weddingGallery).toHaveLength(3);
+    expect(result.editorial).toEqual(defaultEditorialImages());
   });
 
   it("migrates a stored home.hero into the belt, followed by stories, without repeats", () => {
@@ -103,7 +100,7 @@ describe("editorial data normalization", () => {
 
     first.editorial.portrait.gallery[0].publicId = "changed";
 
-    expect(second.editorial.portrait.gallery[0].publicId).toBe("portfolio/z1tvyvvw0kg6tga3iwef");
+    expect(second.editorial).toEqual(defaultEditorialImages());
   });
 
   it("adds localized editorial copy to legacy content", () => {

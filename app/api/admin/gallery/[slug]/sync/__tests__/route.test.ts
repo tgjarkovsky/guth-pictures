@@ -8,6 +8,7 @@ vi.mock("@/modules/gallery/lib/gallery", () => ({
   getGalleryPhotos: vi.fn(async () => [
     { lrId: "A", cloudinaryId: "old/A", filename: "a.jpg", width: 1, height: 1 },
     { lrId: "B", cloudinaryId: "old/B", filename: "b.jpg", width: 1, height: 1 },
+    { lrId: "C", cloudinaryId: "old/C", filename: "c.jpg", width: 1, height: 1 },
   ]),
   setGalleryPhotos: vi.fn(),
   updateGallerySyncState: vi.fn(),
@@ -47,10 +48,10 @@ vi.mock("cloudinary", () => ({
 }));
 
 import { POST } from "../route";
-import { setGalleryPhotos, updateGallerySyncState } from "@/modules/gallery/lib/gallery";
+import { pruneGallerySelection, setGalleryPhotos, updateGallerySyncState } from "@/modules/gallery/lib/gallery";
 
 describe("POST /api/admin/gallery/[slug]/sync", () => {
-  it("při selhání uploadu ponechá původní záznam fotky", async () => {
+  it("při selhání uploadu ponechá původní fotku, fotky mimo album vyřadí i z výběru", async () => {
     const res = await POST(new NextRequest("http://x"), { params: Promise.resolve({ slug: "g" }) });
     const body = await res.json();
 
@@ -58,6 +59,7 @@ describe("POST /api/admin/gallery/[slug]/sync", () => {
       { lrId: "A", cloudinaryId: "client-galleries/g/A", filename: "a.jpg", width: 2048, height: 1365 },
       { lrId: "B", cloudinaryId: "old/B", filename: "b.jpg", width: 1, height: 1 },
     ]);
+    expect(pruneGallerySelection).toHaveBeenCalledWith("g", new Set(["A", "B"]));
     expect(updateGallerySyncState).toHaveBeenCalledWith("g", 2);
     expect(body.failed).toBe(1);
     expect(body.synced).toBe(1);
