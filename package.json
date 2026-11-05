@@ -9,7 +9,7 @@
     "test": "vitest run",
     "portfolio": "tsx scripts/portfolio.ts",
     "test:watch": "vitest",
-    "post-article": "tsx scripts/post-article.ts"
+    "post-article": "tsx modules/blog/scripts/post-article.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.1",
