@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from 'react'
 import { defaultColors as P } from '../../../../lib/theme-presets'
-import { AScrim, AGrain, AMono, ARule } from './primitives'
+import { AScrim, AGrain, AMono, StoryChrome, StoryBrand } from './primitives'
 import { PhotoCycle } from './PhotoCycle'
 import { useTick } from './useTick'
 import type { Photo } from './types'
@@ -68,42 +68,9 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
         <>
           <AScrim topOpacity={0.65} bottomOpacity={0.92} />
 
-          {chrome && (
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, padding: `${px(32)}px ${px(36)}px 0` }}>
-              <div style={{ display: 'flex', gap: px(6), marginBottom: px(24) }}>
-                {Array.from({ length: count }).map((_, idx) => (
-                  <div key={idx} style={{ flex: 1, height: px(4), borderRadius: px(2), background: 'rgba(255,255,255,0.30)', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      background: 'rgba(255,255,255,0.95)',
-                      transform: `scaleX(${idx < tick ? 1 : idx === tick ? 1 : 0})`,
-                      transformOrigin: 'left',
-                      transition: idx === tick ? `transform ${duration}ms linear` : 'transform 200ms',
-                    }} />
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: px(14) }}>
-                <div style={{ width: px(56), height: px(56), borderRadius: 999, background: 'linear-gradient(180deg,#1E1E23,#0A0A0B)', border: `${px(1.5)}px solid rgba(255,255,255,0.4)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: P.text, fontSize: px(22), fontWeight: 700 }}>G</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: px(2) }}>
-                  <span style={{ color: P.text, fontSize: px(20), fontWeight: 600 }}>guthpictures</span>
-                  <span style={{ color: 'rgba(242,240,235,0.7)', fontSize: px(16) }}>1h</span>
-                </div>
-              </div>
-            </div>
-          )}
+          {chrome && <StoryChrome count={count} tick={tick} duration={duration} px={px} />}
 
-          {/* Top brand cluster */}
-          <div style={{
-            position: 'absolute',
-            left: px(80), right: px(80),
-            top: chrome ? px(220) : px(260),
-            zIndex: 10,
-            display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: px(22),
-          }}>
-            <AMono size={px(24)} tracking="0.34em" color={P.text} weight={500}>GUTH&nbsp;&nbsp;PICTURES</AMono>
-            <ARule w={px(72)} color={P.accentSecondary} />
-          </div>
+          <StoryBrand chrome={chrome} px={px} />
 
           {/* Center flashing word — shown in normal mode only; export uses word layer */}
           {showWordInOverlay && (

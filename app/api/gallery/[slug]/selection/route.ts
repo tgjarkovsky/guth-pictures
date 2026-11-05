@@ -1,11 +1,10 @@
 import {
-  getGallery,
   getGalleryPhotos,
   getGallerySelection,
   saveGallerySelection,
-  isExpired,
 } from "@/modules/gallery/lib/gallery";
 import { hasGallerySession } from "@/modules/gallery/lib/gallery-session";
+import { requireGalleryAccess } from "@/modules/gallery/lib/gallery-access";
 import { NextRequest, NextResponse } from "next/server";
 const MAX_NOTE_LENGTH = 1000;
 
@@ -28,16 +27,8 @@ export async function POST(
 ): Promise<NextResponse> {
   const { slug } = await params;
 
-  const gallery = await getGallery(slug);
-  if (!gallery) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  if (isExpired(gallery)) {
-    return NextResponse.json({ error: "Gallery expired — selection locked" }, { status: 410 });
-  }
-
-  if (!(await hasGallerySession(slug))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const gallery = await requireGalleryAccess(slug, "Gallery expired — selection locked");
+  if (gallery instanceof NextResponse) return gallery;
 
   if ((await getGallerySelection(slug))?.confirmedAt) {
     return NextResponse.json({ error: "Selection confirmed — locked" }, { status: 409 });

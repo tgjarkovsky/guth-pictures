@@ -20,7 +20,8 @@ modules/blog/
 │   ├── blog.ts              # CRUD článků v Vercel KV (getBlogPosts, getBlogPost, saveBlogPost…)
 │   └── blog-topics.ts       # předdefinované kategorie/témata článků
 ├── scripts/
-│   ├── post-article.ts      # CLI: publikuje jeden článek (spustit: npx tsx scripts/post-article.ts)
+│   ├── shared.ts            # společné: načtení .env.local, zápis do KV, SVG cover → Cloudinary
+│   ├── post-article.ts      # CLI: publikuje jeden článek (npm run post-article -- --file article.json)
 │   ├── batch-post.ts        # CLI: hromadná publikace ze posts.json
 │   ├── generate-cover.ts    # CLI: generuje cover fotku přes Claude API
 │   ├── posts.json           # fronta článků k publikaci

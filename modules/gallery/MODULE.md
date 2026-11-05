@@ -26,6 +26,7 @@ modules/gallery/
     ├── gallery.ts               # CRUD galerií v Vercel KV (listGalleries, getGallery, setGalleryPhotos…)
     ├── gallery-auth.ts          # HMAC tokeny pro přístup ke galerii (signGalleryToken, verifyGalleryToken, galleryCookieName)
     ├── gallery-session.ts       # hasGallerySession
+    ├── gallery-access.ts        # requireGalleryAccess: 404 → 410 → 401 pro klientské API galerie
     ├── lightroom.ts             # Adobe Lightroom API (OAuth2, listAlbums, getAlbumAssets, streaming)
     ├── selection-filter.ts      # filtrování výběru
     ├── selection-export.ts      # export názvů souborů z výběru
