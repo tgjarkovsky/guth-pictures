@@ -1,3 +1,4 @@
+## [2026-11-05] - Eventy hero: plynulejší přepínání půlek; místo flex-grow se animuje jen posun (translate), takže se při každém snímku nepřepočítává layout a nepřekreslují fotky
 ## [2026-11-05] - Eventy hero: rámeček s nadpisem poloprůsvitný s rozmazáním, fotky pod ním prosvítají
 ## [2026-11-04] - Eventy hero: štítek ztlumené půlky pulzuje se šipkou jako nápověda k najetí myší, dá se i kliknout (dotyk, klávesnice); zmizí po první návštěvě druhé půlky
 ## [2026-11-04] - Eventy a svatby: pod hero dvě kapitoly Konference / Svatby (sticky lišta, text, co fotím, ceník, galerie); nový konferenční ceník (sluzby.conferences: 4 500 / 6 000 / 12 000 Kč), texty hero i kapitol editovatelné v adminu, galerie konferencí a svateb s libovolným počtem fotek; pryč nepoužívaná pole Atmosféra a odkaz na larpy

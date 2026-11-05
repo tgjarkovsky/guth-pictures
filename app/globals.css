@@ -2158,11 +2158,19 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 
 
 /* Events hero: conference / wedding diptych. The hovered (or auto-alternating) half widens and the
-   card word follows it; data-active on the header drives both. */
-.ed-events-hero { position: relative; height: calc(100svh - 4.5rem); min-height: 36rem; display: flex; overflow: hidden; background: var(--editorial-ink); }
-.ed-events-half { position: relative; flex: 1 1 0; margin: 0; overflow: hidden; transition: flex-grow .9s cubic-bezier(.7, 0, .2, 1); }
-.ed-events-half .editorial-image { transform: scale(1.06); transition: transform 1.4s cubic-bezier(.2, .7, .2, 1), filter .9s ease; }
-.ed-events-hero[data-active="conference"] .ed-events-half--conference, .ed-events-hero[data-active="wedding"] .ed-events-half--wedding { flex-grow: 1.7; }
+   card word follows it; data-active on the header drives both.
+   Both halves keep a fixed 63 % size and only translate, so the animation stays on the compositor:
+   the wedding half slides over the conference one, the photos shift by half as much to stay centred
+   in their visible slice, and the wedding caption counter-shifts to stay put. */
+.ed-events-hero { --ed-split: 41.27; position: relative; height: calc(100svh - 4.5rem); min-height: 36rem; overflow: hidden; background: var(--editorial-ink); }
+.ed-events-half { position: absolute; inset: 0 auto 0 0; width: 63%; margin: 0; overflow: hidden; container-type: size; }
+.ed-events-half--wedding { z-index: 1; left: auto; right: 0; }
+.ed-events-half, .ed-events-half > * { transition: translate .9s cubic-bezier(.7, 0, .2, 1); }
+.ed-events-half .editorial-image { transform: scale(1.06); transition: translate .9s cubic-bezier(.7, 0, .2, 1), transform 1.4s cubic-bezier(.2, .7, .2, 1), filter .9s ease; }
+.ed-events-hero[data-active="conference"] .ed-events-half--wedding { translate: calc(var(--ed-split) * 1%) 0; }
+.ed-events-hero[data-active="conference"] .ed-events-half--wedding > figcaption { translate: calc(var(--ed-split) * -1cqi) 0; }
+.ed-events-hero[data-active="conference"] .ed-events-half--wedding > :is(.editorial-image, .editorial-image-placeholder) { translate: calc(var(--ed-split) * -.5cqi) 0; }
+.ed-events-hero[data-active="wedding"] .ed-events-half--conference > :is(.editorial-image, .editorial-image-placeholder) { translate: calc(var(--ed-split) * -.5cqi) 0; }
 .ed-events-hero[data-active="conference"] .ed-events-half--conference .editorial-image, .ed-events-hero[data-active="wedding"] .ed-events-half--wedding .editorial-image { transform: scale(1); }
 .ed-events-hero[data-active="conference"] .ed-events-half--wedding .editorial-image, .ed-events-hero[data-active="wedding"] .ed-events-half--conference .editorial-image { filter: grayscale(.7) brightness(.55); }
 .ed-events-half::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgb(0 0 0 / .55)); pointer-events: none; }
@@ -2190,8 +2198,9 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-events-word > .ed-events-word-static { display: none; }
 .ed-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {
-  .ed-events-half, .ed-events-half .editorial-image { transition: none; }
-  .ed-events-hero[data-active] .ed-events-half { flex-grow: 1; }
+  .ed-events-half, .ed-events-half > *, .ed-events-half .editorial-image { transition: none; }
+  .ed-events-hero[data-active] .ed-events-half { width: 50%; height: 100%; }
+  .ed-events-half, .ed-events-half > * { translate: none !important; }
   .ed-events-hero[data-active] .ed-events-half .editorial-image { transform: none; filter: none; }
   .ed-events-word > [data-side] { display: none; }
   .ed-events-half figcaption button, .ed-events-hint-arrow { animation: none !important; }
@@ -2235,7 +2244,14 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-events-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; scroll-margin-top: 3.5rem; }
 
 @media (max-width: 760px) {
-  .ed-events-hero { height: calc(100svh - 4.5rem); min-height: 34rem; flex-direction: column; }
+  .ed-events-hero { height: calc(100svh - 4.5rem); min-height: 34rem; }
+  .ed-events-half { inset: 0 0 auto 0; width: 100%; height: 63%; }
+  .ed-events-half--wedding { top: auto; bottom: 0; }
+  .ed-events-hero[data-active="conference"] .ed-events-half--wedding { translate: 0 calc(var(--ed-split) * 1%); }
+  .ed-events-hero[data-active="conference"] .ed-events-half--wedding > figcaption { translate: 0 calc(var(--ed-split) * -1cqb); }
+  .ed-events-hero[data-active="conference"] .ed-events-half--wedding > :is(.editorial-image, .editorial-image-placeholder) { translate: 0 calc(var(--ed-split) * -.5cqb); }
+  .ed-events-hero[data-active="wedding"] .ed-events-half--conference > :is(.editorial-image, .editorial-image-placeholder) { translate: 0 calc(var(--ed-split) * -.5cqb); }
+  @media (prefers-reduced-motion: reduce) { .ed-events-hero[data-active] .ed-events-half { width: 100%; height: 50%; } }
   .ed-events-half figcaption { bottom: auto; top: 1.25rem; left: 1.25rem; }
   .ed-events-half--wedding figcaption { top: auto; bottom: 1.25rem; left: auto; right: 1.25rem; }
   .ed-events-hero-card { padding: 1.5rem 1.25rem; }
