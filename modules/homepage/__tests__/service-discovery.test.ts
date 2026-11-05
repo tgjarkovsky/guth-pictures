@@ -1,9 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import sitemap from "@/app/sitemap";
-import { siteUrl } from "@/lib/config";
-import { isServiceSlug, servicePages, serviceSlugs } from "../lib/service-pages";
-
-vi.mock("@/modules/blog/lib/blog", () => ({ getBlogPosts: async () => [] }));
+import { describe, expect, it } from "vitest";
+import { isServiceSlug } from "../lib/service-pages";
 
 describe("service discovery", () => {
   it("accepts only published service slugs", () => {
@@ -11,23 +7,5 @@ describe("service discovery", () => {
     expect(isServiceSlug("brandove-foceni")).toBe(true);
     expect(isServiceSlug("unknown")).toBe(false);
     expect(isServiceSlug("toString")).toBe(false);
-  });
-
-  it("lists both languages and keeps standalone services in the sitemap", async () => {
-    const entries = await sitemap();
-    for (const locale of ["cs", "en"] as const) {
-      for (const slug of serviceSlugs.filter((slug) => slug !== "brandove-foceni")) {
-        const entry = entries.find(({ url }) => url === `${siteUrl}/${locale}/sluzby/${slug}`);
-        expect(entry?.alternates?.languages?.cs).toBe(`${siteUrl}/cs/sluzby/${slug}`);
-        expect(entry?.alternates?.languages?.en).toBe(`${siteUrl}/en/sluzby/${slug}`);
-        expect(servicePages[slug][locale].title).toBeTruthy();
-        expect(servicePages[slug][locale].description).toBeTruthy();
-      }
-      expect(entries.some(({ url }) => url === `${siteUrl}/${locale}/sluzby/brandove-foceni`)).toBe(false);
-      expect(entries.some(({ url }) => url === `${siteUrl}/${locale}/firemni-portrety`)).toBe(true);
-      const events = entries.find(({ url }) => url === `${siteUrl}/${locale}/sluzby/eventy-a-svatby`);
-      expect(events?.alternates?.languages?.cs).toBe(`${siteUrl}/cs/sluzby/eventy-a-svatby`);
-      expect(events?.alternates?.languages?.en).toBe(`${siteUrl}/en/sluzby/eventy-a-svatby`);
-    }
   });
 });

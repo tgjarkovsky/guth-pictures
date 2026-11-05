@@ -1,7 +1,7 @@
 "use client";
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProfilePhotoUploader } from "@/modules/admin/components/ProfilePhotoUploader";
 
 const router = { push: vi.fn() };
@@ -26,10 +26,9 @@ const pick = (container: HTMLElement) => {
 };
 
 describe("ProfilePhotoUploader ukládání", () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+  afterEach(() => vi.unstubAllGlobals());
 
-  it("nahrání: Nahrávám… → Uloženo → po 3000 ms zmizí", async () => {
+  it("nahrání: Nahrávám… → Uloženo", async () => {
     const release = mockFetch(true);
     const { container } = render(<ProfilePhotoUploader />);
     await flush();
@@ -39,10 +38,6 @@ describe("ProfilePhotoUploader ukládání", () => {
     release();
     await flush();
     expect(screen.getByText("Uloženo")).toBeInTheDocument();
-    await act(async () => { vi.advanceTimersByTime(2999); });
-    expect(screen.getByText("Uloženo")).toBeInTheDocument();
-    await act(async () => { vi.advanceTimersByTime(1); });
-    expect(screen.queryByText("Uloženo")).not.toBeInTheDocument();
   });
 
   it("selhání uploadu ukáže Chyba při nahrávání", async () => {

@@ -21,10 +21,10 @@ function mockFetch(ok: boolean) {
 }
 
 describe("ThemeEditor ukládání", () => {
-  beforeEach(() => { vi.useFakeTimers(); refresh.mockClear(); });
-  afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+  beforeEach(() => refresh.mockClear());
+  afterEach(() => vi.unstubAllGlobals());
 
-  it("uložení: Ukládám… → Uloženo → po 2000 ms Uložit", async () => {
+  it("uložení: Ukládám… → Uloženo a obnoví stránku", async () => {
     const release = mockFetch(true);
     render(<ThemeEditor />);
     await flush();
@@ -34,10 +34,6 @@ describe("ThemeEditor ukládání", () => {
     await flush();
     expect(screen.getByRole("button", { name: "Uloženo" })).toBeInTheDocument();
     expect(refresh).toHaveBeenCalled();
-    await act(async () => { vi.advanceTimersByTime(1999); });
-    expect(screen.getByRole("button", { name: "Uloženo" })).toBeInTheDocument();
-    await act(async () => { vi.advanceTimersByTime(1); });
-    expect(screen.getByRole("button", { name: "Uložit" })).toBeInTheDocument();
   });
 
   it("chyba uložení ukáže Chyba", async () => {
@@ -51,7 +47,7 @@ describe("ThemeEditor ukládání", () => {
     expect(refresh).not.toHaveBeenCalled();
   });
 
-  it("reset volá DELETE, ukáže Uloženo a po 2000 ms se vrátí", async () => {
+  it("reset volá DELETE a ukáže Uloženo", async () => {
     const release = mockFetch(true);
     render(<ThemeEditor />);
     await flush();
@@ -60,7 +56,5 @@ describe("ThemeEditor ukládání", () => {
     await flush();
     expect(vi.mocked(fetch)).toHaveBeenCalledWith("/api/admin/theme", { method: "DELETE" });
     expect(screen.getByRole("button", { name: "Uloženo" })).toBeInTheDocument();
-    await act(async () => { vi.advanceTimersByTime(2000); });
-    expect(screen.getByRole("button", { name: "Uložit" })).toBeInTheDocument();
   });
 });

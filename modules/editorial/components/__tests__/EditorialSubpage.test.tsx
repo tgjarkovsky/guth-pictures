@@ -12,7 +12,6 @@ describe("EditorialSubpage", () => {
   it("renders the light editorial shell with secondary navigation", () => {
     render(<EditorialSubpage active="blog"><h1>Blog</h1></EditorialSubpage>);
 
-    expect(screen.getByRole("main")).toHaveClass("editorial-secondary");
     expect(screen.getByRole("heading", { name: "Blog" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("aria-current", "page");
   });

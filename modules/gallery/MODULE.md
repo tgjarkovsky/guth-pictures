@@ -16,8 +16,6 @@ modules/gallery/
 ├── components/
 │   ├── GalleryClient.tsx        # hlavní klientský UI (zobrazení, výběr)
 │   ├── PasswordGate.tsx         # formulář hesla
-│   ├── PhotoGrid.tsx            # grid fotek s lazy loadingem
-│   ├── Lightbox.tsx             # fullscreen náhled fotky
 │   ├── ClientLightbox.tsx       # lightbox klientské galerie s výběrem
 │   ├── HeartIcon.tsx
 │   ├── SaveSelectionButton.tsx
@@ -65,7 +63,6 @@ modules/gallery/
 - `app/admin/galerie/` — admin UI
 - `app/api/gallery/` a `app/api/admin/gallery/` — API routes
 - `modules/admin/components/GalerieList.tsx`, `GalerieDetail.tsx`
-- `modules/homepage/components/PortfolioFilter.tsx` — PhotoGrid sdílen s portfolio
 
 ## Lightroom OAuth2 Flow
 

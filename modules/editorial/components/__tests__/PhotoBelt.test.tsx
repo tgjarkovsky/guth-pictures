@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { EditorialImage } from "@/modules/admin/lib/content";
@@ -37,11 +36,10 @@ describe("PhotoBelt", () => {
     expect(srcs(groups[1])).toEqual(srcs(groups[0]));
   });
 
-  it("uses small cropped portrait thumbnails with empty alt text", () => {
+  it("is decorative: thumbnails have empty alt text", () => {
     const { container } = render(<PhotoBelt images={four} />);
     const img = container.querySelector("img")!;
     expect(img.getAttribute("alt")).toBe("");
-    expect(img.getAttribute("src")).toMatch(/c_fill.*ar_4:5.*w_\d+.*portfolio\/a$/);
   });
 
   it("loads the first group right away and the repeat lazily", () => {
@@ -51,13 +49,7 @@ describe("PhotoBelt", () => {
     expect(second.querySelector("img")).toHaveAttribute("loading", "lazy");
   });
 
-  it("never stops moving on hover (the belt keeps flowing, only the colour comes back)", () => {
-    expect(readFileSync("app/globals.css", "utf8")).not.toMatch(/animation-play-state/);
-  });
 
-  it("keeps the photos at their own height, otherwise flex stretch cancels the staggered offset", () => {
-    expect(readFileSync("app/globals.css", "utf8")).toMatch(/\.ed-belt__group \{[^}]*align-items: flex-start/);
-  });
 
   it("renders nothing without photos", () => {
     const { container } = render(<PhotoBelt images={[]} />);

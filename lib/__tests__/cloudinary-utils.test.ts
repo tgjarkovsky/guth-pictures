@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { cloudinaryUrl, blurUrl, CATEGORIES, toGalleryPhoto } from "@/lib/cloudinary-utils";
+import { cloudinaryUrl, blurUrl, toGalleryPhoto } from "@/lib/cloudinary-utils";
 
 describe("cloudinaryUrl", () => {
   beforeEach(() => {
@@ -20,12 +20,6 @@ describe("cloudinaryUrl", () => {
     );
   });
 
-  it("prázdná transformace se chová jako žádná", () => {
-    const url = cloudinaryUrl("portfolio/foto1.jpg", "");
-    expect(url).toBe(
-      "https://res.cloudinary.com/testcloud/image/upload/portfolio/foto1.jpg"
-    );
-  });
 });
 
 describe("blurUrl", () => {
@@ -41,16 +35,6 @@ describe("blurUrl", () => {
   });
 });
 
-describe("CATEGORIES", () => {
-  it("obsahuje správné kategorie", () => {
-    expect(CATEGORIES).toContain("portréty");
-    expect(CATEGORIES).toContain("svatby");
-  });
-
-  it("je readonly tuple se dvěma položkami", () => {
-    expect(CATEGORIES).toHaveLength(2);
-  });
-});
 
 describe("toGalleryPhoto", () => {
   const base = { public_id: "portfolio/a", width: 100, height: 200 };

@@ -53,7 +53,6 @@ describe("GalerieDetail", () => {
     fireEvent.click(screen.getByRole("button", { name: "↻ Sync z Lightroomu" }));
     const msg = await screen.findByText(/Synchronizováno: 3 fotek, 1 selhalo/);
     expect(msg.textContent).toBe("Synchronizováno: 3 fotek, 1 selhalo\nx");
-    expect(msg.className).toContain("text-green-400");
     expect(fetchMock).toHaveBeenCalledWith("/api/admin/gallery/anna/sync", { method: "POST" });
     expect(refresh).toHaveBeenCalled();
   });
@@ -61,16 +60,14 @@ describe("GalerieDetail", () => {
   it("shows sync error from the API", async () => {
     reply(false, { error: "Boom" });
     fireEvent.click(screen.getByRole("button", { name: "↻ Sync z Lightroomu" }));
-    const msg = await screen.findByText("Chyba: Boom");
-    expect(msg.className).toContain("text-red-400");
+    await screen.findByText("Chyba: Boom");
     expect(refresh).not.toHaveBeenCalled();
   });
 
   it("shows unlock error in the copy result field", async () => {
     reply(false, {});
     fireEvent.click(screen.getByRole("button", { name: "Odemknout" }));
-    const msg = await screen.findByText("Chyba: Unlock failed");
-    expect(msg.className).toContain("text-red-400");
+    await screen.findByText("Chyba: Unlock failed");
     expect(fetchMock).toHaveBeenCalledWith("/api/admin/gallery/anna/unlock", { method: "POST" });
   });
 

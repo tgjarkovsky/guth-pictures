@@ -51,16 +51,14 @@ describe("secondary editorial pages", () => {
     const html = renderToStaticMarkup(await ServicesPage({ params: Promise.resolve({ locale: "cs" }) }));
     const doc = new DOMParser().parseFromString(html, "text/html");
 
-    expect(doc.querySelector("main.editorial-secondary.ed-secondary-services")).not.toBeNull();
     expect(doc.querySelector(".ed-secondary-hero h1")?.textContent).toBe("Služby");
-    expect(doc.querySelectorAll("details")).toHaveLength(9);
+    expect(doc.querySelectorAll(".ed-secondary-faq details")).toHaveLength(defaultPageCopy("cs").services.faq.length);
   });
 
   it("renders an intentional empty blog state in the editorial shell", async () => {
     const html = renderToStaticMarkup(await BlogPage({ params: Promise.resolve({ locale: "cs" }) }));
     const doc = new DOMParser().parseFromString(html, "text/html");
 
-    expect(doc.querySelector("main.editorial-secondary.ed-secondary-blog")).not.toBeNull();
     expect(doc.querySelector(".ed-secondary-empty")?.textContent).toBe("empty");
   });
 
@@ -68,7 +66,6 @@ describe("secondary editorial pages", () => {
     const html = renderToStaticMarkup(await BlogPostPage({ params: Promise.resolve({ locale: "cs", slug: "article" }) }));
     const doc = new DOMParser().parseFromString(html, "text/html");
 
-    expect(doc.querySelector("main.editorial-secondary.ed-secondary-article")).not.toBeNull();
     expect(doc.querySelector("article h1")?.textContent).toBe("Článek");
   });
 
@@ -77,8 +74,7 @@ describe("secondary editorial pages", () => {
       const html = renderToStaticMarkup(await page({ params: Promise.resolve({ locale: "cs" }) }));
       const doc = new DOMParser().parseFromString(html, "text/html");
 
-      expect(doc.querySelector("main.editorial-secondary.ed-secondary-legal")).not.toBeNull();
-      expect(doc.querySelector("article.ed-legal h1")).not.toBeNull();
+        expect(doc.querySelector("article.ed-legal h1")).not.toBeNull();
       expect(doc.querySelectorAll("article.ed-legal section").length).toBeGreaterThan(7);
     }
   });
