@@ -1,3 +1,4 @@
+## [2026-11-05] - Úklid mrtvého kódu: pryč nepoužívané PROFILE_TRANSFORM, HEADSHOT_IDS/AT_WORK_IDS, redirect/useRouter z i18n navigace, proměnná capturesPerSlide a devDependency @types/bcryptjs (bcryptjs 3 má vlastní typy)
 ## [2026-11-05] - Eventy hero: plynulejší přepínání půlek; místo flex-grow se animuje jen posun (translate), takže se při každém snímku nepřepočítává layout a nepřekreslují fotky
 ## [2026-11-05] - Eventy hero: rámeček s nadpisem poloprůsvitný s rozmazáním, fotky pod ním prosvítají
 ## [2026-11-04] - Eventy hero: štítek ztlumené půlky pulzuje se šipkou jako nápověda k najetí myší, dá se i kliknout (dotyk, klávesnice); zmizí po první návštěvě druhé půlky

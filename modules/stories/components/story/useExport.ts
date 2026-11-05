@@ -59,7 +59,6 @@ export function useExport() {
     const overlayCanvases: HTMLCanvasElement[] = []
     const wordCanvases: HTMLCanvasElement[] = []
 
-    const capturesPerSlide = hasWordLayer ? 3 : 2
     for (let i = 0; i < slideCount; i++) {
       if (abortRef.current) break
       onProgress?.(i / slideCount * 0.4)
