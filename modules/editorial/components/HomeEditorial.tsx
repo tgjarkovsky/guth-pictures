@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
 import type { EditorialImage, NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
+import { defaultPageCopy } from "@/modules/admin/lib/page-copy";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
 import { PhotoBelt } from "./PhotoBelt";
@@ -49,6 +50,9 @@ export function HomeEditorial({ locale, content, images }: Props) {
   const cs = locale !== "en";
   const ctaLabel = cs ? "Domluvit focení" : "Book a shoot";
   const copy = content.pages.home;
+  // A link without text is invisible, so a service label cleared in the admin falls back to the default.
+  const fallback = defaultPageCopy(locale).home;
+  const label = (key: "creative" | "business" | "events") => copy[key].trim() || fallback[key];
   const work = workItems(content, images);
 
   return (
@@ -60,9 +64,9 @@ export function HomeEditorial({ locale, content, images }: Props) {
         <div className="ed-home-hero__cta">
           <Link href="/#kontakt" className="ed-book">{ctaLabel}</Link>
           <nav aria-label={cs ? "Fotografické služby" : "Photography services"} className="ed-service-index">
-            <Link href="/sluzby/portretni-foceni"><span>01</span>{copy.creative}</Link>
-            <Link href="/firemni-portrety"><span>02</span>{copy.business}</Link>
-            <Link href="/sluzby/eventy-a-svatby"><span>03</span>{copy.events}</Link>
+            <Link href="/sluzby/portretni-foceni"><span>01</span>{label("creative")}</Link>
+            <Link href="/firemni-portrety"><span>02</span>{label("business")}</Link>
+            <Link href="/sluzby/eventy-a-svatby"><span>03</span>{label("events")}</Link>
           </nav>
         </div>
         {copy.intro && <div className="ed-home-hero__bar"><p>{copy.intro}</p></div>}

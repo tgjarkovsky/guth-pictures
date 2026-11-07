@@ -36,6 +36,15 @@ describe("HomeEditorial", () => {
   });
 });
 
+describe("HomeEditorial service links", () => {
+  it("falls back to the default label when the admin cleared one", () => {
+    const blank = { ...content, pages: { ...content.pages, home: { ...content.pages.home, events: " " } } };
+    const html = renderToStaticMarkup(<HomeEditorial locale="cs" content={blank} images={normalizeImages({ profile: "" })} />);
+    const document = new DOMParser().parseFromString(html, "text/html");
+    expect(document.querySelector('a[href="/sluzby/eventy-a-svatby"]')?.textContent).toBe("03Eventy a svatby");
+  });
+});
+
 describe("HomeEditorial belt", () => {
   it("uses only the admin-picked belt, not the stories", () => {
     const images = normalizeImages({ profile: "" });
