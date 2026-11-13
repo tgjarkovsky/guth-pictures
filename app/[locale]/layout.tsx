@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { Footer } from "@/components/Footer";
 import { LeadSourceCapture } from "@/components/LeadSourceCapture";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 import { siteUrl, ogImage } from "@/lib/config";
 import { getThemeColors, buildThemeStyle } from "@/lib/theme";
 import { getContent, getContactEmail } from "@/modules/admin/lib/content";
@@ -130,6 +131,7 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         <Analytics />
         <LeadSourceCapture />
+        <Script src="https://bugfinder-khaki.vercel.app/widget.js" data-project="guth-pictures" strategy="afterInteractive" />
       </body>
     </html>
   );
