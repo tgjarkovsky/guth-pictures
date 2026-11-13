@@ -6,10 +6,10 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 const csp = (frameAncestors: string) => [
   "default-src 'self'",
   "img-src 'self' res.cloudinary.com data: blob:",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://bugfinder-khaki.vercel.app",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
-  "connect-src 'self' api.cloudinary.com formspree.io",
+  "connect-src 'self' api.cloudinary.com formspree.io https://bugfinder-khaki.vercel.app",
   `frame-ancestors ${frameAncestors}`,
 ].join("; ");
 
