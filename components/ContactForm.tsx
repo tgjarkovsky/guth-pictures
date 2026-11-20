@@ -30,8 +30,12 @@ function ContactFormFields() {
   const packageName = searchParams.get("package");
   const serviceName = searchParams.get("service");
   const topicParam = searchParams.get("topic");
-  const initialTopic = isTopic(topicParam) ? topicParam : "";
-  const initialMessage = packageName && serviceName
+  // Gift voucher redemption page passes ?kod=GP-XXXX-XXXX
+  const voucherCode = searchParams.get("kod");
+  const initialTopic = isTopic(topicParam) ? topicParam : voucherCode ? "portraits" : "";
+  const initialMessage = voucherCode
+    ? t("voucherPreset", { code: voucherCode.toUpperCase() })
+    : packageName && serviceName
     ? t("packagePreset", { package: packageName, service: serviceName })
     : initialTopic ? t(`presets.${initialTopic}`) : "";
   const [topic, setTopic] = useState<Topic | "">(initialTopic);
@@ -56,6 +60,7 @@ function ContactFormFields() {
     const lead = readLeadSource();
     data.set("page", pathname);
     if (packageName) data.set("package", packageName);
+    if (voucherCode) data.set("voucher", voucherCode.toUpperCase());
     if (lead) {
       data.set("source", lead.source);
       if (lead.medium) data.set("medium", lead.medium);
@@ -81,6 +86,7 @@ function ContactFormFields() {
         topic: topic || "none",
         page: pathname,
         package: packageName,
+        ...(voucherCode ? { voucher: true } : {}),
         source: lead?.source ?? "unknown",
         medium: lead?.medium ?? null,
         campaign: lead?.campaign ?? null,

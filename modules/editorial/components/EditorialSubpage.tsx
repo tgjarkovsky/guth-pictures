@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { EditorialNav, type ActivePage } from "./EditorialNav";
 
 type Props = PropsWithChildren<{
-  active: Extract<ActivePage, "services" | "blog" | "legal"> | null;
+  active: Extract<ActivePage, "services" | "blog" | "legal" | "voucher"> | null;
   className?: string;
 }>;
 

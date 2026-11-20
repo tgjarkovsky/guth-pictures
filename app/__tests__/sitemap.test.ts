@@ -22,6 +22,7 @@ const staticPaths = [
   "/sluzby/portretni-foceni",
   "/sluzby/eventy-a-svatby",
   "/firemni-portrety",
+  "/darkovy-poukaz",
   "/blog",
   "/foceni-101",
 ];

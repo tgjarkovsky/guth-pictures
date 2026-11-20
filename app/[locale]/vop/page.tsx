@@ -13,9 +13,9 @@ export default async function VopPage({ params }: { params: Promise<{ locale: st
   return <EditorialSubpage active="legal" className="ed-secondary-legal">{locale === "en" ? <EnVersion /> : <CsVersion />}</EditorialSubpage>;
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
   return (
-    <section className="mb-10">
+    <section id={id} className="mb-10 scroll-mt-24">
       <h2 className="text-xl font-semibold mb-4 pb-2 border-b border-[var(--color-border)]">{title}</h2>
       <div className="text-[var(--color-text-muted)] leading-relaxed text-sm [&_ul]:list-none [&_ul]:space-y-3 [&_strong]:text-[var(--color-text)]">
         {children}
@@ -101,6 +101,16 @@ function EnVersion() {
         <ul>
           <li><strong>Using your photos in my portfolio:</strong> By booking, you&apos;re okay with me using selected photos for my portfolio and social media. If you&apos;d prefer I don&apos;t, just let me know in writing and I&apos;ll respect that (this doesn&apos;t apply to TFP, see section 6).</li>
           <li><strong>Your data:</strong> I only use your contact and billing details to handle your booking and communicate with you. Nothing else.</li>
+        </ul>
+      </Section>
+
+      <Section id="poukazy" title="9. Gift Vouchers">
+        <ul>
+          <li><strong>Buying:</strong> Vouchers are sold at guthpictures.eu/darkovy-poukaz. The voucher is issued once the payment reaches my account; unpaid orders expire after 10 days.</li>
+          <li><strong>Delivery:</strong> The voucher is e-mailed as a PDF to the buyer, who passes it on, together with a paid invoice. I&apos;m not a VAT payer.</li>
+          <li><strong>Validity:</strong> 12 months from purchase unless stated otherwise on the voucher, for one session of the package shown. Book the date within the validity period; the shoot itself can be later. Vouchers are transferable and can go towards a bigger package if you pay the difference.</li>
+          <li><strong>Withdrawal:</strong> As a consumer you can withdraw within 14 days of purchase without giving a reason, as long as the voucher hasn&apos;t been used. Just e-mail me and I&apos;ll refund you within 14 days.</li>
+          <li><strong>Unused vouchers:</strong> Not exchangeable for cash. An expired voucher can be extended by agreement. If I can&apos;t provide the session within the validity period, I&apos;ll refund you.</li>
         </ul>
       </Section>
 
@@ -208,11 +218,21 @@ function CsVersion() {
         </ul>
       </Section>
 
-      <Section title="10. Závěrečná ustanovení">
+      <Section id="poukazy" title="10. Dárkové poukazy">
         <ul className="space-y-4">
-          <li><strong>10.1.</strong> Právní vztahy výslovně neupravené těmito VOP se řídí platným právním řádem České republiky.</li>
-          <li><strong>10.2.</strong> Fotograf si vyhrazuje právo tyto VOP měnit či doplňovat. Pro Klienta je však vždy závazné to znění VOP, které bylo platné v okamžiku uzavření smlouvy/potvrzení objednávky.</li>
-          <li><strong>10.3. Mimosoudní řešení sporů:</strong> Pokud je Klient spotřebitelem, má podle zákona č. 634/1992 Sb., o ochraně spotřebitele, právo na mimosoudní řešení spotřebitelského sporu ze smlouvy o poskytování služeb. Subjektem oprávněným k mimosoudnímu řešení sporu je Česká obchodní inspekce (ČOI), se sídlem Štěpánská 567/15, 120 00 Praha 2, web: www.coi.cz.</li>
+          <li><strong>10.1. Nákup:</strong> Dárkový poukaz lze zakoupit na webu guthpictures.eu/darkovy-poukaz. Kupní smlouva je uzavřena odesláním objednávky; poukaz je vystaven po připsání platby na účet Fotografa. Nezaplacená objednávka zaniká po 10 dnech.</li>
+          <li><strong>10.2. Doručení:</strong> Poukaz je zaslán v elektronické podobě (PDF) na e-mail kupujícího, který ho předá obdarovanému. Spolu s poukazem obdrží kupující fakturu (uhrazeno). Fotograf není plátcem DPH.</li>
+          <li><strong>10.3. Platnost a uplatnění:</strong> Poukaz platí 12 měsíců od zakoupení, pokud není na poukazu uvedeno jinak, a lze ho uplatnit jednorázově na balíček na něm uvedený. Termín focení se sjednává individuálně, musí být domluven v době platnosti poukazu a samotné focení může proběhnout i později. Poukaz je přenosný. Na dražší balíček lze poukaz využít s doplatkem rozdílu.</li>
+          <li><strong>10.4. Odstoupení od smlouvy:</strong> Kupující, který je spotřebitelem, může od kupní smlouvy odstoupit bez udání důvodu do 14 dnů od jejího uzavření, pokud poukaz dosud nebyl uplatněn. Stačí to Fotografovi oznámit e-mailem. Fotograf vrátí zaplacenou částku do 14 dnů od odstoupení stejným způsobem, jakým byla přijata.</li>
+          <li><strong>10.5. Nevyužitý poukaz:</strong> Poukaz nelze směnit za hotovost. Propadlý poukaz lze po dohodě prodloužit. Pokud Fotograf ze své strany nebude schopen službu v době platnosti poskytnout, vrátí zaplacenou částku.</li>
+        </ul>
+      </Section>
+
+      <Section title="11. Závěrečná ustanovení">
+        <ul className="space-y-4">
+          <li><strong>11.1.</strong> Právní vztahy výslovně neupravené těmito VOP se řídí platným právním řádem České republiky.</li>
+          <li><strong>11.2.</strong> Fotograf si vyhrazuje právo tyto VOP měnit či doplňovat. Pro Klienta je však vždy závazné to znění VOP, které bylo platné v okamžiku uzavření smlouvy/potvrzení objednávky.</li>
+          <li><strong>11.3. Mimosoudní řešení sporů:</strong> Pokud je Klient spotřebitelem, má podle zákona č. 634/1992 Sb., o ochraně spotřebitele, právo na mimosoudní řešení spotřebitelského sporu ze smlouvy o poskytování služeb. Subjektem oprávněným k mimosoudnímu řešení sporu je Česká obchodní inspekce (ČOI), se sídlem Štěpánská 567/15, 120 00 Praha 2, web: www.coi.cz.</li>
         </ul>
       </Section>
 
