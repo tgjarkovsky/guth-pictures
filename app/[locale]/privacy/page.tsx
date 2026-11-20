@@ -44,6 +44,7 @@ function CsVersion() {
         <ul>
           <li><strong>Kontaktní a smluvní údaje:</strong> jméno a příjmení, e-mailová adresa, telefonní číslo, fakturační adresa.</li>
           <li><strong>Komunikace:</strong> obsah zpráv zaslaných prostřednictvím kontaktního formuláře nebo e-mailu.</li>
+          <li><strong>Dárkové poukazy:</strong> jméno a e-mail kupujícího, jméno obdarovaného, věnování, případně e-mail obdarovaného a datum odeslání; údaje o platbě (částka, variabilní symbol, datum připsání).</li>
           <li><strong>Fotografie:</strong> vizuální záznamy vzniklé při fotografování, které mohou zachycovat podobu fyzické osoby.</li>
           <li><strong>Zdroj návštěvy:</strong> při prvním otevření webu si prohlížeč uloží do úložiště sezení (sessionStorage), odkud jste přišli: UTM parametry z odkazu, u kliknutí z reklamy Google nebo Facebooku označení zdroje, jinak adresu odkazujícího webu, a stránku, na které jste web otevřeli. Údaj zmizí po zavření karty a nepoužívají se k němu cookies. Pokud odešlete kontaktní formulář, připojí se k vaší zprávě.</li>
           <li><strong>Měření poptávek:</strong> po odeslání formuláře se do statistik Vercel Analytics zapíše událost „lead“ s typem služby, balíčkem, stránkou, na které jste formulář odeslali, a zdrojem návštěvy. Jméno, e-mail ani text zprávy se do statistik neposílají.</li>
@@ -52,7 +53,7 @@ function CsVersion() {
 
       <Section title="3. Účel a právní základ zpracování">
         <ul>
-          <li><strong>Plnění smlouvy (čl. 6 odst. 1 písm. b) GDPR):</strong> zpracování objednávky, komunikace, vystavení faktury, dodání fotografií.</li>
+          <li><strong>Plnění smlouvy (čl. 6 odst. 1 písm. b) GDPR):</strong> zpracování objednávky, komunikace, vystavení faktury či dokladu, dodání fotografií a dárkových poukazů (včetně odeslání poukazu obdarovanému, pokud o to kupující požádá).</li>
           <li><strong>Oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR):</strong> prezentace portfolia na webových stránkách a sociálních sítích (u standardních zakázek, pokud klient nevznese námitku); zjištění, který příspěvek, reklama nebo web přivedl poptávku.</li>
           <li><strong>Plnění právní povinnosti (čl. 6 odst. 1 písm. c) GDPR):</strong> uchovávání daňových dokladů po dobu stanovenou zákonem.</li>
         </ul>
@@ -61,6 +62,7 @@ function CsVersion() {
       <Section title="4. Doba uchovávání">
         <ul>
           <li>Smluvní dokumenty a faktury: 10 let od vystavení (daňová povinnost).</li>
+          <li>Objednávky dárkových poukazů: po dobu platnosti poukazu a 3 roky po ní; doklady o zaplacení 10 let.</li>
           <li>Kontaktní a komunikační údaje: po dobu trvání smluvního vztahu a 3 roky po jeho ukončení.</li>
           <li>Fotografie v portfoliu: do vznesení námitky nebo odvolání souhlasu.</li>
           <li>Zdroj návštěvy v prohlížeči: do zavření karty. Pokud jste formulář odeslali, zůstává ve zprávě po stejnou dobu jako ostatní komunikace.</li>
@@ -70,14 +72,15 @@ function CsVersion() {
       <Section title="5. Příjemci osobních údajů">
         <p>
           Osobní údaje nejsou předávány třetím stranám za účelem marketingu. Mohou být předány pouze
-          zpracovatelům zajišťujícím technické služby (hosting, cloudové úložiště, účetní software),
-          kteří jsou vázáni smlouvou o zpracování osobních údajů.
+          zpracovatelům zajišťujícím technické služby (hosting Vercel, databáze Upstash, cloudové úložiště,
+          odesílání e-mailů Resend, účetní software), kteří jsou vázáni smlouvou o zpracování osobních údajů.
+          Platby za dárkové poukazy přijímá Fio banka, a.s.
         </p>
       </Section>
 
       <Section title="6. Předávání do třetích zemí">
         <p>
-          Fotografie mohou být uloženy na platformách provozovaných mimo EHP (např. Cloudinary, USA).
+          Fotografie a e-maily mohou být zpracovány na platformách provozovaných mimo EHP (např. Cloudinary a Resend, USA).
           Přenos probíhá na základě standardních smluvních doložek Evropské komise.
         </p>
       </Section>
@@ -128,6 +131,7 @@ function EnVersion() {
         <ul>
           <li><strong>Contact & contract data:</strong> name, e-mail address, phone number, billing address.</li>
           <li><strong>Communication:</strong> messages sent via the contact form or e-mail.</li>
+          <li><strong>Gift vouchers:</strong> the buyer&apos;s name and e-mail, the recipient&apos;s name, the dedication, optionally the recipient&apos;s e-mail and send date; payment data (amount, variable symbol, date received).</li>
           <li><strong>Photographs:</strong> visual recordings made during the shoot, which may depict the client&apos;s likeness.</li>
           <li><strong>Visit source:</strong> when you first open the site, your browser stores in session storage where you came from: the UTM parameters of the link, a source label for clicks from Google or Facebook ads, otherwise the address of the referring site, and the page you landed on. It disappears when you close the tab and no cookies are used for it. If you send the contact form, it is attached to your message.</li>
           <li><strong>Inquiry measurement:</strong> after the form is sent, a &quot;lead&quot; event is recorded in Vercel Analytics with the type of service, the package, the page the form was sent from and the visit source. Your name, e-mail and the text of your message are not sent to analytics.</li>
@@ -136,7 +140,7 @@ function EnVersion() {
 
       <Section title="3. Purpose and legal basis">
         <ul>
-          <li><strong>Performance of a contract (Art. 6(1)(b) GDPR):</strong> processing your order, invoicing, delivering photos.</li>
+          <li><strong>Performance of a contract (Art. 6(1)(b) GDPR):</strong> processing your order, invoicing, delivering photos and gift vouchers (including e-mailing the voucher to the recipient if the buyer asks).</li>
           <li><strong>Legitimate interest (Art. 6(1)(f) GDPR):</strong> portfolio presentation on the website and social media (standard paid shoots, unless you object); finding out which post, ad or site brought an inquiry.</li>
           <li><strong>Legal obligation (Art. 6(1)(c) GDPR):</strong> retention of tax documents as required by law.</li>
         </ul>
@@ -145,6 +149,7 @@ function EnVersion() {
       <Section title="4. Retention periods">
         <ul>
           <li>Contracts and invoices: 10 years (tax law).</li>
+          <li>Gift voucher orders: for the voucher&apos;s validity and 3 years after; payment receipts 10 years.</li>
           <li>Contact and communication data: for the duration of the contract and 3 years thereafter.</li>
           <li>Portfolio photographs: until you object or withdraw consent.</li>
           <li>Visit source in your browser: until you close the tab. If you sent the form, it stays in the message for as long as the rest of the communication.</li>
@@ -154,13 +159,14 @@ function EnVersion() {
       <Section title="5. Recipients">
         <p>
           Your data is not shared with third parties for marketing. It may be passed to processors providing
-          technical services (hosting, cloud storage, accounting software) bound by data processing agreements.
+          technical services (Vercel hosting, Upstash database, cloud storage, Resend e-mail delivery, accounting software) bound by data processing agreements.
+          Gift voucher payments are received by Fio banka, a.s.
         </p>
       </Section>
 
       <Section title="6. International transfers">
         <p>
-          Photographs may be stored on platforms outside the EEA (e.g. Cloudinary, USA).
+          Photographs and e-mails may be processed on platforms outside the EEA (e.g. Cloudinary and Resend, USA).
           Transfers are covered by EU Standard Contractual Clauses.
         </p>
       </Section>

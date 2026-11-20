@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
 import type { EditorialImage, NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
@@ -9,7 +9,7 @@ import { PhotoBelt } from "./PhotoBelt";
 import { WorkGrid } from "./WorkGrid";
 import { reviewedWork, type WorkItem } from "./work-items";
 
-type Props = { locale: string; content: NormalizedContentData; images: NormalizedSiteImages };
+type Props = { locale: string; content: NormalizedContentData; images: NormalizedSiteImages; promo?: ReactNode };
 
 // Without any reviewed photos the admin-picked stories stand in.
 function workItems(content: NormalizedContentData, images: NormalizedSiteImages): WorkItem[] {
@@ -46,7 +46,7 @@ function Headline({ text, shift, shiftMobile }: { text: string; shift: string; s
   return <h1 style={style}><span>{body.slice(0, split)}</span> <span className="ed-home-hero__line2">{last}</span></h1>;
 }
 
-export function HomeEditorial({ locale, content, images }: Props) {
+export function HomeEditorial({ locale, content, images, promo }: Props) {
   const cs = locale !== "en";
   const ctaLabel = cs ? "Domluvit focení" : "Book a shoot";
   const copy = content.pages.home;
@@ -71,6 +71,7 @@ export function HomeEditorial({ locale, content, images }: Props) {
         </div>
         {copy.intro && <div className="ed-home-hero__bar"><p>{copy.intro}</p></div>}
       </section>
+      {promo}
 
       <section id="tvorba" className="ed-home-work">
         {copy.work && <h2>{copy.work}</h2>}

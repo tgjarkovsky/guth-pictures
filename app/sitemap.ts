@@ -3,7 +3,7 @@ import { siteUrl } from "@/lib/config";
 import { getBlogPosts } from "@/modules/blog/lib/blog";
 
 const locales = ["cs", "en"] as const;
-const pages = ["", "/sluzby", "/sluzby/portretni-foceni", "/sluzby/eventy-a-svatby", "/firemni-portrety", "/blog", "/foceni-101"] as const;
+const pages = ["", "/sluzby", "/sluzby/portretni-foceni", "/sluzby/eventy-a-svatby", "/firemni-portrety", "/darkovy-poukaz", "/blog", "/foceni-101"] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = pages.flatMap((page) =>

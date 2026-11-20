@@ -15,6 +15,12 @@ const csp = (frameAncestors: string) => [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["cloudinary"],
+  // Voucher PDFs embed these fonts at runtime (fs read), so ship them with the functions that render PDFs.
+  outputFileTracingIncludes: {
+    "/api/vouchers/**": ["./modules/vouchers/fonts/**"],
+    "/api/cron/vouchers": ["./modules/vouchers/fonts/**"],
+    "/api/admin/vouchers/**": ["./modules/vouchers/fonts/**"],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "5mb",
@@ -35,6 +41,10 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|en)/portfolio", destination: "/:locale", permanent: true },
       { source: "/:locale(cs|en)/o-mne", destination: "/:locale", permanent: true },
       { source: "/:locale(cs|en)/sluzby/brandove-foceni", destination: "/:locale", permanent: true },
+      // Short link printed on gift vouchers
+      { source: "/poukaz", destination: "/cs/darkovy-poukaz/uplatnit", permanent: false },
+      { source: "/:locale(cs|en)/poukaz", destination: "/:locale/darkovy-poukaz/uplatnit", permanent: false },
+      { source: "/:locale(cs|en)/darkovy-poukazy", destination: "/:locale/darkovy-poukaz", permanent: true },
     ];
   },
   async headers() {

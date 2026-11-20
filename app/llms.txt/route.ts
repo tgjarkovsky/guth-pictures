@@ -29,6 +29,7 @@ Ceník a balíčky: ${siteUrl}/cs/sluzby
 - [Služby / Services](${siteUrl}/cs/sluzby)
 - [Portrétní focení / Portrait sessions](${siteUrl}/cs/sluzby/portretni-foceni)
 - [Firemní portréty / Business portraits](${siteUrl}/cs/firemni-portrety)
+- [Dárkový poukaz na focení / Gift voucher](${siteUrl}/cs/darkovy-poukaz)
 - [Blog](${siteUrl}/cs/blog), RSS: ${siteUrl}/feed.xml
 - [Focení 101](${siteUrl}/cs/foceni-101): interaktivní průvodce, co dělá fotku (clona, čas, ISO, ohnisko)
 - [Obchodní podmínky](${siteUrl}/cs/vop)

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "blog" | "legal" | "tools" | null;
+export type ActivePage = "home" | "portrait" | "business" | "events" | "services" | "blog" | "legal" | "tools" | "voucher" | null;
 
 type Props = {
   tone: "light" | "dark";
@@ -19,9 +19,10 @@ const hrefs = {
   services: "/sluzby",
   blog: "/blog",
   legal: "/vop",
+  voucher: "/darkovy-poukaz",
 } as const;
 
-const secondaryPages = new Set<ActivePage>(["services", "blog", "legal", "tools"]);
+const secondaryPages = new Set<ActivePage>(["services", "blog", "legal", "tools", "voucher"]);
 
 export function EditorialNav({ tone, active }: Props) {
   const locale = useLocale();
@@ -39,6 +40,7 @@ export function EditorialNav({ tone, active }: Props) {
   const secondaryLinks = [
     { key: "services" as const, href: hrefs.services, label: cs ? "Služby" : "Services" },
     { key: "blog" as const, href: hrefs.blog, label: "Blog" },
+    { key: "voucher" as const, href: hrefs.voucher, label: cs ? "Dárkový poukaz" : "Gift voucher" },
   ];
   const homeLink = { key: "home" as const, href: hrefs.home, label: cs ? "Domů" : "Home" };
   const links = [homeLink, ...(secondaryPages.has(active) ? secondaryLinks : serviceLinks)];

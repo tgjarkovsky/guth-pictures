@@ -15,6 +15,7 @@ const groups = [
     { href: "/admin/galerie", label: "Galerie" },
     { href: "/admin/navrhy", label: "Návrhy" },
     { href: "/admin/pozy", label: "Pózy" },
+    { href: "/admin/poukazy", label: "Poukazy" },
   ] },
   { title: "Publikace", tabs: [
     { href: "/admin/blog", label: "Blog" },

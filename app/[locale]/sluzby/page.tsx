@@ -6,6 +6,8 @@ import { getContent } from "@/modules/admin/lib/content";
 import { ServiceCards, type ServiceItem } from "@/modules/homepage/components/ServiceCards";
 import { ServiceLinks } from "@/modules/homepage/components/ServiceLinks";
 import { EditorialSubpage } from "@/modules/editorial/components/EditorialSubpage";
+import { VoucherBanner } from "@/modules/vouchers/components/VoucherBanner";
+import { getVoucherSettings } from "@/modules/vouchers/lib/settings";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -34,6 +36,7 @@ export default async function SluzbyPage({ params }: { params: Promise<{ locale:
   const { locale } = await params;
   const content = await getContent(locale);
   const copy = content.pages.services;
+  const vouchers = await getVoucherSettings();
   const faq = copy.faq;
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -52,6 +55,7 @@ export default async function SluzbyPage({ params }: { params: Promise<{ locale:
         <h1>{copy.title}</h1>
         <p>{copy.subtitle}</p>
       </section>
+      {vouchers.enabled && <VoucherBanner locale={locale} christmas={vouchers.christmas} />}
       <section className="ed-secondary-services__list" aria-label={locale === "cs" ? "Nabídka focení" : "Photography offer"}>
         <ServiceCards
           selectLabel={copy.select}
