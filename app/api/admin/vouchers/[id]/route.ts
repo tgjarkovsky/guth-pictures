@@ -3,7 +3,7 @@ import { readJson, requireAdmin } from "@/lib/admin-route";
 import { deliver, markPaid } from "@/modules/vouchers/lib/service";
 import { getOrder, saveOrder } from "@/modules/vouchers/lib/store";
 
-type Body = { action: "markPaid" | "resend" | "redeem" | "unredeem" | "cancel" | "note"; note?: string };
+type Body = { action: "markPaid" | "resend" | "invoice" | "redeem" | "unredeem" | "cancel" | "note"; note?: string };
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const denied = await requireAdmin();
@@ -25,6 +25,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       order.sentToBuyerAt = undefined;
       order.sendAttempts = 0;
       order = await deliver(order);
+      break;
+    case "invoice":
+      if (order.status !== "paid" && order.status !== "redeemed") return NextResponse.json({ error: "Poukaz ještě není zaplacený" }, { status: 409 });
+      order.invoiceAttempts = 0;
+      order = await deliver(order);
+      if (order.invoiceError) return NextResponse.json({ error: order.invoiceError }, { status: 502 });
       break;
     case "redeem":
       if (order.status !== "paid") return NextResponse.json({ error: "Uplatnit lze jen zaplacený poukaz" }, { status: 409 });

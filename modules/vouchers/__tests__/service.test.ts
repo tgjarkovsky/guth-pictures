@@ -1,20 +1,31 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createFakeKv } from "./fake-kv";
 
-const { kv, emails, payments } = vi.hoisted(() => ({
+const { kv, emails, payments, fakturacek } = vi.hoisted(() => ({
   kv: { current: null as ReturnType<typeof import("./fake-kv").createFakeKv> | null },
-  emails: [] as { type: string; to?: string; vs: string }[],
+  emails: [] as { type: string; to?: string; vs: string; invoice?: string }[],
   payments: { list: [] as { id: string; date: string; amount: number; vs: string }[] },
+  fakturacek: { up: true, calls: [] as { ref: string; paidAt: string; price: number }[], numbers: new Map<string, string>() },
 }));
 
 vi.mock("@/lib/kv", () => ({ getKv: async () => kv.current }));
 vi.mock("../lib/render", () => ({ renderVoucherPdf: async () => new Uint8Array([1]), qrDataUri: async () => "data:," }));
-vi.mock("../lib/receipt", () => ({ renderReceiptPdf: async () => new Uint8Array([2]) }));
+// Fakturáček: idempotent per order, like the real API
+vi.mock("../lib/fakturacek", () => ({
+  createVoucherInvoice: async (o: { id: string; paidAt: string; product: { priceCzk: number } }) => {
+    if (!fakturacek.up) throw new Error("Fakturáček: HTTP 503");
+    fakturacek.calls.push({ ref: `voucher:${o.id}`, paidAt: o.paidAt, price: o.product.priceCzk });
+    const number = fakturacek.numbers.get(o.id) ?? `2026${String(fakturacek.numbers.size + 1).padStart(4, "0")}`;
+    fakturacek.numbers.set(o.id, number);
+    return { number, pdf: new Uint8Array([3]) };
+  },
+  fetchVoucherInvoicePdf: async () => new Uint8Array([3]),
+}));
 vi.mock("../lib/fio", () => ({ fetchIncomingPayments: async () => payments.list }));
 vi.mock("../lib/email", () => ({
   sendReminder: async (o: { vs: string; buyer: { email: string } }) => { emails.push({ type: "reminder", to: o.buyer.email, vs: o.vs }); },
-  sendVoucherToBuyer: async (o: { vs: string; buyer: { email: string } }) => { emails.push({ type: "buyer", to: o.buyer.email, vs: o.vs }); },
-  sendVoucherToRecipient: async (o: { vs: string; recipient: { email: string } }) => { emails.push({ type: "recipient", to: o.recipient.email, vs: o.vs }); },
+  sendVoucherToBuyer: async (o: { vs: string; buyer: { email: string } }, _t: string, _pdf: unknown, invoice?: { number: string }) => { emails.push({ type: "buyer", to: o.buyer.email, vs: o.vs, invoice: invoice?.number }); },
+  sendInvoice: async (o: { vs: string; buyer: { email: string } }, invoice: { number: string }) => { emails.push({ type: "invoice", to: o.buyer.email, vs: o.vs, invoice: invoice.number }); },
   notifyOwner: async (subject: string) => { emails.push({ type: `owner:${subject}`, vs: "" }); },
   ownerSummary: () => [],
 }));
@@ -35,7 +46,12 @@ beforeEach(() => {
   kv.current = createFakeKv();
   emails.length = 0;
   payments.list = [];
+  fakturacek.up = true;
+  fakturacek.calls.length = 0;
+  fakturacek.numbers.clear();
   process.env.FIO_API_TOKEN = "token";
+  process.env.FAKTURACEK_URL = "https://faktury.test";
+  process.env.FAKTURACEK_API_TOKEN = "t";
   process.env.AUTH_SECRET = "test-secret";
 });
 
@@ -53,9 +69,11 @@ describe("voucher jobs", () => {
     expect(saved.status).toBe("paid");
     expect(saved.code).toMatch(/^GP-/);
     expect(saved.validUntil).toBe("2027-11-20");
-    expect(saved.docNumber).toBe("2026-0001");
     expect(saved.paymentRef).toBe("fio:9001");
-    expect(emails.filter((e) => e.type === "buyer")).toHaveLength(1);
+    expect(saved.invoiceNumber).toBe("20260001");
+    expect(saved.invoiceSentAt).toBeTruthy();
+    expect(emails.filter((e) => e.type === "buyer")).toEqual([{ type: "buyer", to: "petr@example.com", vs: order.vs, invoice: "20260001" }]);
+    expect(fakturacek.calls).toHaveLength(1);
     expect((await findOrderByCode(saved.code!))?.id).toBe(order.id);
   });
 
@@ -93,14 +111,44 @@ describe("voucher jobs", () => {
     expect((await getOrder(order.id))!.status).toBe("paid");
   });
 
-  it("sends to the recipient on the chosen day only", async () => {
-    const order = await createOrder(orderData({ recipient: { name: "Jana", email: "jana@example.com", sendOn: "2026-12-24" } }));
+  it("sends the voucher without waiting when Fakturáček is down, the invoice follows later", async () => {
+    const order = await createOrder(orderData());
     payments.list = [{ id: "9005", date: "2026-11-20", amount: 2500, vs: order.vs }];
-    await runVoucherJobs(new Date("2026-11-20T12:00:00Z"));
-    expect(emails.map((e) => e.type)).toContain("buyer");
-    expect(emails.map((e) => e.type)).not.toContain("recipient");
-    await runVoucherJobs(new Date("2026-12-24T06:00:00Z")); // 07:00 in Prague
-    expect(emails.filter((e) => e.type === "recipient")).toEqual([{ type: "recipient", to: "jana@example.com", vs: order.vs }]);
+    fakturacek.up = false;
+    const first = await runVoucherJobs(new Date("2026-11-20T12:00:00Z"));
+    const toCustomer = () => emails.filter((e) => !e.type.startsWith("owner:"));
+    expect(toCustomer()).toEqual([expect.objectContaining({ type: "buyer", invoice: undefined })]);
+    expect(first.errors.join()).toMatch(/Fakturáček/);
+    let saved = (await getOrder(order.id))!;
+    expect(saved).toMatchObject({ invoiceAttempts: 1, invoiceError: "Fakturáček: HTTP 503" });
+    expect(saved.sentToBuyerAt).toBeTruthy();
+    expect(saved.invoiceSentAt).toBeUndefined();
+
+    fakturacek.up = true;
+    await runVoucherJobs(new Date("2026-11-20T12:10:00Z"));
+    await runVoucherJobs(new Date("2026-11-20T12:20:00Z"));
+    expect(toCustomer().map((e) => e.type)).toEqual(["buyer", "invoice"]);
+    saved = (await getOrder(order.id))!;
+    expect(saved).toMatchObject({ invoiceNumber: "20260001", invoiceAttempts: 0 });
+    expect(saved.invoiceError).toBeUndefined();
+  });
+
+  it("tells the owner once when invoicing keeps failing", async () => {
+    const order = await createOrder(orderData());
+    payments.list = [{ id: "9006", date: "2026-11-20", amount: 2500, vs: order.vs }];
+    fakturacek.up = false;
+    for (let i = 0; i < 7; i++) await runVoucherJobs(new Date(Date.UTC(2026, 10, 20, 12, i * 10)));
+    expect(emails.filter((e) => e.type.startsWith("owner:⚠️ Fakturu"))).toHaveLength(1);
+  });
+
+  it("does not invoice when Fakturáček is not configured, but still sends the voucher", async () => {
+    delete process.env.FAKTURACEK_URL;
+    const order = await createOrder(orderData());
+    payments.list = [{ id: "9007", date: "2026-11-20", amount: 2500, vs: order.vs }];
+    const report = await runVoucherJobs();
+    expect(report.errors).toEqual([]);
+    expect(fakturacek.calls).toHaveLength(0);
+    expect(emails.filter((e) => e.type === "buyer")).toHaveLength(1);
   });
 
   it("skips when another run holds the lock", async () => {

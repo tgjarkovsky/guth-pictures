@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { spayd, ibanToLocal } from "../lib/spayd";
-import { generateVoucherCode, normalizeVoucherCode, formatVs, formatDocNumber } from "../lib/code";
+import { generateVoucherCode, normalizeVoucherCode, formatVs } from "../lib/code";
 import { addMonths, formatCzk, formatDate, pragueDate } from "../lib/dates";
 import { parseFioStatement } from "../lib/fio";
 import { validateOrder } from "../lib/validation";
@@ -31,9 +31,8 @@ describe("codes", () => {
     expect(normalizeVoucherCode("GP-7KQ4-M2X0")).toBeNull(); // 0 is not in the alphabet
     expect(normalizeVoucherCode("GP-123")).toBeNull();
   });
-  it("formats VS and receipt numbers", () => {
+  it("formats the variable symbol", () => {
     expect(formatVs(12, 2026)).toBe("77260012");
-    expect(formatDocNumber(3, 2026)).toBe("2026-0003");
   });
 });
 
@@ -78,7 +77,7 @@ describe("validateOrder", () => {
   const base = { productId: "portrait-basic", buyerName: " Petr ", buyerEmail: "Petr@Example.com", recipientName: "Jana", terms: true, locale: "cs" };
 
   it("accepts a minimal order and normalizes it", () => {
-    const r = validateOrder(base, products, "2026-11-20");
+    const r = validateOrder(base, products);
     expect(r.ok).toBe(true);
     if (r.ok) {
       expect(r.value.buyer).toEqual({ name: "Petr", email: "petr@example.com" });
@@ -86,20 +85,18 @@ describe("validateOrder", () => {
     }
   });
   it("rejects inactive products, bad e-mails and missing consent", () => {
-    const r = validateOrder({ ...base, productId: "business-solo", buyerEmail: "nope", terms: false }, products, "2026-11-20");
+    const r = validateOrder({ ...base, productId: "business-solo", buyerEmail: "nope", terms: false }, products);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.errors).toMatchObject({ productId: "required", buyerEmail: "email", terms: "required" });
   });
-  it("validates the scheduled recipient e-mail", () => {
-    const ok = validateOrder({ ...base, recipientEmail: "jana@example.com", sendOn: "2026-12-24" }, products, "2026-11-20");
-    expect(ok.ok && ok.value.recipient).toEqual({ name: "Jana", email: "jana@example.com", sendOn: "2026-12-24" });
-    const past = validateOrder({ ...base, recipientEmail: "jana@example.com", sendOn: "2026-11-19" }, products, "2026-11-20");
-    expect(!past.ok && past.errors.sendOn).toBe("past");
+  it("ignores any recipient e-mail fields — the buyer passes the voucher on", () => {
+    const r = validateOrder({ ...base, recipientEmail: "jana@example.com", sendOn: "2026-12-24" }, products);
+    expect(r.ok && r.value.recipient).toEqual({ name: "Jana" });
   });
   it("limits the dedication and catches the honeypot", () => {
-    const long = validateOrder({ ...base, dedication: "x".repeat(161) }, products, "2026-11-20");
+    const long = validateOrder({ ...base, dedication: "x".repeat(161) }, products);
     expect(!long.ok && long.errors.dedication).toBe("tooLong");
-    const bot = validateOrder({ ...base, website: "http://spam" }, products, "2026-11-20");
+    const bot = validateOrder({ ...base, website: "http://spam" }, products);
     expect(!bot.ok && bot.errors.form).toBe("spam");
   });
 });

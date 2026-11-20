@@ -4,7 +4,7 @@ import { EditorialSubpage } from "@/modules/editorial/components/EditorialSubpag
 import { getVoucherCopy } from "@/modules/vouchers/copy";
 import { VoucherOrderForm } from "@/modules/vouchers/components/VoucherOrderForm";
 import { isPaymentConfigured } from "@/modules/vouchers/lib/config";
-import { formatCzk, pragueDate } from "@/modules/vouchers/lib/dates";
+import { formatCzk } from "@/modules/vouchers/lib/dates";
 import { activeProducts, getVoucherSettings } from "@/modules/vouchers/lib/settings";
 
 export const revalidate = 300;
@@ -32,15 +32,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-/** Christmas Eve if it's still ahead, otherwise a week from today. */
-function defaultSendOn(today: string): string {
-  const xmas = `${today.slice(0, 4)}-12-24`;
-  if (today <= xmas && today >= `${today.slice(0, 4)}-11-01`) return xmas;
-  const d = new Date(`${today}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + 7);
-  return d.toISOString().slice(0, 10);
-}
-
 export default async function VoucherPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale = raw === "en" ? "en" : "cs";
@@ -48,7 +39,6 @@ export default async function VoucherPage({ params }: { params: Promise<{ locale
   const settings = await getVoucherSettings();
   const products = activeProducts(settings);
   const open = settings.enabled && isPaymentConfigured() && products.length > 0;
-  const today = pragueDate();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -103,8 +93,6 @@ export default async function VoucherPage({ params }: { params: Promise<{ locale
             locale={locale}
             copy={copy.form}
             products={products.map((p) => ({ id: p.id, name: p.name[locale], details: p.details[locale], price: formatCzk(p.priceCzk, locale) }))}
-            defaultSendOn={defaultSendOn(today)}
-            minSendOn={today}
           />
         ) : (
           <p className="ed-secondary-empty">{copy.unavailable}</p>

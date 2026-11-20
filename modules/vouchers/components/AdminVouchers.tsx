@@ -43,7 +43,7 @@ export function AdminVouchers({ initialOrders, initialSettings, setup }: Props) 
     if (filter !== "all" && o.status !== filter) return false;
     if (!query) return true;
     const q = query.toLowerCase();
-    return [o.vs, o.code, o.buyer.name, o.buyer.email, o.recipient.name, o.recipient.email].some((v) => v?.toLowerCase().includes(q));
+    return [o.vs, o.code, o.invoiceNumber, o.buyer.name, o.buyer.email, o.recipient.name].some((v) => v?.toLowerCase().includes(q));
   });
 
   async function refresh() {
@@ -165,6 +165,7 @@ function OrderRow({ order: o, onChange }: { order: VoucherOrder; onChange: (o: V
         <div className="flex items-center gap-2 text-xs">
           {o.paymentIssue && <span className="px-2 py-0.5 bg-red-900/40 text-red-300">nedoplatek</span>}
           {o.lastError && <span className="px-2 py-0.5 bg-red-900/40 text-red-300">chyba odeslání</span>}
+          {o.invoiceError && <span className="px-2 py-0.5 bg-red-900/40 text-red-300">chyba faktury</span>}
           {o.status === "paid" && !o.sentToBuyerAt && !o.lastError && <span className="px-2 py-0.5 bg-white/10 text-gray-300">odesílá se</span>}
           <span className={`px-2 py-0.5 ${s.cls}`}>{s.label}</span>
         </div>
@@ -174,14 +175,14 @@ function OrderRow({ order: o, onChange }: { order: VoucherOrder; onChange: (o: V
         <div className="mt-4 grid gap-4 text-sm">
           <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-gray-300">
             <Info k="Kupující" v={`${o.buyer.name} <${o.buyer.email}>`} />
-            <Info k="Obdarovaný" v={o.recipient.email ? `${o.recipient.name} <${o.recipient.email}> · poslat ${d(o.recipient.sendOn)}` : o.recipient.name} />
+            <Info k="Obdarovaný" v={o.recipient.name} />
             {o.dedication && <Info k="Věnování" v={o.dedication} />}
             <Info k="Jazyk" v={o.locale.toUpperCase()} />
             {o.paidAt && <Info k="Zaplaceno" v={`${dt(o.paidAt)} · ${czk(o.paidAmount ?? 0)} · ${o.paymentRef === "manual" ? "ručně" : o.paymentRef}`} />}
             {o.validUntil && <Info k="Platí do" v={d(o.validUntil)} />}
-            {o.docNumber && <Info k="Doklad" v={o.docNumber} />}
+            {o.invoiceNumber && <Info k="Faktura" v={`${o.invoiceNumber}${o.invoiceSentAt ? ` · posláno ${dt(o.invoiceSentAt)}` : " · zatím neposláno"}`} />}
+            {o.invoiceError && <Info k="Chyba faktury" v={`${o.invoiceError} (pokus ${o.invoiceAttempts ?? 0})`} />}
             {o.sentToBuyerAt && <Info k="Posláno kupujícímu" v={dt(o.sentToBuyerAt)} />}
-            {o.sentToRecipientAt && <Info k="Posláno obdarovanému" v={dt(o.sentToRecipientAt)} />}
             {o.redeemedAt && <Info k="Uplatněno" v={dt(o.redeemedAt)} />}
             {o.paymentIssue && <Info k="Problém s platbou" v={o.paymentIssue} />}
             {o.lastError && <Info k="Poslední chyba" v={`${o.lastError} (pokus ${o.sendAttempts ?? 0})`} />}
@@ -195,7 +196,10 @@ function OrderRow({ order: o, onChange }: { order: VoucherOrder; onChange: (o: V
             {o.status === "redeemed" && <Btn busy={busy} onClick={() => act("unredeem")}>Vrátit uplatnění</Btn>}
             {(o.status === "paid" || o.status === "redeemed") && <Btn busy={busy} onClick={() => act("resend", "Znovu poslat poukaz kupujícímu?")}>Poslat znovu</Btn>}
             {o.code && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/pdf`} target="_blank">PDF poukaz</a>}
-            {o.docNumber && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/pdf?doc=receipt`} target="_blank">Doklad</a>}
+            {o.invoiceNumber && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/pdf?doc=invoice`} target="_blank">Faktura</a>}
+            {(o.status === "paid" || o.status === "redeemed") && !o.invoiceSentAt && (
+              <Btn busy={busy} onClick={() => act("invoice")}>{o.invoiceNumber ? "Poslat fakturu" : "Vystavit fakturu znovu"}</Btn>
+            )}
             {o.status !== "cancelled" && o.status !== "redeemed" && (
               <Btn busy={busy} danger onClick={() => act("cancel", o.status === "paid" ? "Stornovat zaplacený poukaz? Peníze je potřeba vrátit ručně z banky." : "Stornovat objednávku?")}>Storno</Btn>
             )}

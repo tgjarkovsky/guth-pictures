@@ -79,23 +79,20 @@ export async function sendReminder(order: VoucherOrder, token: string): Promise<
   await send(order.buyer.email, cs ? "Připomínka platby — dárkový poukaz" : "Payment reminder — gift voucher", html);
 }
 
-export async function sendVoucherToBuyer(order: VoucherOrder, token: string, voucherPdf: Uint8Array, receiptPdf: Uint8Array): Promise<void> {
+export async function sendVoucherToBuyer(order: VoucherOrder, token: string, voucherPdf: Uint8Array, invoice?: { number: string; pdf: Uint8Array }): Promise<void> {
   const cs = order.locale === "cs";
-  const scheduled = order.recipient.email && order.recipient.sendOn;
   const html = layout(
     p(cs ? `Dobrý den, ${esc(order.buyer.name)},` : `Hi ${esc(order.buyer.name)},`) +
       p(cs
-        ? `platba dorazila, děkuju! V příloze je <strong>dárkový poukaz</strong> pro ${esc(order.recipient.name)} (PDF, formát A5 — můžete ho vytisknout nebo rovnou přeposlat) a doklad o zaplacení.`
-        : `your payment has arrived, thank you! Attached is the <strong>gift voucher</strong> for ${esc(order.recipient.name)} (PDF, A5 — print it or forward it) and your payment receipt.`) +
+        ? `platba dorazila, děkuju! V příloze je <strong>dárkový poukaz</strong> pro ${esc(order.recipient.name)} (PDF, formát A5). Můžete ho vytisknout, nebo rovnou přeposlat.`
+        : `your payment has arrived, thank you! Attached is the <strong>gift voucher</strong> for ${esc(order.recipient.name)} (PDF, A5). Print it or forward it.`) +
       table([
         [cs ? "Kód poukazu" : "Voucher code", order.code ?? ""],
         [cs ? "Platí do" : "Valid until", order.validUntil ? formatDate(order.validUntil, order.locale) : ""],
       ]) +
-      (scheduled
-        ? p(cs
-            ? `Poukaz zároveň pošlu obdarovanému na ${esc(order.recipient.email!)} dne ${formatDate(order.recipient.sendOn!, "cs")} ráno.`
-            : `I'll also e-mail the voucher to ${esc(order.recipient.email!)} on ${formatDate(order.recipient.sendOn!, "en")} in the morning.`)
-        : "") +
+      p(invoice
+        ? cs ? `Přikládám i fakturu ${esc(invoice.number)} (uhrazeno).` : `The paid invoice ${esc(invoice.number)} is attached too.`
+        : cs ? "Fakturu vám pošlu zvlášť v dalším e-mailu." : "The invoice follows in a separate e-mail.") +
       p(cs
         ? "Obdarovaný si termín focení domluví přes QR kód na poukazu nebo odpovědí na tento e-mail."
         : "The recipient books a date via the QR code on the voucher or by replying to this e-mail.") +
@@ -103,25 +100,21 @@ export async function sendVoucherToBuyer(order: VoucherOrder, token: string, vou
   );
   await send(order.buyer.email, cs ? `Váš dárkový poukaz ${order.code}` : `Your gift voucher ${order.code}`, html, [
     { filename: `darkovy-poukaz-${order.code}.pdf`, content: voucherPdf },
-    { filename: `doklad-${order.docNumber}.pdf`, content: receiptPdf },
+    ...(invoice ? [{ filename: `faktura-${invoice.number}.pdf`, content: invoice.pdf }] : []),
   ]);
 }
 
-export async function sendVoucherToRecipient(order: VoucherOrder, voucherPdf: Uint8Array): Promise<void> {
+/** Invoice on its own — when Fakturáček was down while the voucher went out. */
+export async function sendInvoice(order: VoucherOrder, invoice: { number: string; pdf: Uint8Array }): Promise<void> {
   const cs = order.locale === "cs";
   const html = layout(
-    p(cs ? `Ahoj ${esc(order.recipient.name)},` : `Hi ${esc(order.recipient.name)},`) +
+    p(cs ? `Dobrý den, ${esc(order.buyer.name)},` : `Hi ${esc(order.buyer.name)},`) +
       p(cs
-        ? `${esc(order.buyer.name)} ti daroval(a) <strong>${esc(order.product.name)}</strong>. Poukaz najdeš v příloze.`
-        : `${esc(order.buyer.name)} has given you <strong>${esc(order.product.name)}</strong>. The voucher is attached.`) +
-      (order.dedication ? `<blockquote style="margin:0 0 20px;padding:0 0 0 16px;border-left:2px solid #b87333;font-style:italic;color:#4a4340">${esc(order.dedication)}</blockquote>` : "") +
-      p(cs
-        ? `Až budeš chtít vybrat termín, klikni níže nebo mi napiš. Poukaz platí do ${order.validUntil ? formatDate(order.validUntil, "cs") : ""}.`
-        : `Whenever you want to pick a date, click below or write to me. The voucher is valid until ${order.validUntil ? formatDate(order.validUntil, "en") : ""}.`) +
-      button(`${voucherConfig().siteUrl}/${order.locale}/darkovy-poukaz/uplatnit?kod=${order.code}`, cs ? "Domluvit termín focení" : "Book the session"),
+        ? `v příloze posílám fakturu ${esc(invoice.number)} k dárkovému poukazu ${esc(order.code ?? "")}. Je uhrazená, nic neplaťte.`
+        : `attached is invoice ${esc(invoice.number)} for gift voucher ${esc(order.code ?? "")}. It is already paid.`),
   );
-  await send(order.recipient.email!, cs ? "Máš dárkový poukaz na focení 🎁" : "You've got a photo session gift 🎁", html, [
-    { filename: `darkovy-poukaz-${order.code}.pdf`, content: voucherPdf },
+  await send(order.buyer.email, cs ? `Faktura ${invoice.number} — dárkový poukaz` : `Invoice ${invoice.number} — gift voucher`, html, [
+    { filename: `faktura-${invoice.number}.pdf`, content: invoice.pdf },
   ]);
 }
 
@@ -134,7 +127,7 @@ export function ownerSummary(order: VoucherOrder): string[] {
   return [
     `${order.product.name} — ${formatCzk(order.product.priceCzk, "cs")}`,
     `Kupující: ${order.buyer.name} <${order.buyer.email}>`,
-    `Obdarovaný: ${order.recipient.name}${order.recipient.email ? ` <${order.recipient.email}>, poslat ${order.recipient.sendOn}` : ""}`,
+    `Obdarovaný: ${order.recipient.name}`,
     `VS ${order.vs}${order.code ? ` · kód ${order.code}` : ""}`,
   ];
 }

@@ -1,6 +1,6 @@
 import { AdminShell } from "@/modules/admin/components/AdminShell";
 import { AdminVouchers } from "@/modules/vouchers/components/AdminVouchers";
-import { isPaymentConfigured, voucherConfig } from "@/modules/vouchers/lib/config";
+import { isFakturacekConfigured, isPaymentConfigured, voucherConfig } from "@/modules/vouchers/lib/config";
 import { getVoucherSettings } from "@/modules/vouchers/lib/settings";
 import { listOrders } from "@/modules/vouchers/lib/store";
 
@@ -13,7 +13,7 @@ export default async function PoukazyPage() {
     { label: "Bankovní účet (VOUCHER_IBAN)", ok: isPaymentConfigured() },
     { label: "Fio API token (automatické párování)", ok: Boolean(c.fioToken) },
     { label: "Resend (odesílání e-mailů)", ok: Boolean(c.resendKey) },
-    { label: "Adresa na dokladu (BUSINESS_ADDRESS)", ok: Boolean(c.seller.address) },
+    { label: "Fakturáček (FAKTURACEK_URL, FAKTURACEK_API_TOKEN) — faktury", ok: isFakturacekConfigured() },
     { label: "CRON_SECRET", ok: Boolean(process.env.CRON_SECRET) },
   ];
   return (

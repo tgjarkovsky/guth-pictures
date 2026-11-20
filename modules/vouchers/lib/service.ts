@@ -1,14 +1,22 @@
 import "server-only";
 import { signPayload, verifyPayload } from "@/lib/hmac-token";
 import { generateVoucherCode } from "./code";
-import { EXPIRE_AFTER_DAYS, MAX_SEND_ATTEMPTS, REMINDER_AFTER_DAYS, voucherConfig } from "./config";
+import {
+  EXPIRE_AFTER_DAYS,
+  MAX_INVOICE_ATTEMPTS,
+  MAX_SEND_ATTEMPTS,
+  NOTIFY_INVOICE_AFTER,
+  REMINDER_AFTER_DAYS,
+  isFakturacekConfigured,
+  voucherConfig,
+} from "./config";
 import { addMonths, daysBetween, formatDate, pragueDate } from "./dates";
-import { notifyOwner, ownerSummary, sendReminder, sendVoucherToBuyer, sendVoucherToRecipient } from "./email";
+import { notifyOwner, ownerSummary, sendInvoice, sendReminder, sendVoucherToBuyer } from "./email";
+import { createVoucherInvoice, fetchVoucherInvoicePdf } from "./fakturacek";
 import { fetchIncomingPayments, type IncomingPayment } from "./fio";
-import { renderReceiptPdf } from "./receipt";
 import { qrDataUri, renderVoucherPdf } from "./render";
 import { getVoucherSettings, voucherPhotoSrc } from "./settings";
-import { acquireLock, findOrderByVs, isCodeTaken, listOrders, nextDocNumber, releaseLock, saveOrder } from "./store";
+import { acquireLock, findOrderByVs, isCodeTaken, listOrders, releaseLock, saveOrder } from "./store";
 import type { VoucherOrder } from "./types";
 
 // ── order links ──────────────────────────────────────────────────────────────
@@ -51,8 +59,9 @@ export async function buildVoucherPdf(order: VoucherOrder): Promise<Uint8Array> 
   );
 }
 
-export function buildReceiptPdf(order: VoucherOrder): Promise<Uint8Array> {
-  return renderReceiptPdf(order, voucherConfig().seller);
+export function getInvoicePdf(order: VoucherOrder): Promise<Uint8Array> {
+  if (!order.invoiceNumber) throw new Error("Faktura ještě nebyla vystavena");
+  return fetchVoucherInvoicePdf(order);
 }
 
 // ── state transitions ────────────────────────────────────────────────────────
@@ -64,7 +73,7 @@ async function uniqueCode(): Promise<string> {
   throw new Error("Could not generate a unique voucher code");
 }
 
-/** pending → paid. Assigns code, validity and receipt number. Idempotent. */
+/** pending → paid. Assigns code and validity. Idempotent. */
 export async function markPaid(order: VoucherOrder, payment: { amount: number; ref: string; at?: Date }): Promise<VoucherOrder> {
   if (order.status !== "pending") return order;
   const settings = await getVoucherSettings();
@@ -76,28 +85,51 @@ export async function markPaid(order: VoucherOrder, payment: { amount: number; r
   order.paymentIssue = undefined;
   order.code = await uniqueCode();
   order.validUntil = addMonths(pragueDate(at), settings.validityMonths);
-  order.docNumber = await nextDocNumber(at);
   await saveOrder(order);
   return order;
 }
 
-/** Sends whatever this paid order still owes: buyer e-mail, then the scheduled recipient e-mail. */
+/** Issues the invoice in Fakturáček. Failures are recorded on the order and retried by the next run. */
+async function issueInvoice(order: VoucherOrder): Promise<{ number: string; pdf: Uint8Array } | undefined> {
+  if (!isFakturacekConfigured() || (order.invoiceAttempts ?? 0) >= MAX_INVOICE_ATTEMPTS) return undefined;
+  try {
+    const invoice = await createVoucherInvoice(order);
+    order.invoiceNumber = invoice.number;
+    order.invoiceError = undefined;
+    order.invoiceAttempts = 0;
+    return invoice;
+  } catch (err) {
+    order.invoiceAttempts = (order.invoiceAttempts ?? 0) + 1;
+    order.invoiceError = err instanceof Error ? err.message : String(err);
+    console.error(`[vouchers] invoice for ${order.id} failed:`, err);
+    if (order.invoiceAttempts === NOTIFY_INVOICE_AFTER) {
+      await notifyOwner(`⚠️ Fakturu k poukazu ${order.code} se nedaří vystavit`, [...ownerSummary(order), `Chyba: ${order.invoiceError}`, "Poukaz zákazníkovi odešel, faktura se zkouší dál."]).catch(() => {});
+    }
+    return undefined;
+  }
+}
+
+/**
+ * Sends whatever this paid order still owes the buyer: the voucher (with the invoice when
+ * Fakturáček answers) and, if the invoice was late, the invoice on its own. The voucher never
+ * waits for the invoice.
+ */
 export async function deliver(order: VoucherOrder, now = new Date()): Promise<VoucherOrder> {
   if (order.status !== "paid" && order.status !== "redeemed") return order;
-  const needsBuyer = !order.sentToBuyerAt;
-  const needsRecipient = Boolean(order.recipient.email && order.recipient.sendOn && !order.sentToRecipientAt && order.recipient.sendOn <= pragueDate(now));
-  if (!needsBuyer && !needsRecipient) return order;
-  if ((order.sendAttempts ?? 0) >= MAX_SEND_ATTEMPTS) return order;
+  const needsVoucher = !order.sentToBuyerAt;
+  const needsInvoice = !order.invoiceSentAt;
+  if (!needsVoucher && !needsInvoice) return order;
+  if (needsVoucher && (order.sendAttempts ?? 0) >= MAX_SEND_ATTEMPTS) return order;
 
+  const invoice = needsInvoice ? await issueInvoice(order) : undefined;
   try {
-    const voucherPdf = await buildVoucherPdf(order);
-    if (needsBuyer) {
-      await sendVoucherToBuyer(order, await orderToken(order.id), voucherPdf, await buildReceiptPdf(order));
+    if (needsVoucher) {
+      await sendVoucherToBuyer(order, await orderToken(order.id), await buildVoucherPdf(order), invoice);
       order.sentToBuyerAt = now.toISOString();
-    }
-    if (needsRecipient) {
-      await sendVoucherToRecipient(order, voucherPdf);
-      order.sentToRecipientAt = now.toISOString();
+      if (invoice) order.invoiceSentAt = now.toISOString();
+    } else if (invoice) {
+      await sendInvoice(order, invoice);
+      order.invoiceSentAt = now.toISOString();
     }
     order.lastError = undefined;
     order.sendAttempts = 0;
@@ -177,10 +209,11 @@ export async function runVoucherJobs(now = new Date()): Promise<RunReport> {
             report.reminded++;
           }
         } else if (order.status === "paid" || order.status === "redeemed") {
-          const before = `${order.sentToBuyerAt}|${order.sentToRecipientAt}`;
+          const before = `${order.sentToBuyerAt}|${order.invoiceSentAt}`;
           const after = await deliver(order, now);
-          if (`${after.sentToBuyerAt}|${after.sentToRecipientAt}` !== before) report.delivered++;
+          if (`${after.sentToBuyerAt}|${after.invoiceSentAt}` !== before) report.delivered++;
           if (after.lastError) report.errors.push(`${order.vs}: ${after.lastError}`);
+          if (after.invoiceError) report.errors.push(`${order.vs}: ${after.invoiceError}`);
         }
       } catch (err) {
         report.errors.push(`${order.vs}: ${err instanceof Error ? err.message : String(err)}`);

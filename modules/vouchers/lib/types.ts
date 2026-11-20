@@ -27,7 +27,7 @@ export type VoucherOrder = {
   createdAt: string;
   product: { id: string; name: string; details: string[]; priceCzk: number };
   buyer: { name: string; email: string };
-  recipient: { name: string; email?: string; sendOn?: string }; // sendOn = YYYY-MM-DD (Prague)
+  recipient: { name: string };
   dedication?: string;
   christmas: boolean;
 
@@ -40,11 +40,15 @@ export type VoucherOrder = {
   // fulfilment
   code?: string;
   validUntil?: string;          // YYYY-MM-DD
-  docNumber?: string;
   sentToBuyerAt?: string;
-  sentToRecipientAt?: string;
   sendAttempts?: number;
   lastError?: string;
+
+  // invoice from Fakturáček (externalRef voucher:<id>)
+  invoiceNumber?: string;
+  invoiceSentAt?: string;       // e-mailed to the buyer (with the voucher, or later on its own)
+  invoiceAttempts?: number;
+  invoiceError?: string;
   reminderSentAt?: string;
   redeemedAt?: string;
   cancelledAt?: string;

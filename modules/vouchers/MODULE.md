@@ -1,6 +1,6 @@
 # vouchers — dárkové poukazy
 
-Prodej poukazů na focení: objednávka → QR platba → automatické párování přes Fio API → PDF poukaz + doklad e-mailem (Resend).
+Prodej poukazů na focení: objednávka → QR platba → automatické párování přes Fio API → PDF poukaz + faktura z Fakturáčku e-mailem (Resend).
 Nastavení pro provoz: [`docs/vouchers-setup.md`](../../docs/vouchers-setup.md).
 
 ## Soubory
@@ -8,13 +8,13 @@ Nastavení pro provoz: [`docs/vouchers-setup.md`](../../docs/vouchers-setup.md).
 - `copy.ts` — texty stránek CS/EN.
 - `lib/types.ts` — `VoucherOrder`, `VoucherSettings`, `VoucherProduct`.
 - `lib/settings.ts` — balíčky a přepínače v KV (`voucher:settings`), výchozí hodnoty.
-- `lib/store.ts` — objednávky v KV: `voucher:order:{id}`, indexy `voucher:vs:{vs}`, `voucher:code:{code}`, seznam `voucher:orders`, čítače VS a dokladů, zámek běhu.
+- `lib/store.ts` — objednávky v KV: `voucher:order:{id}`, indexy `voucher:vs:{vs}`, `voucher:code:{code}`, seznam `voucher:orders`, čítač VS, zámek běhu.
 - `lib/service.ts` — přechody stavů (`markPaid`, `deliver`), `applyPayments` a `runVoucherJobs` (jeden idempotentní průchod pro cron i tlačítko v adminu), podepsané odkazy na objednávku.
 - `lib/fio.ts` — výpis příchozích plateb (endpoint `periods`, bezstavový, posledních 21 dní).
 - `lib/spayd.ts` — řetězec QR platby.
 - `lib/design.tsx` + `lib/render.tsx` — vzhled poukazu (satori přes `next/og`) → PNG → PDF (`pdf-lib`). Fonty v `fonts/` (přibalené přes `outputFileTracingIncludes`).
-- `lib/receipt.ts` — doklad o přijetí platby (neplátce DPH), textové PDF.
-- `lib/email.ts` — e-maily: pokyny k platbě, připomínka, poukaz kupujícímu, poukaz obdarovanému, notifikace fotografovi.
+- `lib/fakturacek.ts` — faktura ve Fakturáčku (`POST /api/external/invoices`, idempotentní přes `externalRef = voucher:<id>`) a stažení jejího PDF.
+- `lib/email.ts` — e-maily: pokyny k platbě, připomínka, poukaz (s fakturou) kupujícímu, samostatná faktura, notifikace fotografovi.
 
 ## Stránky a API
 
@@ -29,3 +29,4 @@ Nastavení pro provoz: [`docs/vouchers-setup.md`](../../docs/vouchers-setup.md).
 - Kontrola plateb je idempotentní: platba se páruje podle VS a stavu objednávky, ne podle kurzoru, takže opakovaný běh nic nepošle dvakrát.
 - Fio dovolí 1 dotaz za 30 s na token, souběh hlídá zámek `voucher:lock`.
 - Odkaz na objednávku je `id.hmac` (AUTH_SECRET), bez něj se k objednávce nedá dostat.
+- Poukaz nikdy nečeká na fakturu: když Fakturáček neodpoví, poukaz odejde a faktura dorazí samostatně v dalším běhu.

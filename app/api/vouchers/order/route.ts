@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { readJson } from "@/lib/admin-route";
 import { isPaymentConfigured } from "@/modules/vouchers/lib/config";
-import { pragueDate } from "@/modules/vouchers/lib/dates";
 import { sendPaymentInstructions, notifyOwner, ownerSummary } from "@/modules/vouchers/lib/email";
 import { orderToken } from "@/modules/vouchers/lib/service";
 import { activeProducts, getVoucherSettings } from "@/modules/vouchers/lib/settings";
@@ -22,7 +21,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "unavailable" }, { status: 503 });
   }
 
-  const result = validateOrder(body, activeProducts(settings), pragueDate());
+  const result = validateOrder(body, activeProducts(settings));
   if (!result.ok) return NextResponse.json({ errors: result.errors }, { status: 400 });
   const v = result.value;
 

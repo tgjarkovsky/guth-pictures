@@ -1,7 +1,7 @@
 # Dárkové poukazy — nastavení
 
 Prodej poukazů běží na `/cs/darkovy-poukaz`. Zákazník vybere balíček, zaplatí QR platbou a web sám
-spáruje platbu na Fio účtu podle variabilního symbolu. Pak vygeneruje PDF poukaz a doklad a pošle je e-mailem.
+spáruje platbu na Fio účtu podle variabilního symbolu. Pak vygeneruje PDF poukaz, ve Fakturáčku vystaví zaplacenou fakturu a obojí pošle kupujícímu e-mailem.
 Správa je v adminu pod **Klienti → Poukazy**.
 
 Dokud nejsou vyplněné `VOUCHER_IBAN` a `AUTH_SECRET`, stránka místo formuláře ukazuje „prodej je pozastavený“.
@@ -25,9 +25,17 @@ Dokud nejsou vyplněné `VOUCHER_IBAN` a `AUTH_SECRET`, stránka místo formulá
 5. Volitelně uprav `VOUCHER_FROM_EMAIL` (výchozí `Guth Pictures <poukazy@guthpictures.eu>`) a `VOUCHER_NOTIFY_EMAIL` (kam chodí „Prodán poukaz“, výchozí kontaktní e-mail webu).
    Odpovědi zákazníků jdou na kontaktní e-mail webu.
 
-## 3. Údaje na dokladu
+## 3. Faktury z Fakturáčku
 
-Ve Vercelu nastav `BUSINESS_ADDRESS` (adresa z živnostenského rejstříku). `BUSINESS_NAME` a `BUSINESS_ICO` mají výchozí hodnoty z VOP.
+Faktury se vystavují v tvém Fakturáčku přes jeho API (`POST /api/external/invoices`). Je to stejná číselná řada jako u ostatních faktur, faktura je rovnou zaplacená k datu připsání platby a do příjmů pro přiznání se započítá sama.
+
+1. Vygeneruj token: `openssl rand -base64 32`.
+2. Ve Vercelu **Fakturáčku** ho nastav jako `EXTERNAL_API_TOKEN` a spusť migraci `npm run db:migrate` (přidává sloupec `external_ref`).
+3. Ve Vercelu **guth-pictures** nastav `FAKTURACEK_API_TOKEN` (stejná hodnota) a `FAKTURACEK_URL` (adresa Fakturáčku, např. `https://fakturacek.vercel.app`).
+
+Údaje dodavatele (jméno, IČO, adresa, „nejsem plátce DPH“) bere faktura z nastavení Fakturáčku.
+
+Když Fakturáček zrovna neodpovídá, poukaz odejde stejně a faktura přijde zákazníkovi v samostatném e-mailu, jakmile se ji podaří vystavit (zkouší se každých 10 minut, po 5 nezdarech ti přijde upozornění). V adminu je u objednávky tlačítko „Vystavit fakturu znovu“.
 
 ## 4. Automatická kontrola plateb (GitHub Actions)
 
@@ -51,7 +59,7 @@ GitHub občas spustí plánovaný běh se zpožděním. Kdykoli můžeš v admin
 | Stav | Co se děje |
 | --- | --- |
 | čeká na platbu | Po 3 dnech přijde zákazníkovi připomínka, po 10 dnech objednávka vyprší. Platba, která dorazí později, objednávku obnoví. |
-| zaplaceno | Vystaví se kód `GP-XXXX-XXXX`, platnost (12 měsíců) a doklad `RRRR-NNNN`. Hned se pošle e-mail kupujícímu, případně v nastavený den i obdarovanému. |
+| zaplaceno | Vystaví se kód `GP-XXXX-XXXX` a platnost (12 měsíců), ve Fakturáčku zaplacená faktura. Kupujícímu hned odejde e-mail s poukazem a fakturou. Poukaz obdarovanému předává kupující sám. |
 | uplatněno | Označíš v adminu, když je focení domluvené nebo proběhlo. |
 | storno | Ruční. Peníze vracíš z banky sám. |
 
@@ -62,5 +70,5 @@ a otevře kontaktní formulář s předvyplněným kódem.
 
 ## Právní minimum (neplátce DPH)
 
-- Doklad o zaplacení se vystavuje automaticky (číselná řada za rok). Pro daňovou evidenci stačí; ověř s účetní.
-- VOP mají sekci 10 „Dárkové poukazy“ (platnost, 14 dní na odstoupení, přenosnost), zásady ochrany osobních údajů zmiňují Resend a Fio.
+- Ke každému prodeji vznikne ve Fakturáčku faktura (uhrazeno). U prodeje nemusíš nic dělat, příjem se do přiznání započítá podle data zaplacení spolu s ostatními fakturami.
+- VOP mají sekci 10 „Dárkové poukazy“ (platnost, 14 dní na odstoupení, přenosnost), zásady ochrany osobních údajů zmiňují Resend, Fio a Neon.

@@ -25,7 +25,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
   const amount = formatCzk(order.product.priceCzk, locale);
   const message = `${locale === "cs" ? "Darkovy poukaz" : "Gift voucher"} ${order.vs}`;
   const qr = order.status === "pending"
-    ? await qrDataUri(spayd({ iban: c.iban, amount: order.product.priceCzk, vs: order.vs, message, recipient: c.seller.name }), "#11100e", "#ffffff")
+    ? await qrDataUri(spayd({ iban: c.iban, amount: order.product.priceCzk, vs: order.vs, message, recipient: c.payeeName }), "#11100e", "#ffffff")
     : null;
   const issued = order.status === "paid" || order.status === "redeemed";
 
@@ -62,7 +62,9 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
             <p className="ed-voucher-pay__lead">{order.sentToBuyerAt ? t.paidText : t.paidPreparing}</p>
             <div className="ed-voucher-actions">
               <a href={`/api/vouchers/order/${token}/pdf`} className="ed-voucher-cta">{t.download}</a>
-              <a href={`/api/vouchers/order/${token}/pdf?doc=receipt`} className="ed-voucher-link">{t.receipt}</a>
+              {order.invoiceNumber && (
+                <a href={`/api/vouchers/order/${token}/pdf?doc=invoice`} className="ed-voucher-link">{t.invoice} {order.invoiceNumber}</a>
+              )}
             </div>
           </>
         )}

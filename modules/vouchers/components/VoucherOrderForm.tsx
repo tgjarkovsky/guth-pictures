@@ -12,17 +12,14 @@ type Props = {
   locale: "cs" | "en";
   products: ProductOption[];
   copy: VoucherCopy["form"];
-  defaultSendOn: string;   // YYYY-MM-DD
-  minSendOn: string;
 };
 
 const input =
   "w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text)] placeholder:text-[var(--color-text-ghost)] px-4 py-3 focus:outline-none focus:border-[var(--color-text-muted)] focus:ring-1 focus:ring-[var(--color-border)] transition-colors";
 
-export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSendOn }: Props) {
+export function VoucherOrderForm({ locale, products, copy }: Props) {
   const router = useRouter();
   const [productId, setProductId] = useState(products[0]?.id ?? "");
-  const [toRecipient, setToRecipient] = useState(false);
   const [dedication, setDedication] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
@@ -37,6 +34,12 @@ export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSen
     ) : null;
   const aria = (field: string) => (errors[field] ? { "aria-invalid": true, "aria-describedby": `${field}-error` } : {});
 
+  // A field's error disappears as soon as it is edited.
+  function clearError(e: React.FormEvent<HTMLFormElement>) {
+    const name = (e.target as HTMLInputElement).name;
+    if (name && errors[name]) setErrors(({ [name]: _, ...rest }) => rest);
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
@@ -50,8 +53,6 @@ export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSen
       buyerEmail: f.get("buyerEmail"),
       recipientName: f.get("recipientName"),
       dedication,
-      recipientEmail: toRecipient ? f.get("recipientEmail") : "",
-      sendOn: toRecipient ? f.get("sendOn") : "",
       terms: f.get("terms") === "on",
       website: f.get("website"),
     };
@@ -59,7 +60,7 @@ export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSen
       const res = await fetch("/api/vouchers/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.token) {
-        track("voucher_order", { product: productId, toRecipient });
+        track("voucher_order", { product: productId });
         router.push(`/darkovy-poukaz/objednavka/${data.token}`);
         return;
       }
@@ -74,7 +75,7 @@ export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSen
   }
 
   return (
-    <form onSubmit={onSubmit} className="ed-voucher-form" noValidate>
+    <form onSubmit={onSubmit} onChange={clearError} className="ed-voucher-form" noValidate>
       <fieldset>
         <legend>{copy.package}</legend>
         <div className="ed-voucher-packages">
@@ -125,26 +126,6 @@ export function VoucherOrderForm({ locale, products, copy, defaultSendOn, minSen
           {err("buyerEmail")}
         </div>
       </div>
-
-      <label className="ed-voucher-check">
-        <input type="checkbox" checked={toRecipient} onChange={(e) => setToRecipient(e.target.checked)} />
-        <span>{copy.sendToRecipient}</span>
-      </label>
-      {toRecipient && (
-        <div className="ed-voucher-form__grid">
-          <div>
-            <label htmlFor="v-recipient-email">{copy.recipientEmail}</label>
-            <input id="v-recipient-email" name="recipientEmail" type="email" required className={input} {...aria("recipientEmail")} />
-            {err("recipientEmail")}
-          </div>
-          <div>
-            <label htmlFor="v-send-on">{copy.sendOn}</label>
-            <input id="v-send-on" name="sendOn" type="date" required min={minSendOn} defaultValue={defaultSendOn} className={input} {...aria("sendOn")} />
-            <p className="ed-voucher-hint">{copy.sendOnHint}</p>
-            {err("sendOn")}
-          </div>
-        </div>
-      )}
 
       {/* Honeypot — hidden from people, bots fill it in */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="ed-voucher-hp" />

@@ -1,7 +1,7 @@
 import "server-only";
 import { siteUrl, contactEmail } from "@/lib/config";
 
-/** Seller + bank details. Everything that ends up on the payment page and the receipt. */
+/** Bank details for the payment page, mail settings and the Fakturáček connection. */
 export function voucherConfig() {
   return {
     iban: process.env.VOUCHER_IBAN ?? "",
@@ -11,11 +11,10 @@ export function voucherConfig() {
     from: process.env.VOUCHER_FROM_EMAIL ?? "Guth Pictures <poukazy@guthpictures.eu>",
     notify: process.env.VOUCHER_NOTIFY_EMAIL ?? contactEmail,
     replyTo: contactEmail,
-    seller: {
-      name: process.env.BUSINESS_NAME ?? "Tomáš Guth Jarkovský",
-      ico: process.env.BUSINESS_ICO ?? "01948253",
-      address: process.env.BUSINESS_ADDRESS ?? "",
-    },
+    // Name on the QR payment; invoices take the supplier details from Fakturáček's own settings.
+    payeeName: process.env.BUSINESS_NAME ?? "Tomáš Guth Jarkovský",
+    fakturacekUrl: (process.env.FAKTURACEK_URL ?? "").replace(/\/+$/, ""),
+    fakturacekToken: process.env.FAKTURACEK_API_TOKEN ?? "",
     siteUrl,
     secret: process.env.AUTH_SECRET ?? "",
   };
@@ -30,3 +29,11 @@ export function isPaymentConfigured(): boolean {
 export const REMINDER_AFTER_DAYS = 3;
 export const EXPIRE_AFTER_DAYS = 10;
 export const MAX_SEND_ATTEMPTS = 5;
+/** Fakturáček retries: ~8 hours at a 10-minute cron; the owner hears about it after the 5th failure. */
+export const MAX_INVOICE_ATTEMPTS = 50;
+export const NOTIFY_INVOICE_AFTER = 5;
+
+export function isFakturacekConfigured(): boolean {
+  const c = voucherConfig();
+  return Boolean(c.fakturacekUrl && c.fakturacekToken);
+}

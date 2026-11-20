@@ -23,8 +23,3 @@ export function generateOrderId(): string {
 export function formatVs(seq: number, year: number): string {
   return `77${String(year % 100).padStart(2, "0")}${String(seq).padStart(4, "0")}`;
 }
-
-/** Doklad number: 2026-0001. */
-export function formatDocNumber(seq: number, year: number): string {
-  return `${year}-${String(seq).padStart(4, "0")}`;
-}

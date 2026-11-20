@@ -1,6 +1,6 @@
 import "server-only";
 import { getKv } from "@/lib/kv";
-import { formatDocNumber, formatVs, generateOrderId } from "./code";
+import { formatVs, generateOrderId } from "./code";
 import type { VoucherOrder } from "./types";
 
 const orderKey = (id: string) => `voucher:order:${id}`;
@@ -61,12 +61,6 @@ export async function listOrders(limit = 500): Promise<VoucherOrder[]> {
   if (!ids.length) return [];
   const orders = await kv.mget<(VoucherOrder | null)[]>(...ids.map((id) => orderKey(String(id))));
   return orders.filter((o): o is VoucherOrder => Boolean(o));
-}
-
-export async function nextDocNumber(now = new Date()): Promise<string> {
-  const kv = await kvOrThrow();
-  const year = now.getFullYear();
-  return formatDocNumber(await kv.incr(`voucher:doc-seq:${year}`), year);
 }
 
 export async function isCodeTaken(code: string): Promise<boolean> {

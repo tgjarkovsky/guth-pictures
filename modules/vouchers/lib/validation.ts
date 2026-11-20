@@ -6,8 +6,6 @@ export type OrderInput = {
   buyerEmail: string;
   recipientName: string;
   dedication?: string;
-  recipientEmail?: string;
-  sendOn?: string;
   locale: Locale;
   terms: boolean;
   website?: string; // honeypot
@@ -17,7 +15,7 @@ export type ValidOrder = {
   product: VoucherProduct;
   locale: Locale;
   buyer: { name: string; email: string };
-  recipient: { name: string; email?: string; sendOn?: string };
+  recipient: { name: string };
   dedication?: string;
 };
 
@@ -27,8 +25,8 @@ export const NAME_MAX = 60;
 
 const str = (v: unknown) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim() : "");
 
-/** Returns a clean order or a field → error-key map. `today` is YYYY-MM-DD in Prague. */
-export function validateOrder(raw: unknown, products: VoucherProduct[], today: string): { ok: true; value: ValidOrder } | { ok: false; errors: Record<string, string> } {
+/** Returns a clean order or a field → error-key map. */
+export function validateOrder(raw: unknown, products: VoucherProduct[]): { ok: true; value: ValidOrder } | { ok: false; errors: Record<string, string> } {
   const b = (raw ?? {}) as Record<string, unknown>;
   const errors: Record<string, string> = {};
   const locale: Locale = b.locale === "en" ? "en" : "cs";
@@ -53,15 +51,6 @@ export function validateOrder(raw: unknown, products: VoucherProduct[], today: s
   const dedication = str(b.dedication);
   if (dedication.length > DEDICATION_MAX) errors.dedication = "tooLong";
 
-  const recipientEmail = str(b.recipientEmail).toLowerCase();
-  const sendOn = str(b.sendOn);
-  if (recipientEmail) {
-    if (!EMAIL_RE.test(recipientEmail) || recipientEmail.length > 120) errors.recipientEmail = "email";
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(sendOn)) errors.sendOn = "required";
-    else if (sendOn < today) errors.sendOn = "past";
-    else if (sendOn > `${Number(today.slice(0, 4)) + 1}${today.slice(4)}`) errors.sendOn = "tooFar";
-  }
-
   if (b.terms !== true) errors.terms = "required";
 
   if (Object.keys(errors).length || !product) return { ok: false, errors };
@@ -71,7 +60,7 @@ export function validateOrder(raw: unknown, products: VoucherProduct[], today: s
       product,
       locale,
       buyer: { name: buyerName, email: buyerEmail },
-      recipient: recipientEmail ? { name: recipientName, email: recipientEmail, sendOn } : { name: recipientName },
+      recipient: { name: recipientName },
       dedication: dedication || undefined,
     },
   };
