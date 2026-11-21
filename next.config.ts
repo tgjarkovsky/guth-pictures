@@ -17,9 +17,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["cloudinary"],
   // Voucher PDFs embed these fonts at runtime (fs read), so ship them with the functions that render PDFs.
   outputFileTracingIncludes: {
-    "/api/vouchers/**": ["./modules/vouchers/fonts/**"],
-    "/api/cron/vouchers": ["./modules/vouchers/fonts/**"],
-    "/api/admin/vouchers/**": ["./modules/vouchers/fonts/**"],
+    "/api/vouchers/**": ["./modules/vouchers/fonts/**", "./modules/vouchers/photos/**"],
+    "/api/cron/vouchers": ["./modules/vouchers/fonts/**", "./modules/vouchers/photos/**"],
+    "/api/admin/vouchers/**": ["./modules/vouchers/fonts/**", "./modules/vouchers/photos/**"],
   },
   experimental: {
     serverActions: {

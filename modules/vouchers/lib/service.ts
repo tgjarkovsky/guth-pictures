@@ -14,9 +14,10 @@ import { addMonths, daysBetween, formatDate, pragueDate } from "./dates";
 import { notifyOwner, ownerSummary, sendInvoice, sendReminder, sendVoucherToBuyer } from "./email";
 import { createVoucherInvoice, fetchVoucherInvoicePdf } from "./fakturacek";
 import { fetchIncomingPayments, type IncomingPayment } from "./fio";
-import { qrDataUri, renderVoucherPdf } from "./render";
+import { themeForProduct } from "./design";
+import { qrDataUri, renderVoucherPdf, type VoucherCardInput } from "./render";
 import { voucherLineDetails } from "./portrait-products";
-import { getVoucherSettings, voucherPhotoSrc } from "./settings";
+import { getVoucherSettings } from "./settings";
 import { acquireLock, findOrderByVs, isCodeTaken, listOrders, releaseLock, saveOrder } from "./store";
 import type { VoucherOrder } from "./types";
 
@@ -33,29 +34,52 @@ export async function orderIdFromToken(token: string): Promise<string | null> {
   return payload ? payload.slice(TOKEN_PREFIX.length) : null;
 }
 
+// Gift link — what the buyer shares with the recipient. Separate prefix, so it can't open the order page.
+const GIFT_PREFIX = "voucher-gift:";
+
+export function giftToken(id: string): Promise<string> {
+  return signPayload(`${GIFT_PREFIX}${id}`, voucherConfig().secret).then((t) => t.slice(GIFT_PREFIX.length));
+}
+
+export async function orderIdFromGiftToken(token: string): Promise<string | null> {
+  if (!/^[0-9a-f]{18}\.[\w-]+$/.test(token)) return null;
+  const payload = await verifyPayload(`${GIFT_PREFIX}${token}`, voucherConfig().secret);
+  return payload ? payload.slice(GIFT_PREFIX.length) : null;
+}
+
+export async function giftUrl(order: Pick<VoucherOrder, "id" | "locale">): Promise<string> {
+  return `${voucherConfig().siteUrl}/${order.locale}/darkovy-poukaz/darek/${await giftToken(order.id)}`;
+}
+
 // ── PDFs ─────────────────────────────────────────────────────────────────────
 export function bookingUrl(order: Pick<VoucherOrder, "locale" | "code">): string {
   return `${voucherConfig().siteUrl}/${order.locale}/darkovy-poukaz/uplatnit?kod=${order.code}`;
 }
 
-export async function buildVoucherPdf(order: VoucherOrder): Promise<Uint8Array> {
+export function bookingHostLabel(): string {
+  return `${new URL(voucherConfig().siteUrl).host.replace(/^www\./, "")}/poukaz`;
+}
+
+/** Everything the card needs, from an issued order. */
+export async function voucherCard(order: VoucherOrder): Promise<VoucherCardInput> {
   if (!order.code || !order.validUntil) throw new Error("Voucher is not issued yet");
-  const settings = await getVoucherSettings();
-  const host = new URL(voucherConfig().siteUrl).host.replace(/^www\./, "");
+  return {
+    locale: order.locale,
+    theme: themeForProduct(order.product.id),
+    packageName: order.product.name,
+    packageDetails: voucherLineDetails(order.product.details),
+    recipientName: order.recipient.name,
+    dedication: order.dedication,
+    code: order.code,
+    validUntil: formatDate(order.validUntil, order.locale),
+    qrSrc: await qrDataUri(bookingUrl(order)),
+    bookingUrlLabel: bookingHostLabel(),
+  };
+}
+
+export async function buildVoucherPdf(order: VoucherOrder): Promise<Uint8Array> {
   return renderVoucherPdf(
-    {
-      locale: order.locale,
-      packageName: order.product.name,
-      packageDetails: voucherLineDetails(order.product.details),
-      recipientName: order.recipient.name,
-      dedication: order.dedication,
-      code: order.code,
-      validUntil: formatDate(order.validUntil, order.locale),
-      photoSrc: voucherPhotoSrc(settings.photoPublicId),
-      qrSrc: await qrDataUri(bookingUrl(order)),
-      bookingUrlLabel: `${host}/poukaz`,
-      christmas: order.christmas,
-    },
+    await voucherCard(order),
     order.locale === "cs" ? `Dárkový poukaz ${order.code}` : `Gift voucher ${order.code}`,
   );
 }
@@ -125,7 +149,7 @@ export async function deliver(order: VoucherOrder, now = new Date()): Promise<Vo
   const invoice = needsInvoice ? await issueInvoice(order) : undefined;
   try {
     if (needsVoucher) {
-      await sendVoucherToBuyer(order, await orderToken(order.id), await buildVoucherPdf(order), invoice);
+      await sendVoucherToBuyer(order, await orderToken(order.id), await buildVoucherPdf(order), await giftUrl(order), invoice);
       order.sentToBuyerAt = now.toISOString();
       if (invoice) order.invoiceSentAt = now.toISOString();
     } else if (invoice) {

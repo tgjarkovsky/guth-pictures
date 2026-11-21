@@ -79,13 +79,21 @@ export async function sendReminder(order: VoucherOrder, token: string): Promise<
   await send(order.buyer.email, cs ? "Připomínka platby — dárkový poukaz" : "Payment reminder — gift voucher", html);
 }
 
-export async function sendVoucherToBuyer(order: VoucherOrder, token: string, voucherPdf: Uint8Array, invoice?: { number: string; pdf: Uint8Array }): Promise<void> {
+export async function sendVoucherToBuyer(order: VoucherOrder, token: string, voucherPdf: Uint8Array, giftLink: string, invoice?: { number: string; pdf: Uint8Array }): Promise<void> {
   const cs = order.locale === "cs";
   const html = layout(
     p(cs ? `Dobrý den, ${esc(order.buyer.name)},` : `Hi ${esc(order.buyer.name)},`) +
       p(cs
-        ? `platba dorazila, děkuju! V příloze je <strong>dárkový poukaz</strong> pro ${esc(order.recipient.name)} (PDF, formát A5). Můžete ho vytisknout, nebo rovnou přeposlat.`
-        : `your payment has arrived, thank you! Attached is the <strong>gift voucher</strong> for ${esc(order.recipient.name)} (PDF, A5). Print it or forward it.`) +
+        ? `platba dorazila, děkuju! Dárkový poukaz pro ${esc(order.recipient.name)} je hotový. Můžete ho darovat dvěma způsoby:`
+        : `your payment has arrived, thank you! The gift voucher for ${esc(order.recipient.name)} is ready. There are two ways to give it:`) +
+      p(cs
+        ? `<strong>Elektronicky:</strong> pošlete obdarovanému tento odkaz. Otevře se karta poukazu, kterou jde otočit, a rovnou z ní domluvit termín.`
+        : `<strong>Electronically:</strong> send the recipient this link. It opens the voucher card, which they can turn over and book a date from.`) +
+      button(giftLink, cs ? "Otevřít kartu poukazu" : "Open the voucher card") +
+      p(`<a href="${esc(giftLink)}" style="color:#6b625e;word-break:break-all">${esc(giftLink)}</a>`) +
+      p(cs
+        ? `<strong>Vytištěný:</strong> PDF v příloze vytiskněte na A4 bez zmenšení, vystřihněte podle značek a přeložte. Vznikne karta velikosti pohlednice (A6).`
+        : `<strong>Printed:</strong> print the attached PDF on A4 at 100 %, cut along the marks and fold. You get a postcard-sized card (A6).`) +
       table([
         [cs ? "Kód poukazu" : "Voucher code", order.code ?? ""],
         [cs ? "Platí do" : "Valid until", order.validUntil ? formatDate(order.validUntil, order.locale) : ""],

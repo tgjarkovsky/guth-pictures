@@ -2411,6 +2411,30 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-voucher-form__submit strong { font-family: var(--font-editorial-serif), serif; font-size: 2rem; font-variant-numeric: tabular-nums; }
 .ed-voucher-form__submit button { min-height: 3rem; }
 
+/* Gift page (/darkovy-poukaz/darek/…): the voucher as a card you turn over. */
+.ed-gift { max-width: 72rem; margin: 0 auto; padding: clamp(5rem, 10cqi, 8rem) clamp(1rem, 5cqi, 4rem) clamp(3rem, 6cqi, 5rem); display: grid; grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); gap: clamp(2rem, 6cqi, 6rem); align-items: center; }
+.ed-gift h1 { font-size: clamp(2.8rem, 6cqi, 5rem); }
+.ed-gift .ed-voucher-pay__lead { margin-bottom: 1.75rem; }
+.ed-gift__dedication { margin: 0 0 2rem; padding-left: 1rem; border-left: 2px solid var(--editorial-accent); font-family: var(--font-editorial-serif), serif; font-style: italic; font-size: 1.15rem; line-height: 1.55; }
+.ed-gift__meta { margin: 2.5rem 0 0; padding-top: 1.25rem; border-top: 1px solid var(--color-border); display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; font-size: .9rem; }
+.ed-gift__meta dt { font-weight: 600; }
+.ed-gift__meta dd { margin: .2rem 0 0; color: var(--color-text-muted); }
+.ed-gift-card { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; perspective: 1600px; -webkit-tap-highlight-color: transparent; }
+.ed-gift-card:focus-visible { outline: 2px solid var(--editorial-accent); outline-offset: 6px; }
+.ed-gift-card__inner { position: relative; display: block; aspect-ratio: 620 / 874; transform-style: preserve-3d; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.ed-gift-card[data-flipped] .ed-gift-card__inner { transform: rotateY(180deg); }
+.ed-gift-card__face { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 4px; box-shadow: 0 30px 60px -22px rgba(17, 16, 14, .5), 0 8px 18px -8px rgba(17, 16, 14, .3); }
+.ed-gift-card__back { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) { .ed-gift-card__inner { transition: none; } }
+@media (max-width: 760px) {
+  .ed-gift { grid-template-columns: minmax(0, 1fr); padding-top: 5.5rem; }
+  .ed-gift__card { max-width: 22rem; width: 100%; margin: 0 auto; }
+}
+.ed-voucher-share { margin: 2.5rem 0 0; padding: 1.25rem; border: 1px solid var(--color-border); }
+.ed-voucher-share h2 { font-size: 1.5rem; margin-bottom: .5rem; }
+.ed-voucher-share p { margin: 0 0 .75rem; color: var(--color-text-muted); line-height: 1.55; }
+.ed-voucher-share input { width: 100%; padding: .7rem .8rem; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font: inherit; font-size: .9rem; }
+
 .ed-voucher-pay { max-width: 58rem; margin: 0 auto; padding: clamp(5rem, 10cqi, 8rem) clamp(1rem, 5cqi, 4rem) clamp(3rem, 6cqi, 5rem); }
 .ed-voucher-pay h1 { font-size: clamp(2.8rem, 6cqi, 5rem); }
 .ed-voucher-pay__lead { max-width: 40rem; margin: 1.5rem 0 2.5rem; color: var(--color-text-muted); font-size: 1.1rem; line-height: 1.6; }

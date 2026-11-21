@@ -6,7 +6,7 @@ import { OrderStatusPoller } from "@/modules/vouchers/components/OrderStatusPoll
 import { voucherConfig } from "@/modules/vouchers/lib/config";
 import { formatCzk, formatDate } from "@/modules/vouchers/lib/dates";
 import { qrDataUri } from "@/modules/vouchers/lib/render";
-import { orderIdFromToken } from "@/modules/vouchers/lib/service";
+import { giftUrl, orderIdFromToken } from "@/modules/vouchers/lib/service";
 import { spayd } from "@/modules/vouchers/lib/spayd";
 import { getOrder } from "@/modules/vouchers/lib/store";
 
@@ -28,6 +28,8 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
     ? await qrDataUri(spayd({ iban: c.iban, amount: order.product.priceCzk, vs: order.vs, message, recipient: c.payeeName }), "#11100e", "#ffffff")
     : null;
   const issued = order.status === "paid" || order.status === "redeemed";
+  const gift = issued ? await giftUrl(order) : null;
+  const g = getVoucherCopy(locale).gift;
 
   return (
     <EditorialSubpage active="voucher" className="ed-voucher">
@@ -66,6 +68,14 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
                 <a href={`/api/vouchers/order/${token}/pdf?doc=invoice`} className="ed-voucher-link">{t.invoice} {order.invoiceNumber}</a>
               )}
             </div>
+            {gift && (
+              <div className="ed-voucher-share">
+                <h2>{g.share}</h2>
+                <p>{g.shareText}</p>
+                <input readOnly value={gift} aria-label={g.share} />
+                <p style={{ marginTop: ".75rem" }}><a href={gift} className="ed-voucher-link">{locale === "cs" ? "Otevřít kartu poukazu" : "Open the voucher card"}</a></p>
+              </div>
+            )}
           </>
         )}
 
