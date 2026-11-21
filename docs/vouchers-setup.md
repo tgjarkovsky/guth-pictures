@@ -39,11 +39,7 @@ Když Fakturáček zrovna neodpovídá, poukaz odejde stejně a faktura přijde 
 
 ## 4. Automatická kontrola plateb (GitHub Actions)
 
-Workflow `.github/workflows/vouchers-cron.yml` volá každých 10 minut `/api/cron/vouchers`.
-V GitHubu → repo → **Settings → Secrets and variables → Actions** přidej:
-
-- `CRON_SECRET` — stejná hodnota jako `CRON_SECRET` ve Vercelu (vygeneruj `openssl rand -base64 32`),
-- `SITE_URL` — `https://www.guthpictures.eu`.
+Workflow `.github/workflows/vouchers-cron.yml` volá každých 10 minut `/api/cron/vouchers`. Žádné secrets v GitHubu nepotřebuje: job si od GitHubu vyžádá krátkodobý OIDC token a endpoint ověří podpis, repozitář `tgjarkovsky/guth-pictures`, větev `main` a audience `guthpictures.eu` (`lib/github-oidc.ts`). Ručně jde endpoint volat s `Authorization: Bearer <CRON_SECRET>`.
 
 GitHub občas spustí plánovaný běh se zpožděním. Kdykoli můžeš v adminu kliknout na **Zkontrolovat platby teď**.
 
