@@ -79,6 +79,7 @@ export function PackageEditor({
           <summary className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-white/5">
             <span className="text-xs text-gray-500">{i + 1}.</span>
             <span className="truncate flex-1">{pkg.name || <em className="text-gray-500">bez názvu</em>}</span>
+            {pkg.featured && <span className="text-xs text-amber-300">♥</span>}
             <span className="text-xs text-gray-400">{pkg.price}</span>
             <span className="text-gray-500 group-open:rotate-90 transition-transform">›</span>
           </summary>
@@ -117,6 +118,16 @@ export function PackageEditor({
             rows={3}
             className="w-full bg-white/5 border border-white/10 px-2 py-1.5 text-sm text-white focus:outline-none focus:border-white/40 resize-y"
           />}
+          {!simple && (
+            <label className="flex items-center gap-2 text-sm text-gray-300">
+              <input
+                type="checkbox"
+                checked={pkg.featured === true}
+                onChange={(e) => updatePkg(i, (p) => { p.featured = e.target.checked; })}
+              />
+              Zvýraznit (♥ Doporučuji)
+            </label>
+          )}
           <button
             type="button"
             onClick={() => removePkg(i)}

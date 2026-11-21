@@ -7,6 +7,7 @@ export type VoucherProduct = {
   priceCzk: number;
   details: Localized<string[]>; // ["1,5 hod", "7 upravených fotek", "online galerie"]
   active: boolean;
+  featured?: boolean;
 };
 
 export type VoucherSettings = {
@@ -25,7 +26,7 @@ export type VoucherOrder = {
   locale: Locale;
   status: OrderStatus;
   createdAt: string;
-  product: { id: string; name: string; details: string[]; priceCzk: number };
+  product: { id: string; name: string; details: string[]; priceCzk: number; featured?: boolean };
   buyer: { name: string; email: string };
   recipient: { name: string };
   dedication?: string;

@@ -1,5 +1,7 @@
 import { ContactForm } from "@/components/ContactForm";
 import { Link } from "@/i18n/navigation";
+import type { CSSProperties } from "react";
+import { featuredFlags, formatPackagePrice } from "@/lib/package-price";
 import type { NormalizedContentData, NormalizedSiteImages } from "@/modules/admin/lib/content";
 import { EditorialImageView } from "./EditorialImage";
 import { EditorialNav } from "./EditorialNav";
@@ -10,6 +12,8 @@ export function PortraitEditorial({ locale, content, images }: Props) {
   const cs = locale !== "en";
   const copy = content.pages.portrait;
   const gallery = images.editorial.portrait.gallery;
+  const packages = content.sluzby.portraits.packages;
+  const featured = featuredFlags(packages);
   return (
     <main className="editorial-portrait" data-world="portrait">
       <EditorialNav tone="dark" active="portrait" />
@@ -21,7 +25,20 @@ export function PortraitEditorial({ locale, content, images }: Props) {
         {gallery.map((image, i) => <figure key={`${image.publicId}-${i}`}><EditorialImageView image={image} locale={locale} quality="best" sizes="(max-width: 760px) 100vw, 50vw" placeholderLabel={cs ? "Fotografie bude doplněna" : "Photo coming soon"} /></figure>)}
       </section>
       <section className="ed-portrait-process"><h2>{copy.processTitle}</h2><p>{copy.intro}</p><ol>{copy.steps.map((step, i) => <li key={step}><span>0{i + 1}</span>{step}</li>)}</ol><p>{copy.lightQuestion} <Link href="/foceni-101">Focení 101</Link></p></section>
-      <section className="ed-portrait-pricing"><h2>{copy.pricing}</h2><div>{content.sluzby.portraits.packages.map((pkg) => <article key={pkg.id ?? pkg.name}><h3>{pkg.name}</h3><strong>{pkg.price}</strong><p>{pkg.duration}</p><ul>{pkg.includes.map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div></section>
+      <section className="ed-portrait-pricing">
+        <h2>{copy.pricing}</h2>
+        <div style={{ "--cols": Math.min(Math.max(packages.length, 1), 3) } as CSSProperties}>
+          {packages.map((pkg, i) => (
+            <article key={pkg.id ?? pkg.name} data-featured={featured[i] || undefined}>
+              {featured[i] && <span className="ed-portrait-pricing__badge"><span aria-hidden>♥</span> {cs ? "Doporučuji" : "My pick"}</span>}
+              <h3>{pkg.name}</h3>
+              <strong>{formatPackagePrice(pkg.price, locale)}</strong>
+              <p>{pkg.duration}</p>
+              <ul>{pkg.includes.filter((item) => item.trim()).map((item) => <li key={item}>{item}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </section>
       <section id="kontakt" className="ed-portrait-contact"><h2>{copy.cta}</h2><ContactForm /></section>
     </main>
   );
