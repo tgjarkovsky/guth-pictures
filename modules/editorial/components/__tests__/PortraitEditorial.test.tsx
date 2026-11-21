@@ -19,3 +19,13 @@ it("renders the portrait page with pricing, learning link and contact", () => {
   expect(html).toContain("q_auto%3Abest"); // next/image URL-encodes the src
   expect(html).not.toContain("q_auto%3Agood");
 });
+
+it("lays out three packages in three columns with Deluxe highlighted", () => {
+  const pkg = (name: string, price: string) => ({ name, price, duration: "60 minut", includes: ["min. 5 upravených fotografií"] });
+  const content = normalizeContent({ home: { title: "", subtitle: "" }, "o-mne": { title: "", subtitle: "", bio: "" }, lightTesterPromo: { title: "", desc: "" }, testimonials: [], sluzby: { portraits: { title: "Portréty", desc: "", packages: [pkg("Standard", "2000"), pkg("Rozšířený", "4000"), pkg("Deluxe", "4000")] }, weddings: { title: "", desc: "", packages: [] }, business: { title: "", desc: "", packages: [] } } }, "cs");
+  const html = renderToStaticMarkup(<PortraitEditorial locale="cs" content={content} images={normalizeImages()} />);
+  expect(html).toContain("--cols:3");
+  expect(html).toContain("2 000 Kč");
+  expect(html.match(/data-featured="true"/g)).toHaveLength(1);
+  expect(html).toMatch(/data-featured="true"><span class="ed-portrait-pricing__badge">.*Doporučuji<\/span><h3>Deluxe<\/h3>/);
+});

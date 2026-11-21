@@ -26,6 +26,7 @@ function isPackages(v: unknown): boolean {
     if (typeof pkg.price !== "string" || pkg.price.length > MAX_SHORT) return false;
     if (typeof pkg.duration !== "string" || pkg.duration.length > MAX_SHORT) return false;
     if (!Array.isArray(pkg.includes) || pkg.includes.length > MAX_INCLUDES) return false;
+    if (pkg.featured !== undefined && typeof pkg.featured !== "boolean") return false;
     return pkg.includes.every((i) => typeof i === "string" && i.length <= MAX_SHORT);
   });
 }

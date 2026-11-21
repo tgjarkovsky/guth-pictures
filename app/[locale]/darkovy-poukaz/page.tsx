@@ -92,7 +92,7 @@ export default async function VoucherPage({ params }: { params: Promise<{ locale
           <VoucherOrderForm
             locale={locale}
             copy={copy.form}
-            products={products.map((p) => ({ id: p.id, name: p.name[locale], details: p.details[locale], price: formatCzk(p.priceCzk, locale) }))}
+            products={products.map((p) => ({ id: p.id, name: p.name[locale], details: p.details[locale], price: formatCzk(p.priceCzk, locale), featured: p.featured }))}
           />
         ) : (
           <p className="ed-secondary-empty">{copy.unavailable}</p>

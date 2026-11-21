@@ -4,4 +4,5 @@ export type PricingPackage = {
   price: string;
   duration: string;
   includes: string[];
+  featured?: boolean; // highlighted card ("♥ Doporučuji"); see featuredFlags in lib/package-price.ts
 };
