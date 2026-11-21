@@ -13,4 +13,4 @@ licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
 | BodoniModa-Regular / Italic | Bodoni Moda (návrh Noir) |
 | Jost-Regular / Medium | Jost (doprovodné bezpatkové písmo nových návrhů) |
 | DMSerifDisplay-Regular / Italic | DM Serif Display (návrh Riviera) |
-| PlayfairDisplay-Regular / Italic | Playfair Display (návrh Sníh) |
+| PlayfairDisplay-Regular / Medium / Italic | Playfair Display (nadpis poukazu) |
