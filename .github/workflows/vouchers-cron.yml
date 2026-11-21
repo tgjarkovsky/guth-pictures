@@ -2,11 +2,16 @@ name: Gift vouchers — payment check
 
 # Matches Fio payments to voucher orders and e-mails the vouchers.
 # Vercel Hobby can't run sub-daily crons, so GitHub Actions calls the endpoint.
-# Needs repo secrets CRON_SECRET (same value as in Vercel) and SITE_URL (e.g. https://www.guthpictures.eu).
+# No secrets needed: the job sends a short-lived GitHub OIDC token, which the endpoint
+# verifies (this repository, main branch, audience guthpictures.eu) — see lib/github-oidc.ts.
 on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   run:
@@ -15,12 +20,12 @@ jobs:
     steps:
       - name: Call /api/cron/vouchers
         env:
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          SITE_URL: ${{ secrets.SITE_URL }}
+          SITE_URL: https://www.guthpictures.eu
         run: |
-          if [ -z "$CRON_SECRET" ] || [ -z "$SITE_URL" ]; then echo "CRON_SECRET or SITE_URL secret missing"; exit 1; fi
+          token=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=guthpictures.eu" | jq -r .value)
           code=$(curl -sS -o response.json -w "%{http_code}" --max-time 150 \
-            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/vouchers")
+            -H "Authorization: Bearer $token" "$SITE_URL/api/cron/vouchers")
           cat response.json; echo
           # 207 = ran, but some step reported an error (shown in the JSON above)
           if [ "$code" != "200" ] && [ "$code" != "207" ]; then exit 1; fi

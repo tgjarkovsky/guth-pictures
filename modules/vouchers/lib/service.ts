@@ -169,7 +169,8 @@ export async function applyPayments(payments: IncomingPayment[]): Promise<Paymen
     }
     // A late payment revives an expired order — the money is there, the customer gets the voucher.
     if (order.status === "expired") order.status = "pending";
-    await markPaid(order, { amount: payment.amount, ref: `fio:${payment.id}` });
+    // Paid on the day the money reached the account (drives validity and the invoice date).
+    await markPaid(order, { amount: payment.amount, ref: `fio:${payment.id}`, at: /^\d{4}-\d{2}-\d{2}$/.test(payment.date) ? new Date(`${payment.date}T12:00:00Z`) : undefined });
     await notifyOwner(`🎁 Prodán poukaz ${order.code}`, ownerSummary(order)).catch(() => {});
     matches.push({ payment, order, result: "paid" });
   }
