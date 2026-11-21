@@ -89,6 +89,14 @@ describe("isValidContentData — business service", () => {
     expect(isValidContentData(d)).toBe(true);
   });
 
+  it("accepts the featured flag on packages and rejects a non-boolean one", () => {
+    const d = valid() as { sluzby: Record<string, unknown> };
+    d.sluzby.portraits = { title: "t", desc: "d", packages: [{ ...extra, featured: true }] };
+    expect(isValidContentData(d)).toBe(true);
+    d.sluzby.portraits = { title: "t", desc: "d", packages: [{ ...extra, featured: "yes" }] };
+    expect(isValidContentData(d)).toBe(false);
+  });
+
   it("rejects business service with malformed extras", () => {
     const d = valid() as { sluzby: Record<string, unknown> };
     d.sluzby.business = { title: "t", desc: "d", packages: [], extras: [{ name: 1 }] };

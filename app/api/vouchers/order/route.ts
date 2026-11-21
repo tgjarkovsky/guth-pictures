@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
   const order = await createOrder({
     locale: v.locale,
-    product: { id: v.product.id, name: v.product.name[v.locale], details: v.product.details[v.locale], priceCzk: v.product.priceCzk },
+    product: { id: v.product.id, name: v.product.name[v.locale], details: v.product.details[v.locale], priceCzk: v.product.priceCzk, featured: v.product.featured },
     buyer: v.buyer,
     recipient: v.recipient,
     dedication: v.dedication,

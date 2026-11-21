@@ -2283,8 +2283,8 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-portrait-process ol { margin: 4rem 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; list-style: none; }
 .ed-portrait-process li { border-top: 1px solid currentColor; padding-top: 1rem; line-height: 1.6; }
 .ed-portrait-process li span { display: block; margin-bottom: 1rem; font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; opacity: .6; }
-.ed-portrait-pricing > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 2.5rem; }
-.ed-portrait-pricing article { padding: 1.5rem 0; border-top: 1px solid currentColor; }
+.ed-portrait-pricing > div { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: clamp(1rem, 2cqi, 2rem); margin-top: 2.5rem; align-items: stretch; }
+.ed-portrait-pricing article { position: relative; display: flex; flex-direction: column; padding: 1.5rem 0; border-top: 1px solid currentColor; }
 .ed-portrait-pricing strong { font-family: var(--font-editorial-serif), serif; font-size: 2rem; }
 .ed-portrait-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
 /* Shared section typography: portrait + events */
@@ -2386,11 +2386,11 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 .ed-voucher-steps li span { display: block; margin-bottom: .75rem; font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-text); opacity: .6; }
 .ed-voucher-note { margin: 2.5rem 0 0; padding: 1rem 1.25rem; border-left: 3px solid var(--editorial-accent); background: var(--color-bg-overlay); line-height: 1.55; }
 
-.ed-voucher-order { border-top: 1px solid var(--color-border); max-width: 58rem; }
+.ed-voucher-order { border-top: 1px solid var(--color-border); max-width: 66rem; }
 .ed-voucher-form { display: grid; gap: 1.75rem; }
 .ed-voucher-form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .ed-voucher-form legend, .ed-voucher-form label:not(.ed-voucher-package):not(.ed-voucher-check) { display: block; margin-bottom: .4rem; font-size: .875rem; font-weight: 500; }
-.ed-voucher-packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; }
+.ed-voucher-packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1.25rem 1rem; padding-top: .75rem; }
 .ed-voucher-package { position: relative; display: grid; gap: .35rem; padding: 1.25rem; border: 1px solid var(--color-border); cursor: pointer; transition: border-color .2s, background .2s; }
 .ed-voucher-package:hover { border-color: var(--color-text-muted); }
 .ed-voucher-package[data-selected] { border-color: var(--color-text); background: var(--color-bg-overlay); box-shadow: inset 0 0 0 1px var(--color-text); }
@@ -2456,4 +2456,40 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
   .ed-voucher-dl > div { grid-template-columns: 1fr; gap: .15rem; }
   .ed-voucher-qr { justify-self: center; }
   .ed-voucher-form__submit button { width: 100%; }
+}
+
+/* Creative-portrait price list: the highlighted package ("♥ Doporučuji") gets the copper of the voucher */
+.ed-portrait-pricing { --pricing-flair: #c98a4b; }
+.ed-portrait-pricing article[data-featured] {
+  padding: 1.5rem 1.5rem 1.75rem;
+  border: 1px solid var(--pricing-flair);
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--pricing-flair) 22%, transparent), transparent 60%),
+    color-mix(in srgb, var(--pricing-flair) 6%, transparent);
+  box-shadow: 0 24px 60px -30px color-mix(in srgb, var(--pricing-flair) 55%, transparent);
+}
+.ed-portrait-pricing article[data-featured] strong { color: var(--pricing-flair); font-size: 2.4rem; }
+.ed-portrait-pricing article[data-featured] ul li { border-top-color: color-mix(in srgb, var(--pricing-flair) 30%, transparent); }
+.ed-portrait-pricing__badge {
+  position: absolute; top: 0; left: 1.5rem; transform: translateY(-50%);
+  padding: .3rem .75rem; background: var(--pricing-flair); color: #0a0a09;
+  font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+}
+.ed-portrait-pricing__badge span { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .ed-portrait-pricing article[data-featured] { transition: transform .3s ease; }
+  .ed-portrait-pricing article[data-featured]:hover { transform: translateY(-4px); }
+  .ed-portrait-pricing__badge span { animation: ed-heartbeat 2.4s ease-in-out infinite; }
+}
+@keyframes ed-heartbeat { 0%, 70%, 100% { transform: scale(1); } 78% { transform: scale(1.25); } 86% { transform: scale(1); } 92% { transform: scale(1.15); } }
+@media (max-width: 1000px) { .ed-portrait-pricing > div { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+/* Highlighted voucher package — same "♥ Doporučuji" as the portrait price list */
+.ed-voucher-package[data-featured] { border-color: #b87333; background: color-mix(in srgb, #b87333 7%, transparent); }
+.ed-voucher-package[data-featured][data-selected] { box-shadow: inset 0 0 0 1px #b87333; border-color: #b87333; }
+.ed-voucher-package[data-featured] .ed-voucher-package__price { color: #9a5a22; }
+.ed-voucher-package__badge {
+  position: absolute; top: 0; left: 1.25rem; transform: translateY(-50%);
+  padding: .25rem .6rem; background: #b87333; color: #fff;
+  font-size: .65rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
 }
