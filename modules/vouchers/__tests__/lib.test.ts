@@ -140,6 +140,12 @@ describe("packages from the creative portrait", () => {
       ["portrait-deluxe", "Kreativní portrét — Deluxe", "Creative portrait — Deluxe", 4500],
     ]);
     expect(p[0].details.cs[0]).toBe("90 minut");
+    expect(p.map((x) => x.featured)).toEqual([false, true]); // Deluxe by default
+  });
+  it("keeps product ids stable when package ids are regenerated", () => {
+    const a = productsFromPortraitPackages(portraitCs.map((x) => ({ ...x, id: "random-1" })), []);
+    const b = productsFromPortraitPackages(portraitCs.map((x) => ({ ...x, id: "random-2" })), []);
+    expect(a.map((x) => x.id)).toEqual(b.map((x) => x.id));
   });
   it("keeps the voucher line short", () => {
     expect(voucherLineDetails(["90 minut", "Standardní foto session", "Jedna lokace, jeden námět a úprava", "min. 5 upravených fotografií"]))

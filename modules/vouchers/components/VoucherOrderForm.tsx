@@ -6,7 +6,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import type { VoucherCopy } from "../copy";
 import { DEDICATION_MAX } from "../lib/validation";
 
-export type ProductOption = { id: string; name: string; details: string[]; price: string };
+export type ProductOption = { id: string; name: string; details: string[]; price: string; featured?: boolean };
 
 type Props = {
   locale: "cs" | "en";
@@ -80,8 +80,9 @@ export function VoucherOrderForm({ locale, products, copy }: Props) {
         <legend>{copy.package}</legend>
         <div className="ed-voucher-packages">
           {products.map((p) => (
-            <label key={p.id} className="ed-voucher-package" data-selected={p.id === productId || undefined}>
+            <label key={p.id} className="ed-voucher-package" data-selected={p.id === productId || undefined} data-featured={p.featured || undefined}>
               <input type="radio" name="productId" value={p.id} checked={p.id === productId} onChange={() => setProductId(p.id)} />
+              {p.featured && <span className="ed-voucher-package__badge"><span aria-hidden>♥</span> {locale === "cs" ? "Doporučuji" : "My pick"}</span>}
               <span className="ed-voucher-package__name">{p.name}</span>
               <span className="ed-voucher-package__price">{p.price}</span>
               <ul>{p.details.map((d) => <li key={d}>{d}</li>)}</ul>

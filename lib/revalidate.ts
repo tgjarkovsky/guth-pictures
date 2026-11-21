@@ -12,6 +12,7 @@ export function revalidateLocalized(paths: string[]) {
 export const CONTENT_PAGES = [
   "", "/sluzby", "/firemni-portrety", "/sluzby/portretni-foceni",
   "/sluzby/eventy-a-svatby",
+  "/darkovy-poukaz", // voucher packages come from the creative-portrait packages
 ];
 
 export const IMAGE_PAGES = [
