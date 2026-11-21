@@ -1,6 +1,5 @@
 import "server-only";
 import { getKv } from "@/lib/kv";
-import { cloudinaryUrl } from "@/lib/cloudinary-utils";
 import { getContent } from "@/modules/admin/lib/content";
 import { productsFromPortraitPackages } from "./portrait-products";
 import type { VoucherSettings } from "./types";
@@ -50,8 +49,4 @@ export function activeProducts(settings: VoucherSettings) {
   return settings.products.filter((p) => p.active);
 }
 
-/** Cloudinary public ID, or a full https URL (handy for a photo hosted elsewhere). */
-export function voucherPhotoSrc(photo: string): string {
-  if (/^https?:\/\//.test(photo)) return photo;
-  return cloudinaryUrl(photo, "c_fill,g_auto,w_670,h_1240,q_85,f_jpg");
-}
+export { voucherPhotoSrc } from "./settings-photo";

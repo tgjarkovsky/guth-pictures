@@ -9,7 +9,8 @@
     "test": "vitest run",
     "portfolio": "tsx scripts/portfolio.ts",
     "test:watch": "vitest",
-    "post-article": "tsx modules/blog/scripts/post-article.ts"
+    "post-article": "tsx modules/blog/scripts/post-article.ts",
+    "voucher:preview": "tsx --tsconfig scripts/tsconfig.voucher-preview.json scripts/voucher-preview.tsx"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.1",

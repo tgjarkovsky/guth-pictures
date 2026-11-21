@@ -51,3 +51,6 @@ next-env.d.ts
 .superpowers/
 
 /output/poses/
+
+# npm run voucher:preview output
+/.voucher-preview/
