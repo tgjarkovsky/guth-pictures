@@ -15,6 +15,7 @@ import { notifyOwner, ownerSummary, sendInvoice, sendReminder, sendVoucherToBuye
 import { createVoucherInvoice, fetchVoucherInvoicePdf } from "./fakturacek";
 import { fetchIncomingPayments, type IncomingPayment } from "./fio";
 import { qrDataUri, renderVoucherPdf } from "./render";
+import { voucherLineDetails } from "./portrait-products";
 import { getVoucherSettings, voucherPhotoSrc } from "./settings";
 import { acquireLock, findOrderByVs, isCodeTaken, listOrders, releaseLock, saveOrder } from "./store";
 import type { VoucherOrder } from "./types";
@@ -45,7 +46,7 @@ export async function buildVoucherPdf(order: VoucherOrder): Promise<Uint8Array> 
     {
       locale: order.locale,
       packageName: order.product.name,
-      packageDetails: order.product.details,
+      packageDetails: voucherLineDetails(order.product.details),
       recipientName: order.recipient.name,
       dedication: order.dedication,
       code: order.code,

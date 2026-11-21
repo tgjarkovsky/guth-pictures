@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
   if (denied) return denied;
   const settings = await getVoucherSettings();
   const locale = req.nextUrl.searchParams.get("locale") === "en" ? "en" : "cs";
-  const product = activeProducts(settings)[0] ?? settings.products[0];
+  const product = activeProducts(settings)[0];
+  if (!product) return NextResponse.json({ error: "Kreativní portrét nemá žádný balíček s cenou" }, { status: 404 });
   const sample = {
     id: "preview", vs: "77000000", locale, status: "paid", createdAt: new Date().toISOString(),
     product: { id: product.id, name: product.name[locale], details: product.details[locale], priceCzk: product.priceCzk },

@@ -7,7 +7,7 @@ Nastavení pro provoz: [`docs/vouchers-setup.md`](../../docs/vouchers-setup.md).
 
 - `copy.ts` — texty stránek CS/EN.
 - `lib/types.ts` — `VoucherOrder`, `VoucherSettings`, `VoucherProduct`.
-- `lib/settings.ts` — balíčky a přepínače v KV (`voucher:settings`), výchozí hodnoty.
+- `lib/settings.ts` — přepínače v KV (`voucher:settings`). Balíčky se odvozují z balíčků kreativního portrétu (`lib/portrait-products.ts`).
 - `lib/store.ts` — objednávky v KV: `voucher:order:{id}`, indexy `voucher:vs:{vs}`, `voucher:code:{code}`, seznam `voucher:orders`, čítač VS, zámek běhu.
 - `lib/service.ts` — přechody stavů (`markPaid`, `deliver`), `applyPayments` a `runVoucherJobs` (jeden idempotentní průchod pro cron i tlačítko v adminu), podepsané odkazy na objednávku.
 - `lib/fio.ts` — výpis příchozích plateb (endpoint `periods`, bezstavový, posledních 21 dní).

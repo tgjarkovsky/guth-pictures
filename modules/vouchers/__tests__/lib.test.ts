@@ -5,7 +5,19 @@ import { addMonths, formatCzk, formatDate, pragueDate } from "../lib/dates";
 import { parseFioStatement } from "../lib/fio";
 import { validateOrder } from "../lib/validation";
 import { parseSettings } from "../lib/settings-validation";
-import { defaultSettings, normalizeSettings } from "../lib/settings";
+import { defaultStoredSettings, normalizeSettings } from "../lib/settings";
+import { parsePriceCzk, productsFromPortraitPackages, voucherLineDetails } from "../lib/portrait-products";
+
+// The live creative-portrait packages (admin → Texty → Služby → Portréty)
+const portraitCs = [
+  { id: "zakladni", name: "Základní", price: "2500", duration: "90 minut", includes: ["Standardní foto session", "Jedna lokace, jeden námět a úprava", "min. 5 upravených fotografií"] },
+  { id: "deluxe", name: "Deluxe", price: "4 500 Kč", duration: "150-180 minut", includes: ["Půlden strávený společnou tvorbou.", "min. 15 upravených fotografií"] },
+  { name: "Na míru", price: "na dotaz", duration: "", includes: [] },
+];
+const portraitEn = [
+  { id: "zakladni", name: "Basic", price: "2500", duration: "90 minutes", includes: ["Standard session", "min. 5 edited photos"] },
+  { id: "deluxe", name: "Deluxe", price: "4500", duration: "150–180 minutes", includes: ["min. 15 edited photos"] },
+];
 
 describe("spayd", () => {
   it("builds a QR payment string without diacritics or asterisks", () => {
@@ -73,8 +85,8 @@ describe("parseFioStatement", () => {
 });
 
 describe("validateOrder", () => {
-  const products = defaultSettings().products;
-  const base = { productId: "portrait-basic", buyerName: " Petr ", buyerEmail: "Petr@Example.com", recipientName: "Jana", terms: true, locale: "cs" };
+  const products = productsFromPortraitPackages(portraitCs, portraitEn);
+  const base = { productId: "portrait-zakladni", buyerName: " Petr ", buyerEmail: "Petr@Example.com", recipientName: "Jana", terms: true, locale: "cs" };
 
   it("accepts a minimal order and normalizes it", () => {
     const r = validateOrder(base, products);
@@ -85,7 +97,7 @@ describe("validateOrder", () => {
     }
   });
   it("rejects inactive products, bad e-mails and missing consent", () => {
-    const r = validateOrder({ ...base, productId: "business-solo", buyerEmail: "nope", terms: false }, products);
+    const r = validateOrder({ ...base, productId: "portrait-neexistuje", buyerEmail: "nope", terms: false }, products);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.errors).toMatchObject({ productId: "required", buyerEmail: "email", terms: "required" });
   });
@@ -102,18 +114,36 @@ describe("validateOrder", () => {
 });
 
 describe("settings", () => {
-  it("parses admin settings", () => {
-    const parsed = parseSettings(defaultSettings());
-    expect(typeof parsed).toBe("object");
+  it("parses admin settings and ignores packages", () => {
+    expect(parseSettings({ ...defaultStoredSettings(), products: [{ id: "x" }] })).toEqual(defaultStoredSettings());
   });
-  it("rejects bad prices and duplicate ids", () => {
-    const s = defaultSettings();
-    expect(parseSettings({ ...s, products: [{ ...s.products[0], priceCzk: 10 }] })).toMatch(/cena/);
-    expect(parseSettings({ ...s, products: [s.products[0], s.products[0]] })).toMatch(/duplicitní/);
-    expect(parseSettings({ ...s, products: s.products.map((p) => ({ ...p, active: false })) })).toMatch(/aktivní/);
+  it("rejects bad values", () => {
+    expect(parseSettings({ ...defaultStoredSettings(), validityMonths: 0 })).toMatch(/Platnost/);
+    expect(parseSettings({ ...defaultStoredSettings(), photoPublicId: " " })).toMatch(/fotka/);
   });
   it("fills in defaults for partial KV data", () => {
-    expect(normalizeSettings({ christmas: false }).products.length).toBeGreaterThan(0);
-    expect(normalizeSettings({ christmas: false }).christmas).toBe(false);
+    expect(normalizeSettings({ christmas: false })).toEqual({ ...defaultStoredSettings(), christmas: false });
+  });
+});
+
+describe("packages from the creative portrait", () => {
+  it("parses prices", () => {
+    expect(parsePriceCzk("2500")).toBe(2500);
+    expect(parsePriceCzk("4 500 Kč")).toBe(4500);
+    expect(parsePriceCzk("od 2\u00a0500 Kč")).toBe(2500);
+    expect(parsePriceCzk("na dotaz")).toBeNull();
+  });
+  it("sells exactly the portrait packages with a price", () => {
+    const p = productsFromPortraitPackages(portraitCs, portraitEn);
+    expect(p.map((x) => [x.id, x.name.cs, x.name.en, x.priceCzk])).toEqual([
+      ["portrait-zakladni", "Kreativní portrét — Základní", "Creative portrait — Basic", 2500],
+      ["portrait-deluxe", "Kreativní portrét — Deluxe", "Creative portrait — Deluxe", 4500],
+    ]);
+    expect(p[0].details.cs[0]).toBe("90 minut");
+  });
+  it("keeps the voucher line short", () => {
+    expect(voucherLineDetails(["90 minut", "Standardní foto session", "Jedna lokace, jeden námět a úprava", "min. 5 upravených fotografií"]))
+      .toEqual(["90 minut", "min. 5 upravených fotografií"]);
+    expect(voucherLineDetails(["2 hod", "online galerie", "Dlouhý popis, který se na poukaz nevejde"])).toEqual(["2 hod", "online galerie"]);
   });
 });

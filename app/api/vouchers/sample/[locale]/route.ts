@@ -2,17 +2,19 @@ import { addMonths, formatDate, pragueDate } from "@/modules/vouchers/lib/dates"
 import { qrDataUri, renderVoucherPng } from "@/modules/vouchers/lib/render";
 import { activeProducts, getVoucherSettings, voucherPhotoSrc } from "@/modules/vouchers/lib/settings";
 import { siteUrl } from "@/lib/config";
+import { voucherLineDetails } from "@/modules/vouchers/lib/portrait-products";
 
 /** Sample voucher image for the sales page. Cached at the edge for a day. */
 export async function GET(_req: Request, { params }: { params: Promise<{ locale: string }> }) {
   const locale = (await params).locale === "en" ? "en" : "cs";
   const settings = await getVoucherSettings();
-  const product = activeProducts(settings)[0] ?? settings.products[0];
+  const product = activeProducts(settings)[0];
+  if (!product) return new Response(null, { status: 404 });
   const png = await renderVoucherPng(
     {
       locale,
       packageName: product.name[locale],
-      packageDetails: product.details[locale],
+      packageDetails: voucherLineDetails(product.details[locale]),
       recipientName: locale === "cs" ? "Jana" : "Jane",
       dedication: locale === "cs" ? "Ať máš konečně fotky, na kterých se líbíš sama sobě." : "For the photos you've always wanted.",
       code: "GP-XXXX-XXXX",
