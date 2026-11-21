@@ -257,8 +257,7 @@ function SettingsForm({ initial }: { initial: VoucherSettings }) {
     <div className="space-y-6 text-sm">
       <div className="grid sm:grid-cols-2 gap-4">
         <label className="flex items-center gap-2"><input type="checkbox" checked={s.enabled} onChange={(e) => setS({ ...s, enabled: e.target.checked })} /> Prodej poukazů zapnutý</label>
-        <label className="flex items-center gap-2"><input type="checkbox" checked={s.christmas} onChange={(e) => setS({ ...s, christmas: e.target.checked })} /> Vánoční verze (sníh na poukazu, vánoční texty)</label>
-        <label className="grid gap-1">Fotka na poukazu (Cloudinary ID nebo celá https URL)<input className={field} value={s.photoPublicId} onChange={(e) => setS({ ...s, photoPublicId: e.target.value })} /></label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={s.christmas} onChange={(e) => setS({ ...s, christmas: e.target.checked })} /> Vánoční verze (vánoční texty na stránce poukazů)</label>
         <label className="grid gap-1">Platnost (měsíce)<input type="number" min={1} max={36} className={field} value={s.validityMonths} onChange={(e) => setS({ ...s, validityMonths: Number(e.target.value) })} /></label>
       </div>
 

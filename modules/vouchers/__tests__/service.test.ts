@@ -24,7 +24,7 @@ vi.mock("../lib/fakturacek", () => ({
 vi.mock("../lib/fio", () => ({ fetchIncomingPayments: async () => payments.list }));
 vi.mock("../lib/email", () => ({
   sendReminder: async (o: { vs: string; buyer: { email: string } }) => { emails.push({ type: "reminder", to: o.buyer.email, vs: o.vs }); },
-  sendVoucherToBuyer: async (o: { vs: string; buyer: { email: string } }, _t: string, _pdf: unknown, invoice?: { number: string }) => { emails.push({ type: "buyer", to: o.buyer.email, vs: o.vs, invoice: invoice?.number }); },
+  sendVoucherToBuyer: async (o: { vs: string; buyer: { email: string } }, _t: string, _pdf: unknown, _gift: string, invoice?: { number: string }) => { emails.push({ type: "buyer", to: o.buyer.email, vs: o.vs, invoice: invoice?.number }); },
   sendInvoice: async (o: { vs: string; buyer: { email: string } }, invoice: { number: string }) => { emails.push({ type: "invoice", to: o.buyer.email, vs: o.vs, invoice: invoice.number }); },
   notifyOwner: async (subject: string) => { emails.push({ type: `owner:${subject}`, vs: "" }); },
   ownerSummary: () => [],

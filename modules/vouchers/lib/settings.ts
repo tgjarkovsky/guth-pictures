@@ -10,7 +10,7 @@ const KEY = "voucher:settings";
 export type StoredVoucherSettings = Omit<VoucherSettings, "products">;
 
 export function defaultStoredSettings(): StoredVoucherSettings {
-  return { enabled: true, christmas: true, photoPublicId: "portfolio/scppmskdespdikncpzhz", validityMonths: 12 };
+  return { enabled: true, christmas: true, validityMonths: 12 };
 }
 
 export function normalizeSettings(raw: Partial<StoredVoucherSettings> | null | undefined): StoredVoucherSettings {
@@ -19,7 +19,6 @@ export function normalizeSettings(raw: Partial<StoredVoucherSettings> | null | u
   return {
     enabled: raw.enabled ?? d.enabled,
     christmas: raw.christmas ?? d.christmas,
-    photoPublicId: raw.photoPublicId || d.photoPublicId,
     validityMonths: Number.isInteger(raw.validityMonths) && raw.validityMonths! > 0 ? raw.validityMonths! : d.validityMonths,
   };
 }
@@ -48,5 +47,3 @@ export async function setVoucherSettings(settings: StoredVoucherSettings): Promi
 export function activeProducts(settings: VoucherSettings) {
   return settings.products.filter((p) => p.active);
 }
-
-export { voucherPhotoSrc } from "./settings-photo";

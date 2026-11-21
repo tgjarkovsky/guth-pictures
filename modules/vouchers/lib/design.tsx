@@ -1,180 +1,144 @@
-import { defaultColors as P } from "@/lib/theme-presets";
-
 /**
- * Voucher artwork — A5 landscape. Rendered by satori (next/og) into a PNG that
- * is then placed on a PDF page, so only flexbox + inline styles are allowed.
- * Every size goes through `u()`, the design is drawn on a 1240 × 874 grid.
+ * Gift voucher — an A6 two-sided card (105 × 148 mm), drawn on a 620 × 874 grid.
+ * Rendered by satori (next/og), so only flexbox + inline styles are allowed.
+ *
+ * Front: the photo is the gift — logo and one line of type.
+ * Back: who it is for comes first; the practical part is quiet at the bottom.
  */
-export const VOUCHER_GRID = { width: 1240, height: 874 } as const;
+export const CARD = { w: 620, h: 874 } as const;
 
-export type VoucherArtProps = {
+export type VoucherTheme = "noir" | "riviera" | "ivy" | "snow";
+
+/** Photo + accent per package. Photos live in modules/vouchers/photos/<theme>.jpg. */
+export const THEMES: Record<VoucherTheme, { accent: string; position: string }> = {
+  noir: { accent: "#C4574A", position: "center 30%" },
+  riviera: { accent: "#4F7FE3", position: "center 35%" },
+  ivy: { accent: "#7E9E68", position: "center 30%" },
+  snow: { accent: "#C21E2B", position: "center 30%" },
+};
+
+export function themeForProduct(productId: string): VoucherTheme {
+  if (/standard/.test(productId)) return "ivy";
+  if (/rozsireny|extended/.test(productId)) return "riviera";
+  if (/deluxe/.test(productId)) return "snow";
+  return "noir";
+}
+
+export type CardProps = {
   locale: "cs" | "en";
-  packageName: string;          // "Kreativní portrét — Rozšířený"
-  packageDetails: string[];     // ["2–4 hod", "15 upravených fotek", "online galerie"]
+  theme: VoucherTheme;
+  photoSrc: string;             // data: URI
+  qrSrc: string;                // data: URI of the booking QR code
   recipientName: string;
   dedication?: string;
-  code: string;                 // GP-7KQ4-M2XD
+  packageName: string;
+  packageDetails: string[];
+  code: string;
   validUntil: string;           // already formatted for the locale
-  photoSrc: string;             // URL or data: URI
-  qrSrc: string;                // data: URI of the reservation QR code
   bookingUrlLabel: string;      // guthpictures.eu/poukaz
-  christmas?: boolean;
   scale?: number;
 };
 
+export const CREAM = "#F6F3EE";
+export const INK = "#232120";
+const MUTED = "#7B746D";
+
 const copy = {
   cs: {
-    kicker: "Dárkový poukaz",
-    headline: ["Portrét,", "který zůstane."],
-    for: "pro",
-    code: "Kód poukazu",
-    valid: "Platí do",
-    booking: "Termín si rezervuj na",
-    season: "Krásné Vánoce",
+    title: "Dárkový poukaz",
+    sub: "na fotografický zážitek",
+    for: "Pro",
+    book: "Termín si domluvíš přes QR kód",
+    or: "nebo na",
+    valid: "platí do",
   },
   en: {
-    kicker: "Gift voucher",
-    headline: ["A portrait", "that stays."],
-    for: "for",
-    code: "Voucher code",
-    valid: "Valid until",
-    booking: "Book your session at",
-    season: "Merry Christmas",
+    title: "Gift voucher",
+    sub: "for a photo experience",
+    for: "For",
+    book: "Book your session via the QR code",
+    or: "or at",
+    valid: "valid until",
   },
 } as const;
 
-// Fixed snow pattern so every voucher looks the same.
-const SNOW: [number, number, number][] = [
-  [62, 70, 3], [180, 40, 2], [300, 120, 4], [420, 60, 2], [120, 210, 2],
-  [380, 260, 3], [70, 390, 2], [250, 330, 2], [460, 420, 3], [150, 520, 4],
-  [340, 560, 2], [60, 660, 3], [230, 720, 2], [420, 690, 3], [480, 180, 2],
-  [30, 800, 2], [300, 820, 3], [500, 560, 2],
-];
+const f = (st: React.CSSProperties = {}): React.CSSProperties => ({ display: "flex", ...st });
 
-export function VoucherArt(props: VoucherArtProps) {
-  const s = props.scale ?? 1;
-  const u = (n: number) => n * s;
-  const t = copy[props.locale];
-  const copper = P.accentSecondary;
-  const photoW = 470;
-
+export function CardFront(p: CardProps) {
+  const u = (n: number) => n * (p.scale ?? 1);
+  const t = copy[p.locale];
+  const theme = THEMES[p.theme];
   return (
-    <div
-      style={{
-        width: u(VOUCHER_GRID.width),
-        height: u(VOUCHER_GRID.height),
-        display: "flex",
-        background: P.bg,
-        color: P.text,
-        fontFamily: "Epilogue",
-      }}
-    >
-      {/* Photo column */}
-      <div style={{ width: u(photoW), height: "100%", display: "flex", position: "relative", overflow: "hidden" }}>
+    <div style={f({ width: u(CARD.w), height: u(CARD.h), position: "relative", background: INK, overflow: "hidden" })}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={p.photoSrc}
+        width={u(CARD.w)}
+        height={u(CARD.h)}
+        style={{ objectFit: "cover", objectPosition: theme.position, width: u(CARD.w), height: u(CARD.h) }}
+        alt=""
+      />
+      <div style={f({ position: "absolute", left: 0, right: 0, bottom: 0, height: u(420), backgroundImage: "linear-gradient(180deg, rgba(20,18,17,0) 0%, rgba(20,18,17,.55) 55%, rgba(20,18,17,.82) 100%)" })} />
+      <div style={f({ position: "absolute", left: 0, right: 0, top: 0, height: u(140), backgroundImage: "linear-gradient(180deg, rgba(20,18,17,.45) 0%, rgba(20,18,17,0) 100%)" })} />
+      <div style={f({ position: "absolute", left: u(44), top: u(40), fontFamily: "Syne", fontWeight: 800, fontSize: u(12), letterSpacing: u(2.6), textTransform: "uppercase", color: CREAM })}>
+        Guth Pictures
+      </div>
+      <div style={f({ position: "absolute", left: u(44), right: u(44), bottom: u(52), flexDirection: "column", color: CREAM })}>
+        <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(64), lineHeight: 1.0, letterSpacing: u(-1) }}>{t.title}</span>
+        <div style={f({ marginTop: u(10), alignItems: "flex-end" })}>
+          <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(25), lineHeight: 1.1 }}>{t.sub}</span>
+          <div style={f({ width: u(7), height: u(7), background: theme.accent, marginLeft: u(4), marginBottom: u(5) })} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function CardBack(p: CardProps) {
+  const u = (n: number) => n * (p.scale ?? 1);
+  const t = copy[p.locale];
+  const accent = THEMES[p.theme].accent;
+  const long = p.recipientName.length > 22;
+  return (
+    <div style={f({ width: u(CARD.w), height: u(CARD.h), background: CREAM, color: INK, flexDirection: "column", padding: u(52) })}>
+      <div style={f({ flex: 0.55 })} />
+      <span style={{ fontFamily: "Epilogue", fontWeight: 600, fontSize: u(10), letterSpacing: u(2.6), textTransform: "uppercase", color: MUTED }}>{t.for}</span>
+      <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(long ? 36 : 46), lineHeight: 1.08, marginTop: u(8) }}>{p.recipientName}</span>
+      {p.dedication && (
+        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(p.dedication.length > 110 ? 16 : 18), lineHeight: 1.5, color: MUTED, marginTop: u(18) }}>
+          {p.dedication}
+        </span>
+      )}
+      <div style={f({ width: u(32), height: u(2), background: accent, marginTop: u(36) })} />
+      <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(24), lineHeight: 1.2, marginTop: u(22) }}>{p.packageName}</span>
+      <span style={{ fontFamily: "Epilogue", fontSize: u(13), lineHeight: 1.6, color: MUTED, marginTop: u(6) }}>{p.packageDetails.join(" · ")}</span>
+      <div style={f({ flex: 1 })} />
+      <div style={f({ alignItems: "center" })}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={props.photoSrc}
-          width={u(photoW)}
-          height={u(VOUCHER_GRID.height)}
-          style={{ objectFit: "cover", width: u(photoW), height: u(VOUCHER_GRID.height) }}
-          alt=""
-        />
-        {props.christmas &&
-          SNOW.map(([x, y, r], i) => (
-            <div
-              key={i}
-              style={{
-                position: "absolute", left: u(x), top: u(y), width: u(r * 2), height: u(r * 2),
-                borderRadius: u(r), background: "rgba(250,240,228,0.75)",
-              }}
-            />
-          ))}
+        <img src={p.qrSrc} width={u(92)} height={u(92)} alt="" />
+        <div style={f({ flexDirection: "column", marginLeft: u(20), fontFamily: "Epilogue", fontSize: u(12.5), lineHeight: 1.55, color: INK })}>
+          <span>{t.book}</span>
+          <span>{`${t.or} ${p.bookingUrlLabel}`}</span>
+        </div>
       </div>
-
-      {/* Text column */}
-      <div
-        style={{
-          flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between",
-          padding: `${u(64)}px ${u(72)}px ${u(56)}px ${u(64)}px`, position: "relative",
-        }}
-      >
-        {/* Frame line */}
-        <div
-          style={{
-            position: "absolute", top: u(28), right: u(28), bottom: u(28), left: u(16), display: "flex",
-            border: `${u(1.5)}px solid ${copper}`, opacity: 0.55,
-          }}
-        />
-
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", fontFamily: "DM Mono", fontSize: u(15), letterSpacing: u(4), textTransform: "uppercase", color: copper }}>
-              Guth Pictures · {t.kicker}
-            </div>
-            {props.christmas && (
-              <div style={{ display: "flex", alignItems: "center", fontFamily: "DM Mono", fontSize: u(15), letterSpacing: u(4), textTransform: "uppercase", color: P.textMuted }}>
-                <div style={{ display: "flex", width: u(8), height: u(8), background: copper, transform: "rotate(45deg)", marginRight: u(12) }} />
-                {t.season}
-              </div>
-            )}
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", marginTop: u(44), fontFamily: "Syne", fontWeight: 700, fontSize: u(76), lineHeight: 1.0, letterSpacing: u(-1.5) }}>
-            <span>{t.headline[0]}</span>
-            <span>{t.headline[1]}</span>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "baseline", marginTop: u(40), fontSize: u(30) }}>
-            <span style={{ color: P.textMuted, marginRight: u(12) }}>{t.for}</span>
-            <span style={{ fontWeight: 600 }}>{props.recipientName}</span>
-          </div>
-
-          {props.dedication && (
-            <div style={{ display: "flex", marginTop: u(18), fontStyle: "italic", fontSize: u(21), lineHeight: 1.45, color: P.textMuted, maxWidth: u(620) }}>
-              „{props.dedication}“
-            </div>
-          )}
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", flexDirection: "column", borderTop: `${u(1)}px solid rgba(237,226,217,0.18)`, paddingTop: u(22) }}>
-            <div style={{ display: "flex", fontSize: u(25), fontWeight: 600 }}>{props.packageName}</div>
-            <div style={{ display: "flex", marginTop: u(8), fontSize: u(18), color: P.textMuted }}>
-              {props.packageDetails.join("  ·  ")}
-            </div>
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: u(30) }}>
-            <div style={{ display: "flex", gap: u(44) }}>
-              <Field label={t.code} value={props.code} u={u} mono />
-              <Field label={t.valid} value={props.validUntil} u={u} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: u(16) }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                <span style={{ fontSize: u(14), color: P.textGhost }}>{t.booking}</span>
-                <span style={{ fontSize: u(17), color: P.text }}>{props.bookingUrlLabel}</span>
-              </div>
-              <div style={{ display: "flex", padding: u(6), background: P.accent, borderRadius: u(4) }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={props.qrSrc} width={u(92)} height={u(92)} alt="" />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div style={f({ marginTop: u(22), paddingTop: u(14), borderTop: `${u(1)}px solid rgba(35,33,32,.14)`, justifyContent: "space-between", fontFamily: "Epilogue", fontSize: u(10.5), letterSpacing: u(1), color: MUTED })}>
+        <span>{p.code}</span>
+        <span>{`${t.valid} ${p.validUntil}`}</span>
       </div>
     </div>
   );
 }
 
-function Field({ label, value, u, mono }: { label: string; value: string; u: (n: number) => number; mono?: boolean }) {
+/** One line of print instructions under the fold sheet (pdf-lib's standard fonts can't do Czech). */
+export function PrintHint({ locale, scale = 1 }: { locale: "cs" | "en"; scale?: number }) {
+  const u = (n: number) => n * scale;
+  const text = locale === "cs"
+    ? "Vytiskněte na A4 bez zmenšení (100 %), vystřihněte podle značek a přeložte v půlce. Nejlépe na pevnější papír."
+    : "Print on A4 at 100 % (no scaling), cut along the marks and fold in half. Heavier paper works best.";
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <span style={{ fontFamily: "DM Mono", fontSize: u(12), letterSpacing: u(3), textTransform: "uppercase", color: P.textGhost }}>
-        {label}
-      </span>
-      <span style={{ marginTop: u(6), fontSize: u(22), fontFamily: mono ? "DM Mono" : "Epilogue", color: P.accent, letterSpacing: mono ? u(1.5) : 0 }}>
-        {value}
-      </span>
+    <div style={f({ width: u(HINT.w), height: u(HINT.h), alignItems: "center", background: "#ffffff", fontFamily: "Epilogue", fontSize: u(11), color: "#8a8580" })}>
+      {text}
     </div>
   );
 }
+export const HINT = { w: 1240, h: 30 } as const;

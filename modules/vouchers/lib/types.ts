@@ -12,7 +12,6 @@ export type VoucherProduct = {
 export type VoucherSettings = {
   enabled: boolean;             // hides the shop when false
   christmas: boolean;           // seasonal artwork + copy
-  photoPublicId: string;        // Cloudinary photo on the voucher
   validityMonths: number;
   products: VoucherProduct[];
 };

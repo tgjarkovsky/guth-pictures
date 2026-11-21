@@ -119,7 +119,6 @@ describe("settings", () => {
   });
   it("rejects bad values", () => {
     expect(parseSettings({ ...defaultStoredSettings(), validityMonths: 0 })).toMatch(/Platnost/);
-    expect(parseSettings({ ...defaultStoredSettings(), photoPublicId: " " })).toMatch(/fotka/);
   });
   it("fills in defaults for partial KV data", () => {
     expect(normalizeSettings({ christmas: false })).toEqual({ ...defaultStoredSettings(), christmas: false });
