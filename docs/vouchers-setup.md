@@ -45,7 +45,7 @@ GitHub občas spustí plánovaný běh se zpožděním. Kdykoli můžeš v admin
 
 ## 5. Ověření před spuštěním
 
-1. Admin → Poukazy → **Nastavení**: zkontroluj balíčky, ceny, fotku (Cloudinary ID) a vánoční přepínač, pak klikni na **Náhled poukazu**.
+1. Admin → Poukazy → **Nastavení**: zkontroluj fotku (Cloudinary ID) a vánoční přepínač, pak klikni na **Náhled poukazu**. Balíčky a ceny se berou z kreativního portrétu (Texty → Služby → Portréty).
 2. Objednej na webu nejlevnější poukaz na svůj e-mail a zaplať ho (třeba z jiného účtu).
 3. Do ~10 minut ti má přijít poukaz a doklad a v adminu má být stav „zaplaceno“.
 4. Objednávku v adminu **stornuj** a peníze si pošli zpátky.

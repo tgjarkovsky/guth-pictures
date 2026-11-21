@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { messageClass, useAdminAction } from "@/modules/admin/components/useAdminAction";
-import type { OrderStatus, VoucherOrder, VoucherProduct, VoucherSettings } from "../lib/types";
+import type { OrderStatus, VoucherOrder, VoucherSettings } from "../lib/types";
 
 type Props = {
   initialOrders: VoucherOrder[];
@@ -242,12 +242,11 @@ function NoteEditor({ initial, busy, onSave }: { initial: string; busy: boolean;
 function SettingsForm({ initial }: { initial: VoucherSettings }) {
   const [s, setS] = useState(initial);
   const { busy, message, run } = useAdminAction();
-  const setProduct = (i: number, patch: Partial<VoucherProduct>) => setS({ ...s, products: s.products.map((p, j) => (j === i ? { ...p, ...patch } : p)) });
 
   function save() {
     run("/api/admin/vouchers/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(s) }, {
       onSuccess: (data) => {
-        setS(data.settings);
+        setS({ ...s, ...data.settings });
         return "Uloženo";
       },
     });
@@ -263,32 +262,21 @@ function SettingsForm({ initial }: { initial: VoucherSettings }) {
         <label className="grid gap-1">Platnost (měsíce)<input type="number" min={1} max={36} className={field} value={s.validityMonths} onChange={(e) => setS({ ...s, validityMonths: Number(e.target.value) })} /></label>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         <h2 className="font-semibold">Balíčky</h2>
-        {s.products.map((p, i) => (
-          <div key={i} className="border border-white/10 p-3 grid gap-2">
-            <div className="grid sm:grid-cols-[1fr_1fr_8rem_auto] gap-2 items-end">
-              <label className="grid gap-1 text-xs text-gray-400">Název CS<input className={field} value={p.name.cs} onChange={(e) => setProduct(i, { name: { ...p.name, cs: e.target.value } })} /></label>
-              <label className="grid gap-1 text-xs text-gray-400">Název EN<input className={field} value={p.name.en} onChange={(e) => setProduct(i, { name: { ...p.name, en: e.target.value } })} /></label>
-              <label className="grid gap-1 text-xs text-gray-400">Cena (Kč)<input type="number" className={field} value={p.priceCzk} onChange={(e) => setProduct(i, { priceCzk: Number(e.target.value) })} /></label>
-              <label className="flex items-center gap-2 pb-2"><input type="checkbox" checked={p.active} onChange={(e) => setProduct(i, { active: e.target.checked })} /> v prodeji</label>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-2">
-              <label className="grid gap-1 text-xs text-gray-400">Co obsahuje CS (řádek = položka, max 4)<textarea rows={3} className={field} value={p.details.cs.join("\n")} onChange={(e) => setProduct(i, { details: { ...p.details, cs: e.target.value.split("\n") } })} /></label>
-              <label className="grid gap-1 text-xs text-gray-400">Co obsahuje EN<textarea rows={3} className={field} value={p.details.en.join("\n")} onChange={(e) => setProduct(i, { details: { ...p.details, en: e.target.value.split("\n") } })} /></label>
-            </div>
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>ID: {p.id}</span>
-              <button onClick={() => setS({ ...s, products: s.products.filter((_, j) => j !== i) })} className="text-red-400">Odebrat</button>
-            </div>
-          </div>
-        ))}
-        <button
-          onClick={() => setS({ ...s, products: [...s.products, { id: `balicek-${s.products.length + 1}`, name: { cs: "", en: "" }, priceCzk: 2500, details: { cs: [], en: [] }, active: false }] })}
-          className="px-3 py-1.5 border border-white/20"
-        >
-          + Přidat balíček
-        </button>
+        <p className="text-gray-400">
+          Poukazy se prodávají na balíčky <strong>kreativního portrétu</strong>. Ceny, délku a obsah měníš v{" "}
+          <a href="/admin/obsah" className="underline">Texty → Služby → Portréty</a>, poukazy se přizpůsobí samy.
+        </p>
+        <ul className="divide-y divide-white/10 border border-white/10">
+          {s.products.map((p) => (
+            <li key={p.id} className="px-3 py-2 flex justify-between gap-4">
+              <span>{p.name.cs} <span className="text-gray-500">· {p.details.cs.join(" · ")}</span></span>
+              <span className="tabular-nums">{czk(p.priceCzk)}</span>
+            </li>
+          ))}
+          {s.products.length === 0 && <li className="px-3 py-2 text-amber-300">Kreativní portrét nemá žádný balíček s cenou — poukazy se neprodávají.</li>}
+        </ul>
       </div>
 
       <div className="flex items-center gap-4">
