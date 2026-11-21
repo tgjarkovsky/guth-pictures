@@ -6,7 +6,7 @@ licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
 | File | Family |
 | --- | --- |
 | Epilogue-Regular / SemiBold / Italic | Epilogue |
-| Syne-Bold | Syne |
+| Syne-Bold, Syne-ExtraBold | Syne (nadpis jako na homepage) |
 | DMMono-Regular | DM Mono |
 | CormorantGaramond-Medium / Bold / Italic | Cormorant Garamond (voucher redesign) |
 | GreatVibes-Regular | Great Vibes (recipient name, voucher redesign) |
