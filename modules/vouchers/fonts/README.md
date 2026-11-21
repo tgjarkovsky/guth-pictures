@@ -10,3 +10,7 @@ licensed under the SIL Open Font License 1.1 (https://openfontlicense.org).
 | DMMono-Regular | DM Mono |
 | CormorantGaramond-Medium / Bold / Italic | Cormorant Garamond (voucher redesign) |
 | GreatVibes-Regular | Great Vibes (recipient name, voucher redesign) |
+| BodoniModa-Regular / Italic | Bodoni Moda (návrh Noir) |
+| Jost-Regular / Medium | Jost (doprovodné bezpatkové písmo nových návrhů) |
+| DMSerifDisplay-Regular / Italic | DM Serif Display (návrh Riviera) |
+| PlayfairDisplay-Regular / Italic | Playfair Display (návrh Sníh) |
