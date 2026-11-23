@@ -106,7 +106,8 @@ export function AdminVouchers({ initialOrders, initialSettings, setup }: Props) 
               {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
             </select>
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Hledat VS, kód, jméno, e-mail…" className="flex-1 min-w-48 bg-transparent border border-white/20 px-3 py-2 text-sm" />
-            <a href="/api/admin/vouchers/preview" target="_blank" className="text-sm underline text-gray-300">Náhled poukazu</a>
+            <a href="/cs/darkovy-poukaz/darek/ukazka" target="_blank" className="text-sm underline text-gray-300">Náhled stránky poukazu</a>
+            <a href="/api/admin/vouchers/preview" target="_blank" className="text-sm underline text-gray-300">Náhled PDF</a>
           </div>
           {runner.message && <p className={`text-sm ${messageClass(runner.message)}`}>{runner.message}</p>}
 
@@ -195,6 +196,7 @@ function OrderRow({ order: o, onChange }: { order: VoucherOrder; onChange: (o: V
             {o.status === "paid" && <Btn busy={busy} onClick={() => act("redeem", `Uplatnit poukaz ${o.code}?`)}>✓ Uplatnit (focení proběhlo / domluveno)</Btn>}
             {o.status === "redeemed" && <Btn busy={busy} onClick={() => act("unredeem")}>Vrátit uplatnění</Btn>}
             {(o.status === "paid" || o.status === "redeemed") && <Btn busy={busy} onClick={() => act("resend", "Znovu poslat poukaz kupujícímu?")}>Poslat znovu</Btn>}
+            {o.code && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/gift`} target="_blank">Stránka poukazu</a>}
             {o.code && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/pdf`} target="_blank">PDF poukaz</a>}
             {o.invoiceNumber && <a className="px-3 py-1.5 border border-white/20 hover:border-white/50" href={`/api/admin/vouchers/${o.id}/pdf?doc=invoice`} target="_blank">Faktura</a>}
             {(o.status === "paid" || o.status === "redeemed") && !o.invoiceSentAt && (
@@ -271,7 +273,11 @@ function SettingsForm({ initial }: { initial: VoucherSettings }) {
           {s.products.map((p) => (
             <li key={p.id} className="px-3 py-2 flex justify-between gap-4">
               <span>{p.name.cs} <span className="text-gray-500">· {p.details.cs.join(" · ")}</span></span>
-              <span className="tabular-nums">{czk(p.priceCzk)}</span>
+              <span className="flex gap-4 shrink-0">
+                <a href={`/cs/darkovy-poukaz/darek/ukazka?balicek=${p.id}`} target="_blank" className="underline text-gray-300">Náhled stránky</a>
+                <a href={`/api/admin/vouchers/preview?balicek=${p.id}`} target="_blank" className="underline text-gray-300">PDF</a>
+                <span className="tabular-nums">{czk(p.priceCzk)}</span>
+              </span>
             </li>
           ))}
           {s.products.length === 0 && <li className="px-3 py-2 text-amber-300">Kreativní portrét nemá žádný balíček s cenou — poukazy se neprodávají.</li>}
@@ -280,7 +286,7 @@ function SettingsForm({ initial }: { initial: VoucherSettings }) {
 
       <div className="flex items-center gap-4">
         <button onClick={save} disabled={busy} className="px-4 py-2 bg-white text-black font-medium disabled:opacity-50">{busy ? "Ukládám…" : "Uložit nastavení"}</button>
-        <a href="/api/admin/vouchers/preview" target="_blank" className="underline text-gray-300">Náhled poukazu (po uložení)</a>
+        <a href="/api/admin/vouchers/preview" target="_blank" className="underline text-gray-300">Náhled PDF (po uložení)</a>
         {message && <span className={messageClass(message)}>{message}</span>}
       </div>
     </div>
