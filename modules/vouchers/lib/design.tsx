@@ -17,6 +17,18 @@ export const THEMES: Record<VoucherTheme, { accent: string; position: string }> 
   snow: { accent: "#C21E2B", position: "center 30%" },
 };
 
+/** Order on the picker, with names the buyer sees. */
+export const THEME_CHOICES: { id: VoucherTheme; name: { cs: string; en: string } }[] = [
+  { id: "snow", name: { cs: "Sníh", en: "Snow" } },
+  { id: "noir", name: { cs: "Noir", en: "Noir" } },
+  { id: "riviera", name: { cs: "Riviéra", en: "Riviera" } },
+  { id: "ivy", name: { cs: "Břečťan", en: "Ivy" } },
+];
+
+export function isVoucherTheme(v: unknown): v is VoucherTheme {
+  return typeof v === "string" && Object.hasOwn(THEMES, v);
+}
+
 export function themeForProduct(productId: string): VoucherTheme {
   if (/standard/.test(productId)) return "ivy";
   if (/rozsireny|extended/.test(productId)) return "riviera";

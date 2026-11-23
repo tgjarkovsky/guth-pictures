@@ -164,3 +164,14 @@ describe("featuredInMiddle", () => {
     expect(run([{ id: "s" }, { id: "d", featured: true }])).toEqual(["s", "d"]);
   });
 });
+
+describe("voucher design", () => {
+  it("accepts only known designs", async () => {
+    const { isVoucherTheme, THEME_CHOICES } = await import("../lib/design");
+    expect(THEME_CHOICES.every((c) => isVoucherTheme(c.id))).toBe(true);
+    expect(isVoucherTheme("noir")).toBe(true);
+    expect(isVoucherTheme("toString")).toBe(false);
+    expect(isVoucherTheme("")).toBe(false);
+    expect(isVoucherTheme(42)).toBe(false);
+  });
+});

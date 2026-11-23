@@ -31,7 +31,7 @@ vi.mock("../lib/email", () => ({
 }));
 
 import { createOrder, getOrder, findOrderByCode } from "../lib/store";
-import { orderIdFromToken, orderToken, runVoucherJobs } from "../lib/service";
+import { canChangeTheme, orderIdFromToken, orderTheme, orderToken, runVoucherJobs } from "../lib/service";
 
 const orderData = (over: Record<string, unknown> = {}) => ({
   locale: "cs" as const,
@@ -169,5 +169,19 @@ describe("order tokens", () => {
     expect(await orderIdFromToken(tampered)).toBeNull();
     expect(await orderIdFromToken(`${"0".repeat(18)}${token.slice(dot)}`)).toBeNull();
     expect(await orderIdFromToken("../../etc")).toBeNull();
+  });
+});
+
+describe("voucher design choice", () => {
+  const product = { id: "portrait-deluxe", name: "Deluxe", details: [], priceCzk: 4000 };
+  it("follows the package until the buyer picks one", () => {
+    expect(orderTheme({ product })).toBe("snow");
+    expect(orderTheme({ product, theme: "noir" })).toBe("noir");
+  });
+  it("can change only until the voucher is e-mailed", () => {
+    expect(canChangeTheme({ status: "pending" })).toBe(true);
+    expect(canChangeTheme({ status: "paid" })).toBe(true);
+    expect(canChangeTheme({ status: "paid", sentToBuyerAt: "2026-11-23T10:00:00Z" })).toBe(false);
+    expect(canChangeTheme({ status: "expired" })).toBe(false);
   });
 });

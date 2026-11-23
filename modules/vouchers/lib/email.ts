@@ -60,7 +60,9 @@ export async function sendPaymentInstructions(order: VoucherOrder, token: string
         ["IBAN", c.iban],
         [cs ? "Variabilní symbol" : "Variable symbol", order.vs],
       ]) +
-      p(cs ? "Nejrychlejší je naskenovat QR kód na stránce objednávky v bankovní aplikaci:" : "The quickest way is to scan the QR code on your order page in your banking app:") +
+      p(cs
+        ? "Nejrychlejší je naskenovat QR kód na stránce objednávky v bankovní aplikaci. Tam si také můžete vybrat fotku na poukaz:"
+        : "The quickest way is to scan the QR code on your order page in your banking app. You can also pick the photo for the voucher there:") +
       button(orderUrl(token, order.locale), cs ? "Zobrazit QR platbu" : "Show QR payment") +
       p(cs ? `Bez platby objednávka po ${10} dnech zanikne. Kdybyste cokoli potřebovali, stačí odpovědět na tento e-mail.` : `Unpaid orders expire after 10 days. Just reply to this e-mail if you need anything.`),
   );
