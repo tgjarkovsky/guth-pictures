@@ -6,7 +6,9 @@ import { OrderStatusPoller } from "@/modules/vouchers/components/OrderStatusPoll
 import { voucherConfig } from "@/modules/vouchers/lib/config";
 import { formatCzk, formatDate } from "@/modules/vouchers/lib/dates";
 import { qrDataUri } from "@/modules/vouchers/lib/render";
-import { giftUrl, orderIdFromToken } from "@/modules/vouchers/lib/service";
+import { ThemePicker } from "@/modules/vouchers/components/ThemePicker";
+import { THEME_CHOICES } from "@/modules/vouchers/lib/design";
+import { canChangeTheme, giftUrl, orderIdFromToken, orderTheme } from "@/modules/vouchers/lib/service";
 import { spayd } from "@/modules/vouchers/lib/spayd";
 import { getOrder } from "@/modules/vouchers/lib/store";
 
@@ -54,7 +56,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
                 <div><dt>{t.message}</dt><dd>{message}</dd></div>
               </dl>
             </div>
-            <p className="ed-voucher-waiting" role="status"><span aria-hidden className="ed-voucher-dot" />{t.waiting}</p>
+            <p className="ed-voucher-waiting">{t.waiting}</p>
           </>
         )}
 
@@ -86,6 +88,16 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
           </>
         )}
         {order.status === "cancelled" && <h1>{t.cancelledTitle}</h1>}
+
+        {canChangeTheme(order) && (
+          <ThemePicker
+            token={token}
+            locale={locale}
+            choices={THEME_CHOICES.map((c) => ({ id: c.id, name: c.name[locale] }))}
+            initial={orderTheme(order)}
+            copy={{ title: t.designTitle, text: t.designText, saved: t.designSaved, error: t.designError }}
+          />
+        )}
 
         <div className="ed-voucher-summary">
           <h2>{t.summary}</h2>

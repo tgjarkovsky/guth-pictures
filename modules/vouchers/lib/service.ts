@@ -14,7 +14,7 @@ import { addMonths, daysBetween, formatDate, pragueDate } from "./dates";
 import { notifyOwner, ownerSummary, sendInvoice, sendReminder, sendVoucherToBuyer } from "./email";
 import { createVoucherInvoice, fetchVoucherInvoicePdf } from "./fakturacek";
 import { fetchIncomingPayments, type IncomingPayment } from "./fio";
-import { themeForProduct } from "./design";
+import { themeForProduct, type VoucherTheme } from "./design";
 import { qrDataUri, renderVoucherPdf, type VoucherCardInput } from "./render";
 import { voucherLineDetails } from "./portrait-products";
 import { getVoucherSettings } from "./settings";
@@ -65,7 +65,7 @@ export async function voucherCard(order: VoucherOrder): Promise<VoucherCardInput
   if (!order.code || !order.validUntil) throw new Error("Voucher is not issued yet");
   return {
     locale: order.locale,
-    theme: themeForProduct(order.product.id),
+    theme: orderTheme(order),
     packageName: order.product.name,
     packageDetails: voucherLineDetails(order.product.details),
     recipientName: order.recipient.name,
@@ -82,6 +82,15 @@ export async function buildVoucherPdf(order: VoucherOrder): Promise<Uint8Array> 
     await voucherCard(order),
     order.locale === "cs" ? `Dárkový poukaz ${order.code}` : `Gift voucher ${order.code}`,
   );
+}
+
+export function orderTheme(order: Pick<VoucherOrder, "theme" | "product">): VoucherTheme {
+  return order.theme ?? themeForProduct(order.product.id);
+}
+
+/** The design can change while the order waits for payment or the voucher waits to be sent. */
+export function canChangeTheme(order: Pick<VoucherOrder, "status" | "sentToBuyerAt">): boolean {
+  return order.status === "pending" || (order.status === "paid" && !order.sentToBuyerAt);
 }
 
 export function getInvoicePdf(order: VoucherOrder): Promise<Uint8Array> {

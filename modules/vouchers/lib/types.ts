@@ -1,3 +1,5 @@
+import type { VoucherTheme } from "./design";
+
 export type Locale = "cs" | "en";
 export type Localized<T> = { cs: T; en: T };
 
@@ -30,6 +32,7 @@ export type VoucherOrder = {
   recipient: { name: string };
   dedication?: string;
   christmas: boolean;
+  theme?: VoucherTheme;         // photo + accent the buyer picked; default follows the package
 
   // payment
   paidAt?: string;
