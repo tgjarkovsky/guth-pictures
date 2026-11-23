@@ -5,6 +5,7 @@ import { getVoucherCopy } from "@/modules/vouchers/copy";
 import { VoucherOrderForm } from "@/modules/vouchers/components/VoucherOrderForm";
 import { isPaymentConfigured } from "@/modules/vouchers/lib/config";
 import { formatCzk } from "@/modules/vouchers/lib/dates";
+import { featuredInMiddle } from "@/modules/vouchers/lib/portrait-products";
 import { activeProducts, getVoucherSettings } from "@/modules/vouchers/lib/settings";
 
 export const revalidate = 300;
@@ -92,7 +93,7 @@ export default async function VoucherPage({ params }: { params: Promise<{ locale
           <VoucherOrderForm
             locale={locale}
             copy={copy.form}
-            products={products.map((p) => ({ id: p.id, name: p.name[locale], details: p.details[locale], price: formatCzk(p.priceCzk, locale), featured: p.featured }))}
+            products={featuredInMiddle(products).map((p) => ({ id: p.id, name: p.name[locale], details: p.details[locale], price: formatCzk(p.priceCzk, locale), featured: p.featured }))}
           />
         ) : (
           <p className="ed-secondary-empty">{copy.unavailable}</p>
