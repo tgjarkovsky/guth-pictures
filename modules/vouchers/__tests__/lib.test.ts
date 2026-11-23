@@ -152,3 +152,15 @@ describe("packages from the creative portrait", () => {
     expect(voucherLineDetails(["2 hod", "online galerie", "Dlouhý popis, který se na poukaz nevejde"])).toEqual(["2 hod", "online galerie"]);
   });
 });
+
+describe("featuredInMiddle", () => {
+  it("moves the highlighted package to the middle", async () => {
+    const { featuredInMiddle } = await import("../lib/portrait-products");
+    const ids = (xs: { id: string }[]) => xs.map((x) => x.id);
+    type P = { id: string; featured?: boolean };
+    const run = (xs: P[]) => ids(featuredInMiddle<P>(xs));
+    expect(run([{ id: "s" }, { id: "r" }, { id: "d", featured: true }])).toEqual(["s", "d", "r"]);
+    expect(run([{ id: "s" }, { id: "r" }, { id: "d" }])).toEqual(["s", "r", "d"]);
+    expect(run([{ id: "s" }, { id: "d", featured: true }])).toEqual(["s", "d"]);
+  });
+});

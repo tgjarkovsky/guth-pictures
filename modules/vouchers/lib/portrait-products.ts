@@ -41,3 +41,12 @@ export function voucherLineDetails(details: string[]): string[] {
 }
 
 export { parsePriceCzk };
+
+/** The highlighted package sits in the middle of the row (Standard · Deluxe · Rozšířený). */
+export function featuredInMiddle<T extends { featured?: boolean }>(items: T[]): T[] {
+  const i = items.findIndex((p) => p.featured);
+  if (i < 0 || items.length < 3) return items;
+  const rest = items.filter((_, j) => j !== i);
+  const mid = Math.floor(items.length / 2);
+  return [...rest.slice(0, mid), items[i], ...rest.slice(mid)];
+}
