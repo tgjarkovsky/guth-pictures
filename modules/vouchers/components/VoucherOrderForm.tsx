@@ -4,7 +4,8 @@ import { useState } from "react";
 import { track } from "@vercel/analytics";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { VoucherCopy } from "../copy";
-import { DEDICATION_MAX } from "../lib/validation";
+import { DEDICATION_MAX, validateOrder } from "../lib/validation";
+import type { VoucherProduct } from "../lib/types";
 
 export type ProductOption = { id: string; name: string; details: string[]; price: string; featured?: boolean };
 
@@ -19,7 +20,7 @@ const input =
 
 export function VoucherOrderForm({ locale, products, copy }: Props) {
   const router = useRouter();
-  const [productId, setProductId] = useState(products[0]?.id ?? "");
+  const [productId, setProductId] = useState(""); // nothing preselected; checked before sending
   const [dedication, setDedication] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
@@ -37,15 +38,18 @@ export function VoucherOrderForm({ locale, products, copy }: Props) {
   // A field's error disappears as soon as it is edited.
   function clearError(e: React.FormEvent<HTMLFormElement>) {
     const name = (e.target as HTMLInputElement).name;
-    if (name && errors[name]) setErrors(({ [name]: _, ...rest }) => rest);
+    if (!name || !errors[name]) return;
+    const { [name]: _, ...rest } = errors;
+    setErrors(rest);
+    if (Object.keys(rest).length === 0 && formError === copy.errors.check) setFormError("");
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus("sending");
+    const form = e.currentTarget;
     setErrors({});
     setFormError("");
-    const f = new FormData(e.currentTarget);
+    const f = new FormData(form);
     const body = {
       locale,
       productId,
@@ -56,6 +60,22 @@ export function VoucherOrderForm({ locale, products, copy }: Props) {
       terms: f.get("terms") === "on",
       website: f.get("website"),
     };
+
+    // Same rules as the server, checked before anything is sent.
+    const check = validateOrder(body, products.map((p) => ({ id: p.id, active: true }) as VoucherProduct));
+    if (!check.ok && !check.errors.form) {
+      setErrors(check.errors);
+      setFormError(copy.errors.check);
+      const first = (["productId", "recipientName", "dedication", "buyerName", "buyerEmail", "terms"] as const).find((k) => check.errors[k]);
+      const el = first && form.querySelector<HTMLElement>(`[name="${first}"]`);
+      if (el) {
+        (first === "productId" ? el.closest("fieldset") ?? el : el).scrollIntoView({ behavior: "smooth", block: "center" });
+        el.focus({ preventScroll: true });
+      }
+      return;
+    }
+
+    setStatus("sending");
     try {
       const res = await fetch("/api/vouchers/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({}));
@@ -140,17 +160,15 @@ export function VoucherOrderForm({ locale, products, copy }: Props) {
       {err("terms")}
 
       <div className="ed-voucher-form__submit">
-        {selected && (
-          <p>
-            <span>{copy.total}</span> <strong>{selected.price}</strong>
-          </p>
-        )}
+        <p>
+          <span>{copy.total}</span> <strong>{selected ? selected.price : "—"}</strong>
+        </p>
         <button type="submit" disabled={status === "sending"} className="px-6 py-3 bg-[var(--color-text)] text-[var(--color-bg)] font-medium hover:opacity-85 transition-opacity disabled:opacity-50">
           {status === "sending" ? copy.submitting : copy.submit}
         </button>
       </div>
       {formError && (
-        <div role="alert" className="p-4 text-sm" style={{ background: "var(--color-error-bg)", border: "1px solid var(--color-error-border)", color: "var(--color-error-fg)" }}>
+        <div role="alert" aria-live="assertive" className="p-4 text-sm" style={{ background: "var(--color-error-bg)", border: "1px solid var(--color-error-border)", color: "var(--color-error-fg)" }}>
           {formError}
         </div>
       )}

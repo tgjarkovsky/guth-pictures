@@ -45,6 +45,9 @@ export const voucherCopy = {
       total: "Celkem",
       errors: {
         required: "Vyplňte prosím.",
+        package: "Vyberte prosím balíček.",
+        terms: "Potvrďte prosím souhlas s podmínkami.",
+        check: "Ještě něco chybí, zkontrolujte prosím označená pole.",
         email: "Zkontrolujte e-mail.",
         tooLong: "Text je moc dlouhý.",
         generic: "Objednávku se nepodařilo odeslat. Zkuste to znovu, nebo mi napište.",
@@ -142,6 +145,9 @@ export const voucherCopy = {
       total: "Total",
       errors: {
         required: "Please fill this in.",
+        package: "Please pick a package.",
+        terms: "Please confirm you agree to the terms.",
+        check: "Something is missing, please check the highlighted fields.",
         email: "Check the e-mail address.",
         tooLong: "Too long.",
         generic: "The order could not be sent. Please try again or write to me.",
