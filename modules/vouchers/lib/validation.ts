@@ -34,7 +34,7 @@ export function validateOrder(raw: unknown, products: VoucherProduct[]): { ok: t
   if (str(b.website)) return { ok: false, errors: { form: "spam" } };
 
   const product = products.find((p) => p.active && p.id === b.productId);
-  if (!product) errors.productId = "required";
+  if (!product) errors.productId = "package";
 
   const buyerName = str(b.buyerName);
   if (!buyerName) errors.buyerName = "required";
@@ -51,7 +51,7 @@ export function validateOrder(raw: unknown, products: VoucherProduct[]): { ok: t
   const dedication = str(b.dedication);
   if (dedication.length > DEDICATION_MAX) errors.dedication = "tooLong";
 
-  if (b.terms !== true) errors.terms = "required";
+  if (b.terms !== true) errors.terms = "terms";
 
   if (Object.keys(errors).length || !product) return { ok: false, errors };
   return {

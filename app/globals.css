@@ -2366,7 +2366,11 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 
 /* ── Gift vouchers (/darkovy-poukaz) ───────────────────────────────────────── */
 /* Voucher pages are dark so the card photo reads like a gift; the rest of the secondary world stays paper. */
-.editorial-secondary.ed-voucher { --editorial-paper: #0e0d0c; --editorial-ink: #efebe4; --editorial-accent: #d0493a; color-scheme: dark; }
+.editorial-secondary.ed-voucher {
+  --editorial-paper: #0e0d0c; --editorial-ink: #efebe4; --editorial-accent: #d0493a; color-scheme: dark;
+  --color-error-bg: rgba(208, 73, 58, .14); --color-error-border: #d0493a; --color-error-fg: #f29a8e;
+  --color-success-bg: rgba(74, 160, 102, .14); --color-success-border: #4aa066; --color-success-fg: #9fd8ae;
+}
 .ed-voucher { font-family: var(--font-editorial-sans), sans-serif; }
 .ed-voucher h1, .ed-voucher h2 { font-family: var(--font-editorial-serif), serif; font-weight: 800; letter-spacing: -.04em; line-height: .95; margin: 0; text-wrap: balance; }
 .ed-voucher-kicker { margin: 0 0 1.25rem; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--color-text-muted); }

@@ -99,7 +99,7 @@ describe("validateOrder", () => {
   it("rejects inactive products, bad e-mails and missing consent", () => {
     const r = validateOrder({ ...base, productId: "portrait-neexistuje", buyerEmail: "nope", terms: false }, products);
     expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.errors).toMatchObject({ productId: "required", buyerEmail: "email", terms: "required" });
+    if (!r.ok) expect(r.errors).toMatchObject({ productId: "package", buyerEmail: "email", terms: "terms" });
   });
   it("ignores any recipient e-mail fields — the buyer passes the voucher on", () => {
     const r = validateOrder({ ...base, recipientEmail: "jana@example.com", sendOn: "2026-12-24" }, products);
