@@ -9,9 +9,9 @@ type Attachment = { filename: string; content: Uint8Array };
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 function layout(body: string): string {
-  return `<!doctype html><html><body style="margin:0;background:#f4f1ea;font-family:Helvetica,Arial,sans-serif;color:#11100e">
+  return `<!doctype html><html><body style="margin:0;background:#f0efeb;font-family:Helvetica,Arial,sans-serif;color:#11100e">
 <div style="max-width:560px;margin:0 auto;padding:32px 24px">
-<p style="margin:0 0 24px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#b87333">Guth Pictures</p>
+<p style="margin:0 0 24px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c93a2b">Guth Pictures</p>
 ${body}
 <p style="margin:40px 0 0;font-size:12px;color:#6b625e">Guth Pictures · <a href="https://guthpictures.eu" style="color:#6b625e">guthpictures.eu</a></p>
 </div></body></html>`;
@@ -19,7 +19,7 @@ ${body}
 
 const p = (s: string) => `<p style="margin:0 0 16px;font-size:15px;line-height:1.6">${s}</p>`;
 const button = (href: string, label: string) =>
-  `<p style="margin:24px 0"><a href="${esc(href)}" style="display:inline-block;background:#11100e;color:#f4f1ea;padding:14px 22px;text-decoration:none;font-weight:600">${esc(label)}</a></p>`;
+  `<p style="margin:24px 0"><a href="${esc(href)}" style="display:inline-block;background:#11100e;color:#f0efeb;padding:14px 22px;text-decoration:none;font-weight:600">${esc(label)}</a></p>`;
 const table = (rows: [string, string][]) =>
   `<table style="border-collapse:collapse;margin:8px 0 20px;font-size:15px">${rows
     .map(([k, v]) => `<tr><td style="padding:6px 24px 6px 0;color:#6b625e">${esc(k)}</td><td style="padding:6px 0;font-weight:600">${esc(v)}</td></tr>`)

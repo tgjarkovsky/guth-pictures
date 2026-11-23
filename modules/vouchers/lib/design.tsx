@@ -11,7 +11,7 @@ export type VoucherTheme = "noir" | "riviera" | "ivy" | "snow";
 
 /** Photo + accent per package. Photos live in modules/vouchers/photos/<theme>.jpg. */
 export const THEMES: Record<VoucherTheme, { accent: string; position: string }> = {
-  noir: { accent: "#C4574A", position: "center 30%" },
+  noir: { accent: "#C93A2B", position: "center 30%" },
   riviera: { accent: "#4F7FE3", position: "center 35%" },
   ivy: { accent: "#7E9E68", position: "center 30%" },
   snow: { accent: "#C21E2B", position: "center 30%" },
@@ -39,7 +39,7 @@ export type CardProps = {
   scale?: number;
 };
 
-export const CREAM = "#F6F3EE";
+export const CREAM = "#F0EFEB";
 export const INK = "#232120";
 const MUTED = "#7B746D";
 
