@@ -1878,7 +1878,7 @@ a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), 
 /* Every editorial page root carries data-world; the world classes below override the tokens. */
 [data-world] {
   --editorial-ink: #191315;
-  --editorial-paper: #f3efe7;
+  --editorial-paper: #f0efeb;
   --editorial-accent: #8f2b24;
   --color-bg: var(--editorial-paper);
   --color-bg-elevated: color-mix(in srgb, var(--editorial-ink) 4%, var(--editorial-paper));
@@ -1902,9 +1902,9 @@ a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), 
 }
 
 .editorial-portrait { --editorial-ink: #eeeae2; --editorial-paper: #0a0a09; --editorial-accent: #eeeae2; }
-.editorial-business { --editorial-ink: #12201b; --editorial-paper: #f1efe8; --editorial-accent: #2e5a45; }
-.editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f5f2ec; --editorial-accent: #0b0b0a; }
-.editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f4f1ea; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
+.editorial-business { --editorial-ink: #12201b; --editorial-paper: #f0efeb; --editorial-accent: #2e5a45; }
+.editorial-events { --editorial-ink: #0b0b0a; --editorial-paper: #f0efeb; --editorial-accent: #0b0b0a; }
+.editorial-secondary { --editorial-ink: #11100e; --editorial-paper: #f0efeb; --editorial-accent: #c93a2b; --color-accent: var(--editorial-accent); --color-success-bg: #e2f2e5; --color-success-border: #397a4d; --color-success-fg: #166534; --color-error-bg: #f7e4e1; --color-error-border: #a74338; --color-error-fg: #7f1d1d; --color-border-sub: color-mix(in srgb, var(--editorial-ink) 18%, transparent); --color-bg-overlay: color-mix(in srgb, var(--editorial-ink) 7%, transparent); }
 
 .editorial-nav {
   position: absolute;
@@ -2016,9 +2016,9 @@ a.ed-business-phone { color: inherit; font-family: var(--font-editorial-serif), 
 /* ── Home: cream page, dark only as passe-partout ──
    The hero is a dark card holding the nav, the headline and the photo, so header and hero read as
    one framed object; photos below sit on the same dark mats. The headline's baseline rests on the photo. */
-.editorial-home { --home-dark: #232120; --home-dark-ink: #f1eee9; --home-dark-accent: #c4574a; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --gutter: clamp(1.25rem, 5cqi, 5rem); overflow-x: clip; }
+.editorial-home { --home-dark: #232120; --home-dark-ink: #f0efeb; --home-dark-accent: #c93a2b; --mat: clamp(.6rem, 1.2cqi, 1rem); --card-gap: clamp(.75rem, 2cqi, 2rem); --nav-h: 4.5rem; --gutter: clamp(1.25rem, 5cqi, 5rem); overflow-x: clip; }
 /* Cream nudged away from yellow; body scope so the footer follows. */
-.editorial-home { --editorial-paper: #f4f2ee; }
+.editorial-home { --editorial-paper: #f0efeb; }
 /* The site-wide fixed accent hairline would float over the cream gap above the card. */
 body:has([data-world])::before { display: none; }
 /* The nav's containing block is the full-width main, the card sits in the 1440px column: inset by both. */
@@ -2065,7 +2065,7 @@ body:has([data-world])::before { display: none; }
 .ed-home-story:nth-child(6n + 1) { grid-column: span 7; }
 .ed-home-story:nth-child(6n + 2), .ed-home-story:nth-child(6n + 3) { grid-column: span 5; grid-row: span 1; }
 .ed-home-story__photo { position: absolute; inset: 0; }
-.ed-home-story figcaption { position: absolute; inset: 0; z-index: 1; padding: clamp(1.25rem, 2.5cqi, 2rem); display: flex; flex-direction: column; justify-content: end; gap: 1rem; color: #f4f1ea; background: linear-gradient(0deg, rgba(20,20,20,.55), transparent 35%); transition: background-color .35s ease-out; }
+.ed-home-story figcaption { position: absolute; inset: 0; z-index: 1; padding: clamp(1.25rem, 2.5cqi, 2rem); display: flex; flex-direction: column; justify-content: end; gap: 1rem; color: #f0efeb; background: linear-gradient(0deg, rgba(20,20,20,.55), transparent 35%); transition: background-color .35s ease-out; }
 .ed-home-story blockquote { max-width: 32ch; margin: 0; font-family: var(--font-editorial-serif), serif; font-size: clamp(1.05rem, 1.6cqi, 1.5rem); font-weight: 600; line-height: 1.2; letter-spacing: -.01em; white-space: pre-line; opacity: 0; transform: translateY(.75rem); transition: opacity .35s ease-out, transform .35s ease-out; }
 .ed-home-story blockquote::before { content: "„"; margin-right: .05em; font-size: 1.6em; line-height: 0; color: var(--home-dark-accent); }
 .ed-home-story blockquote::after { content: "“"; }
@@ -2359,7 +2359,7 @@ html:has(.ed-review-lightbox[open]) { overflow: hidden; }
 
 /* Site footer: a dark closing band on every public page, independent of the page world. */
 .site-footer {
-  --color-bg: #11100e; --color-text: #f4f1ea; --color-text-muted: #b9b4aa; --color-text-ghost: #8a857b;
+  --color-bg: #11100e; --color-text: #f0efeb; --color-text-muted: #b9b4aa; --color-text-ghost: #8a857b;
   --color-border: rgba(244, 241, 234, .16);
   font-family: var(--font-editorial-sans), sans-serif;
 }
