@@ -30,7 +30,7 @@ vi.mock("../lib/email", () => ({
   ownerSummary: () => [],
 }));
 
-import { createOrder, getOrder, findOrderByCode } from "../lib/store";
+import { claimOnDemandCheck, createOrder, getOrder, findOrderByCode } from "../lib/store";
 import { canChangeTheme, orderIdFromToken, orderTheme, orderToken, runVoucherJobs } from "../lib/service";
 
 const orderData = (over: Record<string, unknown> = {}) => ({
@@ -183,5 +183,12 @@ describe("voucher design choice", () => {
     expect(canChangeTheme({ status: "paid" })).toBe(true);
     expect(canChangeTheme({ status: "paid", sentToBuyerAt: "2026-11-23T10:00:00Z" })).toBe(false);
     expect(canChangeTheme({ status: "expired" })).toBe(false);
+  });
+});
+
+describe("on-demand payment check", () => {
+  it("lets only one caller through per window", async () => {
+    expect(await claimOnDemandCheck()).toBe(true);
+    expect(await claimOnDemandCheck()).toBe(false);
   });
 });

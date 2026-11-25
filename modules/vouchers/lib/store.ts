@@ -74,6 +74,12 @@ export async function acquireLock(seconds = 120): Promise<boolean> {
   return (await kv.set(LOCK, "1", { nx: true, ex: seconds })) === "OK";
 }
 
+/** At most one on-demand payment check per window, whoever asks (order pages poll often). */
+export async function claimOnDemandCheck(seconds = 60): Promise<boolean> {
+  const kv = await kvOrThrow();
+  return (await kv.set(`${LOCK}:on-demand`, "1", { nx: true, ex: seconds })) === "OK";
+}
+
 export async function releaseLock(): Promise<void> {
   const kv = await kvOrThrow();
   await kv.del(LOCK);

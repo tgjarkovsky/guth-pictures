@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 
-/** Polls the order status and refreshes the server-rendered page once it changes. */
+/** Polls the order status (which also nudges the payment check) and refreshes the page once it changes. */
 export function OrderStatusPoller({ token, status, sent }: { token: string; status: string; sent: boolean }) {
   const router = useRouter();
   useEffect(() => {
-    const id = setInterval(async () => {
+    const tick = async () => {
       if (document.hidden) return;
       try {
         const res = await fetch(`/api/vouchers/order/${token}`, { cache: "no-store" });
@@ -17,8 +17,13 @@ export function OrderStatusPoller({ token, status, sent }: { token: string; stat
       } catch {
         // offline — try again next tick
       }
-    }, 20_000);
-    return () => clearInterval(id);
+    };
+    const first = setTimeout(tick, 2_000); // starts a payment check right away
+    const id = setInterval(tick, 20_000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(id);
+    };
   }, [token, status, sent, router]);
   return null;
 }
