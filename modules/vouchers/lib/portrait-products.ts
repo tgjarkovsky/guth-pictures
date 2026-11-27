@@ -37,7 +37,16 @@ export function voucherLineDetails(details: string[]): string[] {
   const [duration, ...rest] = details;
   const counted = rest.filter((d) => /\d/.test(d));
   const picked = counted.length ? counted : rest.filter((d) => d.length <= 30);
-  return [duration, ...picked].filter(Boolean).slice(0, 3);
+  return [duration, ...picked].filter(Boolean).slice(0, 3).map(tidyDetail);
+}
+
+/** Admin copy → print: "90-120" gets an en dash, a trailing period goes, "Min." mid-line becomes "min.". */
+function tidyDetail(d: string): string {
+  return d
+    .trim()
+    .replace(/(\d)\s*-\s*(\d)/g, "$1–$2")
+    .replace(/\.$/, "")
+    .replace(/^(Min\.|Minimálně|At least)(?=\s)/, (m) => m.toLowerCase());
 }
 
 export { parsePriceCzk };
