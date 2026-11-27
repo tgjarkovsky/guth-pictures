@@ -67,6 +67,7 @@ const copy = {
     book: "Termín si domluvíš přes QR kód",
     or: "nebo na",
     code: "Kód",
+    place: "Praha",
     valid: "platí do",
   },
   en: {
@@ -76,6 +77,7 @@ const copy = {
     book: "Book your session via the QR code",
     or: "or at",
     code: "Code",
+    place: "Prague",
     valid: "valid until",
   },
 } as const;
@@ -120,13 +122,13 @@ export function CardBack(p: CardProps) {
       <span style={{ fontFamily: "Epilogue", fontWeight: 600, fontSize: u(10), letterSpacing: u(2.6), textTransform: "uppercase", color: MUTED }}>{t.for}</span>
       <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(long ? 36 : 46), lineHeight: 1.08, marginTop: u(8) }}>{p.recipientName}</span>
       {p.dedication && (
-        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(p.dedication.length > 110 ? 16 : 18), lineHeight: 1.5, color: MUTED, marginTop: u(18) }}>
+        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(p.dedication.length > 110 ? 16 : 18), lineHeight: 1.5, color: INK, marginTop: u(18) }}>
           {p.dedication}
         </span>
       )}
       <div style={f({ width: u(32), height: u(2), background: accent, marginTop: u(36) })} />
       <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(24), lineHeight: 1.2, marginTop: u(22) }}>{p.packageName}</span>
-      <span style={{ fontFamily: "Epilogue", fontSize: u(13), lineHeight: 1.6, color: MUTED, marginTop: u(6) }}>{p.packageDetails.join(" · ")}</span>
+      <span style={{ fontFamily: "Epilogue", fontSize: u(13), lineHeight: 1.6, color: MUTED, marginTop: u(6) }}>{[...p.packageDetails, t.place].join(" · ")}</span>
       <div style={f({ flex: 1 })} />
       <div style={f({ alignItems: "center" })}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
