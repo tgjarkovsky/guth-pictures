@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { readJson, requireAdmin } from "@/lib/admin-route";
 import { getDrafts, saveDrafts } from "@/modules/stories/lib/store";
 import type { StoryDraft } from "@/modules/stories/lib/types";
+import { activeProducts, getVoucherSettings } from "@/modules/vouchers/lib/settings";
+
+/** „od 2 900 Kč“ podle nejlevnějšího aktivního poukazu; prázdné, když žádný není. */
+async function voucherPriceFrom(): Promise<string> {
+  const prices = activeProducts(await getVoucherSettings()).map(p => p.priceCzk);
+  if (!prices.length) return "";
+  return `od ${Math.min(...prices).toLocaleString("cs-CZ").replace(/\s/g, "\u00a0")}\u00a0Kč`;
+}
 
 export async function GET() {
   const denied = await requireAdmin();
@@ -15,12 +23,14 @@ export async function POST(req: NextRequest) {
   if (denied) return denied;
   const body = await readJson<{ template?: unknown }>(req);
   if (body instanceof NextResponse) return body;
+  const template = body.template === "D" || body.template === "P" ? body.template : "C";
   const draft: StoryDraft = {
     id: `d-${Date.now()}`,
-    template: body.template === "D" ? "D" : "C",
+    template,
     photos: [], headline: "", sub: "", words: [], subHeadline: "",
     textSource: "manual",
     createdAt: new Date().toISOString(),
+    ...(template === "P" && { price: await voucherPriceFrom(), voucherTheme: "snow", format: "story" }),
   };
   const drafts = await getDrafts();
   await saveDrafts([draft, ...drafts]);

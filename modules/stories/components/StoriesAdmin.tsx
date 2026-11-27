@@ -27,10 +27,10 @@ export function StoriesAdmin({ galleryPhotos }: { galleryPhotos: GalleryPhoto[] 
 
   useEffect(() => { void reload(); }, [reload]);
 
-  async function addManualDraft() {
+  async function addManualDraft(template: "C" | "P" = "C") {
     await fetch("/api/admin/stories/drafts", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ template: "C" }),
+      body: JSON.stringify({ template }),
     });
     await reload();
   }
@@ -70,9 +70,14 @@ export function StoriesAdmin({ galleryPhotos }: { galleryPhotos: GalleryPhoto[] 
 
       {tab === "drafts" && (
         <div className="space-y-6">
-          <button onClick={addManualDraft} className="text-sm border border-white/20 px-3 py-1.5 hover:border-white/50">
-            + Nový návrh
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => addManualDraft()} className="text-sm border border-white/20 px-3 py-1.5 hover:border-white/50">
+              + Nový návrh
+            </button>
+            <button onClick={() => addManualDraft("P")} className="text-sm border border-white/20 px-3 py-1.5 hover:border-white/50">
+              + Reklama na poukaz
+            </button>
+          </div>
           {drafts.map(d => (
             <DraftCard key={d.id} draft={d} galleryPhotos={galleryPhotos} onChanged={reload} />
           ))}
