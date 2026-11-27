@@ -4,7 +4,8 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { PDFDocument, rgb } from "pdf-lib";
 import QRCode from "qrcode";
-import { CARD, CREAM, CardBack, CardFront, HINT, INK, PrintHint, type CardProps, type VoucherTheme } from "./design";
+import { voucherConfig } from "./config";
+import { CARD, CREAM, CardBack, CardFront, HINT, INK, PrintHint, type CardProps, type VoucherContact, type VoucherTheme } from "./design";
 
 // next.config.ts traces these folders into the serverless bundle.
 const FONT_DIR = path.join(process.cwd(), "modules/vouchers/fonts");
@@ -44,7 +45,15 @@ export function qrDataUri(text: string, dark: string = INK, light: string = CREA
 }
 
 export type CardSide = "front" | "back";
-export type VoucherCardInput = Omit<CardProps, "scale" | "photoSrc">;
+export type VoucherCardInput = Omit<CardProps, "scale" | "photoSrc" | "contact">;
+
+/** "+420728113966" → "+420 728 113 966"; anything else is printed as given. */
+export const prettyPhone = (phone: string) => phone.replace(/^\+420\s*(\d{3})\s*(\d{3})\s*(\d{3})$/, "+420 $1 $2 $3");
+
+function voucherContact(): VoucherContact {
+  const c = voucherConfig();
+  return { name: c.payeeName, phone: prettyPhone(c.phone), email: c.replyTo };
+}
 
 /** 2× the grid ≈ 300 dpi at A6 — sharp in print, ~1 MB per side. */
 export const PRINT_SCALE = 2;
@@ -55,14 +64,14 @@ async function png(node: React.ReactElement, w: number, h: number): Promise<Uint
 }
 
 export async function renderCardPng(props: VoucherCardInput, side: CardSide, scale = PRINT_SCALE): Promise<Uint8Array> {
-  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), scale };
+  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), contact: voucherContact(), scale };
   const Side = side === "front" ? CardFront : CardBack;
   return png(<Side {...full} />, CARD.w * scale, CARD.h * scale);
 }
 
 /** Back and front side by side (1240 × 874 grid) — the sample on the sales page and in link previews. */
 export async function renderSpreadPng(props: VoucherCardInput, scale = 0.8): Promise<Uint8Array> {
-  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), scale };
+  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), contact: voucherContact(), scale };
   return png(
     <div style={{ display: "flex" }}>
       <CardBack {...full} />

@@ -150,6 +150,9 @@ describe("packages from the creative portrait", () => {
     expect(voucherLineDetails(["90 minut", "Standardní foto session", "Jedna lokace, jeden námět a úprava", "min. 5 upravených fotografií"]))
       .toEqual(["90 minut", "min. 5 upravených fotografií"]);
     expect(voucherLineDetails(["2 hod", "online galerie", "Dlouhý popis, který se na poukaz nevejde"])).toEqual(["2 hod", "online galerie"]);
+    expect(voucherLineDetails(["90-120 minut", "Make-up v ceně.", "Min. 7 upravených fotografií"]))
+      .toEqual(["90–120 minut", "min. 7 upravených fotografií"]);
+    expect(voucherLineDetails(["120 - 180 minutes", "At least 15 edited photos."])).toEqual(["120–180 minutes", "at least 15 edited photos"]);
   });
 });
 

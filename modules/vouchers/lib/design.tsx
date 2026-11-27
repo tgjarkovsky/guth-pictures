@@ -48,8 +48,12 @@ export type CardProps = {
   code: string;
   validUntil: string;           // already formatted for the locale
   bookingUrlLabel: string;      // guthpictures.eu/poukaz
+  contact?: VoucherContact;     // filled in by render.tsx (server-only)
   scale?: number;
 };
+
+/** Who to call or write to — a person, so the recipient isn't left with just a QR code. */
+export type VoucherContact = { name: string; phone: string; email: string };
 
 export const CREAM = "#F0EFEB";
 export const INK = "#232120";
@@ -58,18 +62,22 @@ const MUTED = "#7B746D";
 const copy = {
   cs: {
     title: "Dárkový poukaz",
-    sub: "na fotografický zážitek",
+    sub: "na portrétní focení",
     for: "Pro",
     book: "Termín si domluvíš přes QR kód",
     or: "nebo na",
+    code: "Kód",
+    place: "Praha",
     valid: "platí do",
   },
   en: {
     title: "Gift voucher",
-    sub: "for a photo experience",
+    sub: "for a portrait session",
     for: "For",
     book: "Book your session via the QR code",
     or: "or at",
+    code: "Code",
+    place: "Prague",
     valid: "valid until",
   },
 } as const;
@@ -97,10 +105,7 @@ export function CardFront(p: CardProps) {
       </div>
       <div style={f({ position: "absolute", left: u(44), right: u(44), bottom: u(52), flexDirection: "column", color: CREAM })}>
         <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(64), lineHeight: 1.0, letterSpacing: u(-1) }}>{t.title}</span>
-        <div style={f({ marginTop: u(10), alignItems: "flex-end" })}>
-          <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(25), lineHeight: 1.1 }}>{t.sub}</span>
-          <div style={f({ width: u(7), height: u(7), background: theme.accent, marginLeft: u(4), marginBottom: u(5) })} />
-        </div>
+        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(25), lineHeight: 1.1, marginTop: u(10) }}>{t.sub}</span>
       </div>
     </div>
   );
@@ -117,24 +122,31 @@ export function CardBack(p: CardProps) {
       <span style={{ fontFamily: "Epilogue", fontWeight: 600, fontSize: u(10), letterSpacing: u(2.6), textTransform: "uppercase", color: MUTED }}>{t.for}</span>
       <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(long ? 36 : 46), lineHeight: 1.08, marginTop: u(8) }}>{p.recipientName}</span>
       {p.dedication && (
-        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(p.dedication.length > 110 ? 16 : 18), lineHeight: 1.5, color: MUTED, marginTop: u(18) }}>
+        <span style={{ fontFamily: "Playfair", fontStyle: "italic", fontSize: u(p.dedication.length > 110 ? 16 : 18), lineHeight: 1.5, color: INK, marginTop: u(18) }}>
           {p.dedication}
         </span>
       )}
       <div style={f({ width: u(32), height: u(2), background: accent, marginTop: u(36) })} />
       <span style={{ fontFamily: "Playfair", fontWeight: 500, fontSize: u(24), lineHeight: 1.2, marginTop: u(22) }}>{p.packageName}</span>
-      <span style={{ fontFamily: "Epilogue", fontSize: u(13), lineHeight: 1.6, color: MUTED, marginTop: u(6) }}>{p.packageDetails.join(" · ")}</span>
+      <span style={{ fontFamily: "Epilogue", fontSize: u(13), lineHeight: 1.6, color: MUTED, marginTop: u(6) }}>{[...p.packageDetails, t.place].join(" · ")}</span>
       <div style={f({ flex: 1 })} />
       <div style={f({ alignItems: "center" })}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={p.qrSrc} width={u(92)} height={u(92)} alt="" />
-        <div style={f({ flexDirection: "column", marginLeft: u(20), fontFamily: "Epilogue", fontSize: u(12.5), lineHeight: 1.55, color: INK })}>
+        <img src={p.qrSrc} width={u(104)} height={u(104)} alt="" />
+        <div style={f({ flexDirection: "column", marginLeft: u(22), fontFamily: "Epilogue", fontSize: u(12.5), lineHeight: 1.5, color: INK })}>
           <span>{t.book}</span>
           <span>{`${t.or} ${p.bookingUrlLabel}`}</span>
+          {p.contact && (
+            <div style={f({ flexDirection: "column", marginTop: u(10) })}>
+              <span style={{ fontWeight: 600 }}>{p.contact.name}</span>
+              <span>{p.contact.phone}</span>
+              <span>{p.contact.email}</span>
+            </div>
+          )}
         </div>
       </div>
       <div style={f({ marginTop: u(22), paddingTop: u(14), borderTop: `${u(1)}px solid rgba(35,33,32,.14)`, justifyContent: "space-between", fontFamily: "Epilogue", fontSize: u(10.5), letterSpacing: u(1), color: MUTED })}>
-        <span>{p.code}</span>
+        <span>{`${t.code} ${p.code}`}</span>
         <span>{`${t.valid} ${p.validUntil}`}</span>
       </div>
     </div>

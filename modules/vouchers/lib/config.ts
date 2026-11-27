@@ -13,6 +13,8 @@ export function voucherConfig() {
     replyTo: contactEmail,
     // Name on the QR payment; invoices take the supplier details from Fakturáček's own settings.
     payeeName: process.env.BUSINESS_NAME ?? "Tomáš Guth Jarkovský",
+    // Printed on the voucher. Base64 like RevealPhone, so the number isn't greppable in the repo.
+    phone: process.env.VOUCHER_PHONE ?? Buffer.from("KzQyMDcyODExMzk2Ng==", "base64").toString(),
     fakturacekUrl: (process.env.FAKTURACEK_URL ?? "").replace(/\/+$/, ""),
     fakturacekToken: process.env.FAKTURACEK_API_TOKEN ?? "",
     siteUrl,
