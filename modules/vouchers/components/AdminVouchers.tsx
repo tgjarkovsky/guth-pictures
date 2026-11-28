@@ -2,12 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { messageClass, useAdminAction } from "@/modules/admin/components/useAdminAction";
+import type { GalleryPhoto } from "@/lib/cloudinary-utils";
 import type { OrderStatus, VoucherOrder, VoucherSettings } from "../lib/types";
+import { ThemePhotosEditor } from "./ThemePhotosEditor";
 
 type Props = {
   initialOrders: VoucherOrder[];
   initialSettings: VoucherSettings;
   setup: { label: string; ok: boolean }[];
+  galleryPhotos: GalleryPhoto[];
 };
 
 const STATUS: Record<OrderStatus, { label: string; cls: string }> = {
@@ -22,7 +25,7 @@ const czk = (n: number) => `${new Intl.NumberFormat("cs-CZ").format(n)} Kč`;
 const dt = (iso?: string) => (iso ? new Date(iso).toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "");
 const d = (iso?: string) => (iso ? iso.split("-").reverse().map(Number).join(". ") : "");
 
-export function AdminVouchers({ initialOrders, initialSettings, setup }: Props) {
+export function AdminVouchers({ initialOrders, initialSettings, setup, galleryPhotos }: Props) {
   const [orders, setOrders] = useState(initialOrders);
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [query, setQuery] = useState("");
@@ -120,7 +123,7 @@ export function AdminVouchers({ initialOrders, initialSettings, setup }: Props) 
           )}
         </>
       ) : (
-        <SettingsForm initial={initialSettings} />
+        <SettingsForm initial={initialSettings} galleryPhotos={galleryPhotos} />
       )}
     </div>
   );
@@ -241,14 +244,16 @@ function NoteEditor({ initial, busy, onSave }: { initial: string; busy: boolean;
   );
 }
 
-function SettingsForm({ initial }: { initial: VoucherSettings }) {
+function SettingsForm({ initial, galleryPhotos }: { initial: VoucherSettings; galleryPhotos: GalleryPhoto[] }) {
   const [s, setS] = useState(initial);
+  const [savedAt, setSavedAt] = useState(0);
   const { busy, message, run } = useAdminAction();
 
   function save() {
     run("/api/admin/vouchers/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(s) }, {
       onSuccess: (data) => {
         setS({ ...s, ...data.settings });
+        setSavedAt(Date.now());
         return "Uloženo";
       },
     });
@@ -283,6 +288,13 @@ function SettingsForm({ initial }: { initial: VoucherSettings }) {
           {s.products.length === 0 && <li className="px-3 py-2 text-amber-300">Kreativní portrét nemá žádný balíček s cenou — poukazy se neprodávají.</li>}
         </ul>
       </div>
+
+      <ThemePhotosEditor
+        value={s.themePhotos}
+        onChange={(themePhotos) => setS({ ...s, themePhotos })}
+        galleryPhotos={galleryPhotos}
+        savedAt={savedAt}
+      />
 
       <div className="flex items-center gap-4">
         <button onClick={save} disabled={busy} className="px-4 py-2 bg-white text-black font-medium disabled:opacity-50">{busy ? "Ukládám…" : "Uložit nastavení"}</button>

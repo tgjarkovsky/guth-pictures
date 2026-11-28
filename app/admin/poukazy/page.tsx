@@ -1,3 +1,4 @@
+import { getGalleryPhotos } from "@/lib/cloudinary";
 import { AdminShell } from "@/modules/admin/components/AdminShell";
 import { AdminVouchers } from "@/modules/vouchers/components/AdminVouchers";
 import { isFakturacekConfigured, isPaymentConfigured, voucherConfig } from "@/modules/vouchers/lib/config";
@@ -8,7 +9,11 @@ export const dynamic = "force-dynamic";
 
 export default async function PoukazyPage() {
   const c = voucherConfig();
-  const [orders, settings] = await Promise.all([listOrders().catch(() => []), getVoucherSettings()]);
+  const [orders, settings, galleryPhotos] = await Promise.all([
+    listOrders().catch(() => []),
+    getVoucherSettings(),
+    getGalleryPhotos("portfolio").catch(() => []),
+  ]);
   const setup = [
     { label: "Bankovní účet (VOUCHER_IBAN)", ok: isPaymentConfigured() },
     { label: "Fio API token (automatické párování)", ok: Boolean(c.fioToken) },
@@ -18,7 +23,7 @@ export default async function PoukazyPage() {
   ];
   return (
     <AdminShell>
-      <AdminVouchers initialOrders={orders} initialSettings={settings} setup={setup} />
+      <AdminVouchers initialOrders={orders} initialSettings={settings} setup={setup} galleryPhotos={galleryPhotos} />
     </AdminShell>
   );
 }

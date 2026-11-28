@@ -22,7 +22,9 @@ interface ExportOptions {
   height: number
   slideCount: number
   slideDurationMs: number
-  hasWordLayer?: boolean // true for Template D
+  /** Vlastní délka jednotlivých snímků (šablona P drží kartu poukazu déle); jinak všechny slideDurationMs. */
+  slideDurationsMs?: number[]
+  hasWordLayer?: boolean // true for Template D and P
   onProgress?: (pct: number) => void
   onLayerReady?: (slideIndex: number, layer: ExportLayer) => Promise<void>
 }
@@ -48,6 +50,7 @@ export function useExport() {
     height,
     slideCount,
     slideDurationMs,
+    slideDurationsMs,
     hasWordLayer = false,
     onProgress,
     onLayerReady,
@@ -84,7 +87,13 @@ export function useExport() {
 
     let encoderError: Error | null = null
     const encoder = new VideoEncoder({
-      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      // Některé enkodéry (headless Chromium) nevyplní chunk.duration — doplníme délku snímku sami.
+      output: (chunk, meta) => {
+        const data = new Uint8Array(chunk.byteLength)
+        chunk.copyTo(data)
+        const m = meta?.decoderConfig ? { decoderConfig: { ...meta.decoderConfig, colorSpace: meta.decoderConfig.colorSpace ?? undefined } } : undefined
+        muxer.addVideoChunkRaw(data, chunk.type, chunk.timestamp, chunk.duration ?? 1_000_000 / FPS, m)
+      },
       error: e => { encoderError = e },
     })
 
@@ -97,8 +106,10 @@ export function useExport() {
     })
 
     const frameDuration = 1_000_000 / FPS
-    const framesPerSlide = Math.round(slideDurationMs / 1000 * FPS)
-    const totalFrames = Math.ceil((slideDurationMs * slideCount + 800) / 1000 * FPS)
+    const slideFrames = Array.from({ length: slideCount }, (_, i) =>
+      Math.max(Math.round((slideDurationsMs?.[i] ?? slideDurationMs) / 1000 * FPS), 1))
+    const slideStarts = slideFrames.map((_, i) => slideFrames.slice(0, i).reduce((a, b) => a + b, 0))
+    const totalFrames = slideStarts[slideCount - 1] + slideFrames[slideCount - 1] + Math.ceil(0.8 * FPS)
 
     const offscreen = new OffscreenCanvas(width, height)
     const ctx = offscreen.getContext('2d')!
@@ -107,8 +118,10 @@ export function useExport() {
       if (encoderError) throw encoderError
       onProgress?.(0.4 + fi / totalFrames * 0.6)
 
-      const slide = Math.min(Math.floor(fi / framesPerSlide), slideCount - 1)
-      const frameInSlide = fi - slide * framesPerSlide
+      let slide = 0
+      while (slide < slideCount - 1 && fi >= slideStarts[slide + 1]) slide++
+      const frameInSlide = fi - slideStarts[slide]
+      const framesPerSlide = slideFrames[slide]
       const prev = Math.max(slide - 1, 0)
 
       const fade = slide === 0 ? 1 : ease(frameInSlide / FADE_FRAMES)

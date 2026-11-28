@@ -13,6 +13,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ them
     0.75,
   );
   return new Response(Buffer.from(png), {
-    headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800" },
+    headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=300, s-maxage=600, stale-while-revalidate=86400" },
   });
 }

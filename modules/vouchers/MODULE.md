@@ -13,6 +13,7 @@ Nastavení pro provoz: [`docs/vouchers-setup.md`](../../docs/vouchers-setup.md).
 - `lib/fio.ts` — výpis příchozích plateb (endpoint `periods`, bezstavový, posledních 21 dní).
 - `lib/spayd.ts` — řetězec QR platby.
 - `lib/design.tsx` + `lib/render.tsx` — vzhled poukazu (satori přes `next/og`) → PNG → PDF (`pdf-lib`). Fonty v `fonts/` (přibalené přes `outputFileTracingIncludes`).
+- Fotky na kartách: v adminu (Poukazy → Nastavení → Fotky na kartách) se pro každý vzhled vybírá fotka z portfolia (`themePhotos` v nastavení, Cloudinary public id + výřez). `render.tsx` ji stáhne v tiskové velikosti; bez výběru nebo při výpadku Cloudinary použije přibalenou `photos/<theme>.jpg`. Stejnou kartu používá reklamní šablona P ve stories.
 - `lib/fakturacek.ts` — faktura ve Fakturáčku (`POST /api/external/invoices`, idempotentní přes `externalRef = voucher:<id>`) a stažení jejího PDF.
 - `lib/email.ts` — e-maily: pokyny k platbě, připomínka, poukaz (s fakturou) kupujícímu, samostatná faktura, notifikace fotografovi.
 

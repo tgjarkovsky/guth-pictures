@@ -3,9 +3,7 @@ import { flushSync } from "react-dom";
 import { signedUploadRequest } from "@/lib/cloudinary-signed-upload";
 import type { StoryDraft } from "../../lib/types";
 import { useExport, type ExportLayer } from "./useExport";
-
-const W = 1080;
-const H = 1920;
+import { FORMAT_SIZE, cardSlideMs } from "./TemplateP";
 
 const errMsg = (err: unknown) => (err instanceof Error ? err.message : err);
 
@@ -21,6 +19,7 @@ export function useStoryExport(draft: StoryDraft, { publishAt, onChanged, export
   const [exportTick, setExportTick] = useState<number | undefined>(undefined);
   const [exportLayer, setExportLayer] = useState<ExportLayer | undefined>(undefined);
   const { exportVideo } = useExport();
+  const size = FORMAT_SIZE[draft.template === "P" ? draft.format ?? "story" : "story"];
 
   const canRender = draft.photos.length > 0 && !exporting
     && !(draft.template === "D" && draft.words.filter(Boolean).length === 0);
@@ -34,11 +33,15 @@ export function useStoryExport(draft: StoryDraft, { publishAt, onChanged, export
     try {
       return await exportVideo({
         element: exportRef.current!,
-        width: W,
-        height: H,
+        width: size.w,
+        height: size.h,
         slideCount,
         slideDurationMs: duration,
-        hasWordLayer: draft.template === "D",
+        // šablona P: poslední snímek je karta poukazu a drží déle
+        slideDurationsMs: draft.template === "P"
+          ? Array.from({ length: slideCount }, (_, i) => (i === slideCount - 1 ? cardSlideMs(duration) : duration))
+          : undefined,
+        hasWordLayer: draft.template !== "C",
         onProgress: setProgress,
         onLayerReady,
       });

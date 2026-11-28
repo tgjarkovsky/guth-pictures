@@ -9,6 +9,10 @@ vi.mock("../story/TemplateC", () => ({
 vi.mock("../story/TemplateD", () => ({
   TemplateD: (p: { words: string[]; scale: number }) => <div data-testid="tpl-D" data-scale={p.scale}>{p.words.join("|")}</div>,
 }));
+vi.mock("../story/TemplateP", async (orig) => ({
+  ...(await orig<typeof import("../story/TemplateP")>()),
+  TemplateP: (p: { headline: string; price: string; format: string }) => <div data-testid="tpl-P" data-format={p.format}>{p.headline}|{p.price}</div>,
+}));
 vi.mock("../story/useExport", () => ({ useExport: () => ({ exportVideo: vi.fn() }) }));
 
 const draft: StoryDraft = {
@@ -61,5 +65,17 @@ describe("DraftCard", () => {
     const sent = JSON.parse(init!.body as string).draft;
     expect(sent.id).toBe("d1");
     expect(sent.photos.map((p: { publicId: string }) => p.publicId)).toEqual(["folder/second", "folder/first"]);
+  });
+
+  it("šablona P: předloha vyplní texty, feed 4:5 nejde naplánovat jako story", () => {
+    setup();
+    fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "P" } });
+    expect(screen.getAllByTestId("tpl-P")).toHaveLength(2);
+    const [format, , preset] = screen.getAllByRole("combobox").slice(2);
+    fireEvent.change(preset, { target: { value: "1" } });
+    expect(screen.getAllByTestId("tpl-P")[0].textContent).toBe("Ne další\nsvetr.|");
+    fireEvent.change(format, { target: { value: "feed" } });
+    expect(screen.getAllByTestId("tpl-P")[0].dataset.format).toBe("feed");
+    expect(screen.getByText("Schválit + naplánovat").closest("button")).toBeDisabled();
   });
 });

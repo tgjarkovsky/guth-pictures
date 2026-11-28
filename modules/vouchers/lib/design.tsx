@@ -40,6 +40,7 @@ export type CardProps = {
   locale: "cs" | "en";
   theme: VoucherTheme;
   photoSrc: string;             // data: URI
+  photoPosition?: string;       // object-position of the photo; default per theme
   qrSrc: string;                // data: URI of the booking QR code
   recipientName: string;
   dedication?: string;
@@ -95,7 +96,7 @@ export function CardFront(p: CardProps) {
         src={p.photoSrc}
         width={u(CARD.w)}
         height={u(CARD.h)}
-        style={{ objectFit: "cover", objectPosition: theme.position, width: u(CARD.w), height: u(CARD.h) }}
+        style={{ objectFit: "cover", objectPosition: p.photoPosition ?? theme.position, width: u(CARD.w), height: u(CARD.h) }}
         alt=""
       />
       <div style={f({ position: "absolute", left: 0, right: 0, bottom: 0, height: u(420), backgroundImage: "linear-gradient(180deg, rgba(20,18,17,0) 0%, rgba(20,18,17,.55) 55%, rgba(20,18,17,.82) 100%)" })} />
