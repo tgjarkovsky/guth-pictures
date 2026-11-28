@@ -12,10 +12,14 @@ export type VoucherProduct = {
   featured?: boolean;
 };
 
+/** A portfolio photo (Cloudinary public id) chosen in the admin for one card design; x/y = crop focus in %. */
+export type ThemePhoto = { publicId: string; x: number; y: number };
+
 export type VoucherSettings = {
   enabled: boolean;             // hides the shop when false
   christmas: boolean;           // seasonal artwork + copy
   validityMonths: number;
+  themePhotos: Partial<Record<VoucherTheme, ThemePhoto>>; // missing theme = the bundled photo in modules/vouchers/photos
   products: VoucherProduct[];
 };
 

@@ -25,6 +25,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
     bookingUrlLabel: `${new URL(siteUrl).host.replace(/^www\./, "")}/poukaz`,
   });
   return new Response(Buffer.from(png), {
-    headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" },
+    headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=300, s-maxage=600, stale-while-revalidate=86400" },
   });
 }

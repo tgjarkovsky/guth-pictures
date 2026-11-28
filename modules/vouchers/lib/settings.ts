@@ -2,6 +2,7 @@ import "server-only";
 import { getKv } from "@/lib/kv";
 import { getContent } from "@/modules/admin/lib/content";
 import { productsFromPortraitPackages } from "./portrait-products";
+import { cleanThemePhotos } from "./settings-validation";
 import type { VoucherSettings } from "./types";
 
 const KEY = "voucher:settings";
@@ -10,7 +11,7 @@ const KEY = "voucher:settings";
 export type StoredVoucherSettings = Omit<VoucherSettings, "products">;
 
 export function defaultStoredSettings(): StoredVoucherSettings {
-  return { enabled: true, christmas: true, validityMonths: 12 };
+  return { enabled: true, christmas: true, validityMonths: 12, themePhotos: {} };
 }
 
 export function normalizeSettings(raw: Partial<StoredVoucherSettings> | null | undefined): StoredVoucherSettings {
@@ -20,6 +21,7 @@ export function normalizeSettings(raw: Partial<StoredVoucherSettings> | null | u
     enabled: raw.enabled ?? d.enabled,
     christmas: raw.christmas ?? d.christmas,
     validityMonths: Number.isInteger(raw.validityMonths) && raw.validityMonths! > 0 ? raw.validityMonths! : d.validityMonths,
+    themePhotos: cleanThemePhotos(raw.themePhotos),
   };
 }
 

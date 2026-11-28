@@ -4,7 +4,9 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { PDFDocument, rgb } from "pdf-lib";
 import QRCode from "qrcode";
+import { cloudinaryUrl } from "@/lib/cloudinary-utils";
 import { voucherConfig } from "./config";
+import { getVoucherSettings } from "./settings";
 import { CARD, CREAM, CardBack, CardFront, HINT, INK, PrintHint, type CardProps, type VoucherContact, type VoucherTheme } from "./design";
 
 // next.config.ts traces these folders into the serverless bundle.
@@ -30,14 +32,44 @@ export function loadFonts(): Promise<FontSpec[]> {
   return fontsPromise;
 }
 
-const photoCache = new Map<VoucherTheme, Promise<string>>();
-export function themePhoto(theme: VoucherTheme): Promise<string> {
-  let p = photoCache.get(theme);
+const photoCache = new Map<string, Promise<string>>();
+const cached = (key: string, load: () => Promise<Buffer>) => {
+  let p = photoCache.get(key);
   if (!p) {
-    p = readFile(path.join(PHOTO_DIR, `${theme}.jpg`)).then((b) => `data:image/jpeg;base64,${b.toString("base64")}`);
-    photoCache.set(theme, p);
+    p = load().then((b) => `data:image/jpeg;base64,${b.toString("base64")}`);
+    p.catch(() => photoCache.delete(key));
+    photoCache.set(key, p);
   }
   return p;
+};
+const bundledPhoto = (theme: VoucherTheme) => cached(`file:${theme}`, () => readFile(path.join(PHOTO_DIR, `${theme}.jpg`)));
+
+/**
+ * The card photo: the portfolio photo picked in the admin (Cloudinary, sharp enough for print),
+ * or the bundled one when none is picked or Cloudinary doesn't answer.
+ */
+export async function themePhoto(theme: VoucherTheme): Promise<{ src: string; position?: string }> {
+  const picked = (await getVoucherSettings()).themePhotos[theme];
+  if (picked) {
+    // 2× the card grid (1240 × 1748) is what the print render needs; a bit more leaves room for the crop.
+    const url = cloudinaryUrl(picked.publicId, "c_limit,w_1600,h_2400,q_90,f_jpg");
+    try {
+      const src = await cached(url, async () => {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Cloudinary ${res.status}`);
+        return Buffer.from(await res.arrayBuffer());
+      });
+      return { src, position: `${picked.x}% ${picked.y}%` };
+    } catch (err) {
+      console.error(`[vouchers] card photo for ${theme} failed, using the bundled one`, err);
+    }
+  }
+  return { src: await bundledPhoto(theme) };
+}
+
+async function withPhoto(props: VoucherCardInput, scale: number): Promise<CardProps> {
+  const photo = await themePhoto(props.theme);
+  return { ...props, photoSrc: photo.src, photoPosition: photo.position, contact: voucherContact(), scale };
 }
 
 export function qrDataUri(text: string, dark: string = INK, light: string = CREAM): Promise<string> {
@@ -45,7 +77,7 @@ export function qrDataUri(text: string, dark: string = INK, light: string = CREA
 }
 
 export type CardSide = "front" | "back";
-export type VoucherCardInput = Omit<CardProps, "scale" | "photoSrc" | "contact">;
+export type VoucherCardInput = Omit<CardProps, "scale" | "photoSrc" | "photoPosition" | "contact">;
 
 /** "+420728113966" → "+420 728 113 966"; anything else is printed as given. */
 export const prettyPhone = (phone: string) => phone.replace(/^\+420\s*(\d{3})\s*(\d{3})\s*(\d{3})$/, "+420 $1 $2 $3");
@@ -64,14 +96,14 @@ async function png(node: React.ReactElement, w: number, h: number): Promise<Uint
 }
 
 export async function renderCardPng(props: VoucherCardInput, side: CardSide, scale = PRINT_SCALE): Promise<Uint8Array> {
-  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), contact: voucherContact(), scale };
+  const full = await withPhoto(props, scale);
   const Side = side === "front" ? CardFront : CardBack;
   return png(<Side {...full} />, CARD.w * scale, CARD.h * scale);
 }
 
 /** Back and front side by side (1240 × 874 grid) — the sample on the sales page and in link previews. */
 export async function renderSpreadPng(props: VoucherCardInput, scale = 0.8): Promise<Uint8Array> {
-  const full: CardProps = { ...props, photoSrc: await themePhoto(props.theme), contact: voucherContact(), scale };
+  const full = await withPhoto(props, scale);
   return png(
     <div style={{ display: "flex" }}>
       <CardBack {...full} />

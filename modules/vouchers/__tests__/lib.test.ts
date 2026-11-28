@@ -123,6 +123,18 @@ describe("settings", () => {
   it("fills in defaults for partial KV data", () => {
     expect(normalizeSettings({ christmas: false })).toEqual({ ...defaultStoredSettings(), christmas: false });
   });
+  it("keeps only valid card photos and clamps the crop", () => {
+    const parsed = parseSettings({
+      ...defaultStoredSettings(),
+      themePhotos: {
+        snow: { publicId: "portfolio/zima-01", x: 140, y: -5 },
+        noir: { publicId: "../etc/passwd", x: 50, y: 50 },
+        disco: { publicId: "portfolio/x", x: 50, y: 50 },
+        ivy: { publicId: 42 },
+      },
+    });
+    expect(typeof parsed !== "string" && parsed.themePhotos).toEqual({ snow: { publicId: "portfolio/zima-01", x: 100, y: 0 } });
+  });
 });
 
 describe("packages from the creative portrait", () => {
