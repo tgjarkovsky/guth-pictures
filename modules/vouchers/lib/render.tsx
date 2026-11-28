@@ -7,6 +7,7 @@ import QRCode from "qrcode";
 import { cloudinaryUrl } from "@/lib/cloudinary-utils";
 import { voucherConfig } from "./config";
 import { getVoucherSettings } from "./settings";
+import type { ThemePhoto } from "./types";
 import { CARD, CREAM, CardBack, CardFront, HINT, INK, PrintHint, type CardProps, type VoucherContact, type VoucherTheme } from "./design";
 
 // next.config.ts traces these folders into the serverless bundle.
@@ -51,20 +52,37 @@ const bundledPhoto = (theme: VoucherTheme) => cached(`file:${theme}`, () => read
 export async function themePhoto(theme: VoucherTheme): Promise<{ src: string; position?: string }> {
   const picked = (await getVoucherSettings()).themePhotos[theme];
   if (picked) {
-    // 2× the card grid (1240 × 1748) is what the print render needs; a bit more leaves room for the crop.
-    const url = cloudinaryUrl(picked.publicId, "c_limit,w_1600,h_2400,q_90,f_jpg");
     try {
-      const src = await cached(url, async () => {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Cloudinary ${res.status}`);
-        return Buffer.from(await res.arrayBuffer());
-      });
-      return { src, position: `${picked.x}% ${picked.y}%` };
+      return await portfolioPhoto(picked);
     } catch (err) {
       console.error(`[vouchers] card photo for ${theme} failed, using the bundled one`, err);
     }
   }
   return { src: await bundledPhoto(theme) };
+}
+
+async function portfolioPhoto(photo: ThemePhoto): Promise<{ src: string; position: string }> {
+  // 2× the card grid (1240 × 1748) is what the print render needs; a bit more leaves room for the crop.
+  const url = cloudinaryUrl(photo.publicId, "c_limit,w_1600,h_2400,q_90,f_jpg");
+  const src = await cached(url, async () => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Cloudinary ${res.status} pro ${photo.publicId}`);
+    return Buffer.from(await res.arrayBuffer());
+  });
+  return { src, position: `${photo.x}% ${photo.y}%` };
+}
+
+/**
+ * Admin preview of a card front with a photo that may not be saved yet (null = the bundled one).
+ * Unlike the real render it throws when Cloudinary fails, so the admin sees the error instead of the old photo.
+ */
+export async function renderFrontPreview(theme: VoucherTheme, locale: "cs" | "en", photo: ThemePhoto | null, scale = 1): Promise<Uint8Array> {
+  const p = photo ? await portfolioPhoto(photo) : { src: await bundledPhoto(theme), position: undefined };
+  const props: CardProps = {
+    locale, theme, photoSrc: p.src, photoPosition: p.position, scale,
+    qrSrc: "", recipientName: "", packageName: "", packageDetails: [], code: "", validUntil: "", bookingUrlLabel: "",
+  };
+  return png(<CardFront {...props} />, CARD.w * scale, CARD.h * scale);
 }
 
 async function withPhoto(props: VoucherCardInput, scale: number): Promise<CardProps> {

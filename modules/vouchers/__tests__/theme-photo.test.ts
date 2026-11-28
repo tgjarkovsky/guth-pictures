@@ -4,7 +4,7 @@ vi.mock("server-only", () => ({}));
 const settings = vi.hoisted(() => ({ themePhotos: {} as Record<string, unknown> }));
 vi.mock("../lib/settings", () => ({ getVoucherSettings: async () => settings }));
 
-import { themePhoto } from "../lib/render";
+import { renderFrontPreview, themePhoto } from "../lib/render";
 
 describe("themePhoto", () => {
   beforeEach(() => {
@@ -34,5 +34,10 @@ describe("themePhoto", () => {
     const p = await themePhoto("ivy");
     expect(p.position).toBeUndefined();
     expect(p.src).toMatch(/^data:image\/jpeg;base64,\/9j/);
+  });
+
+  it("náhled v adminu při chybě Cloudinary nepodstrčí starou fotku, ale ohlásí chybu", async () => {
+    global.fetch = vi.fn().mockResolvedValue(new Response(null, { status: 404 })) as unknown as typeof fetch;
+    await expect(renderFrontPreview("snow", "cs", { publicId: "portfolio/missing", x: 50, y: 50 })).rejects.toThrow(/Cloudinary 404/);
   });
 });
