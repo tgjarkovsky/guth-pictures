@@ -1,6 +1,5 @@
 "use client";
-import { AScrim, AGrain, AMono, StoryChrome, StoryBrand } from './primitives'
-import { defaultColors as P } from '../../../../lib/theme-presets'
+import { AScrim, ALabel, StoryChrome, StoryBrand, AccentEnd, ReplyIcon, S, fitHeadline, headlineStyle } from './primitives'
 import { PhotoCycle } from './PhotoCycle'
 import { useTick } from './useTick'
 import type { Photo } from './types'
@@ -32,14 +31,15 @@ export function TemplateC({ photos, duration, paused, lang, headline, sub, cta, 
 
   const showPhoto = exportLayer !== 'overlay'
   const showOverlay = exportLayer !== 'photo'
-  const bg = exportLayer === 'overlay' ? 'transparent' : '#0A0A0B'
+  const bg = exportLayer === 'overlay' ? 'transparent' : S.bg
+  const title = headline || (cs ? 'Silná\natmosféra.' : 'Strong\natmosphere.')
 
   return (
     <div style={{
       position: 'absolute', inset: 0,
       background: bg,
       overflow: 'hidden',
-      fontFamily: 'var(--story-font-sans)',
+      fontFamily: S.sans,
     }}>
       {showPhoto && (
         <PhotoCycle
@@ -57,16 +57,10 @@ export function TemplateC({ photos, duration, paused, lang, headline, sub, cta, 
 
           {chrome && <StoryChrome count={count} tick={tick} duration={duration} px={px} />}
 
-          <StoryBrand chrome={chrome} px={px}>
-            <AMono
-              key={tick}
-              size={px(20)}
-              tracking="0.26em"
-              color="rgba(242,240,235,0.85)"
-              style={{ marginTop: px(4), transition: 'opacity 400ms' }}
-            >
+          <StoryBrand top={chrome ? 220 : 260} px={px}>
+            <ALabel key={tick} size={px(20)} color={S.inkMuted} style={{ marginTop: px(4) }}>
               {captions[tick % captions.length]}
-            </AMono>
+            </ALabel>
           </StoryBrand>
 
           {/* Headline block */}
@@ -76,17 +70,12 @@ export function TemplateC({ photos, duration, paused, lang, headline, sub, cta, 
             bottom: px(360),
             zIndex: 10,
           }}>
-            <h1 style={{
-              margin: 0,
-              fontSize: px(168), fontWeight: 700, lineHeight: 0.88,
-              letterSpacing: '-0.035em', color: P.text,
-              whiteSpace: 'pre-line',
-            }}>
-              {headline || (cs ? 'Silná\natmosféra.' : 'Strong\natmosphere.')}
+            <h1 style={headlineStyle(px(fitHeadline(title, 920, 168)))}>
+              <AccentEnd text={title} />
             </h1>
             <p style={{
               marginTop: px(32),
-              fontSize: px(32), color: 'rgba(242,240,235,0.80)',
+              fontSize: px(32), color: S.inkMuted,
               lineHeight: 1.35, maxWidth: px(760),
             }}>
               {sub || (cs ? 'Osobité kreativní portréty.' : 'Distinctive creative portraits.')}
@@ -100,19 +89,15 @@ export function TemplateC({ photos, duration, paused, lang, headline, sub, cta, 
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: px(16),
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: px(14) }}>
-              <svg width={px(30)} height={px(30)} viewBox="0 0 24 24" fill="none" stroke={P.text} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z" />
-              </svg>
-              <span style={{ fontSize: px(30), fontWeight: 500, color: P.text }}>
+              <ReplyIcon size={px(30)} color={S.accent} />
+              <span style={{ fontSize: px(30), fontWeight: 500, color: S.ink }}>
                 {cta || (cs ? 'Odepiš rovnou na tuhle story' : 'Reply to this story')}
               </span>
             </div>
-            <AMono size={px(18)} color="rgba(242,240,235,0.60)" tracking="0.28em">
-              {cs ? 'VÍCE INFO V BIO' : 'MORE INFO IN BIO'}
-            </AMono>
+            <ALabel size={px(18)}>
+              {cs ? 'Více info v biu' : 'More info in bio'}
+            </ALabel>
           </div>
-
-          <AGrain />
         </>
       )}
     </div>

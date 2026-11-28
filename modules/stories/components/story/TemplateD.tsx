@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from 'react'
-import { defaultColors as P } from '../../../../lib/theme-presets'
-import { AScrim, AGrain, AMono, StoryChrome, StoryBrand } from './primitives'
+import { AScrim, ALabel, StoryChrome, StoryBrand, AccentEnd, ReplyIcon, S, fitHeadline, headlineStyle } from './primitives'
 import { PhotoCycle } from './PhotoCycle'
 import { useTick } from './useTick'
 import type { Photo } from './types'
@@ -31,7 +30,12 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
   const showOverlay = exportLayer === undefined || exportLayer === 'overlay'
   const showWordOnly = exportLayer === 'word'
   const showWordInOverlay = exportLayer === undefined
-  const bg = (exportLayer === 'overlay' || exportLayer === 'word') ? 'transparent' : '#0A0A0B'
+  const bg = (exportLayer === 'overlay' || exportLayer === 'word') ? 'transparent' : S.bg
+  const wordAt = (i: number) => words[i % words.length] || (cs ? 'Portréty.' : 'Portraits.')
+  const wordStyle = (text: string) => ({
+    ...headlineStyle(px(fitHeadline(text, 940, 216))),
+    textAlign: 'center' as const, padding: `0 ${px(60)}px`,
+  })
 
   // Track exiting word for preview exit animation (normal mode only)
   const prevTickRef = useRef(tick)
@@ -52,7 +56,7 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
       position: 'absolute', inset: 0,
       background: bg,
       overflow: 'hidden',
-      fontFamily: 'var(--story-font-sans)',
+      fontFamily: S.sans,
     }}>
       {showPhoto && (
         <PhotoCycle
@@ -70,7 +74,7 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
 
           {chrome && <StoryChrome count={count} tick={tick} duration={duration} px={px} />}
 
-          <StoryBrand chrome={chrome} px={px} />
+          <StoryBrand top={chrome ? 220 : 260} px={px} />
 
           {/* Center flashing word — shown in normal mode only; export uses word layer */}
           {showWordInOverlay && (
@@ -80,15 +84,9 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <h1
                     key={`exit-${exitTick}`}
-                    style={{
-                      margin: 0,
-                      fontSize: px(216), fontWeight: 700, lineHeight: 0.9,
-                      letterSpacing: '-0.04em', color: P.text,
-                      textAlign: 'center', padding: `0 ${px(60)}px`,
-                      animation: 'wordOut 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
-                    }}
+                    style={{ ...wordStyle(wordAt(exitTick)), animation: 'wordOut 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' }}
                   >
-                    {words[exitTick % words.length] || (cs ? 'Portréty.' : 'Portraits.')}
+                    <AccentEnd text={wordAt(exitTick)} />
                   </h1>
                 </div>
               )}
@@ -96,15 +94,9 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <h1
                   key={`enter-${tick}`}
-                  style={{
-                    margin: 0,
-                    fontSize: px(216), fontWeight: 700, lineHeight: 0.9,
-                    letterSpacing: '-0.04em', color: P.text,
-                    textAlign: 'center', padding: `0 ${px(60)}px`,
-                    animation: 'wordIn 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  }}
+                  style={{ ...wordStyle(wordAt(tick)), animation: 'wordIn 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}
                 >
-                  {words[tick % words.length] || (cs ? 'Portréty.' : 'Portraits.')}
+                  <AccentEnd text={wordAt(tick)} />
                 </h1>
               </div>
             </div>
@@ -120,25 +112,21 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
           }}>
             <h2 style={{
               margin: 0,
-              fontSize: px(44), fontWeight: 500,
-              color: 'rgba(242,240,235,0.90)',
+              fontSize: px(42), fontWeight: 500,
+              color: S.ink,
               textAlign: 'center', lineHeight: 1.2,
               letterSpacing: '-0.01em',
             }}>
               {subHeadline || (cs ? 'Silná atmosféra. Osobité portréty.' : 'Strong atmosphere. Distinctive portraits.')}
             </h2>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: px(12), color: P.accentSecondary, fontSize: px(26), fontWeight: 600 }}>
-              <svg width={px(28)} height={px(28)} viewBox="0 0 24 24" fill="none" stroke={P.accentSecondary} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z" />
-              </svg>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: px(12), color: S.ink, fontSize: px(28), fontWeight: 600 }}>
+              <ReplyIcon size={px(28)} color={S.accent} />
               {cta || (cs ? 'Odepiš rovnou na tuhle story' : 'Reply to this story')}
             </div>
-            <AMono size={px(16)} color="rgba(242,240,235,0.55)" tracking="0.24em">
-              {cs ? 'VÍCE INFO V BIO' : 'MORE INFO IN BIO'} · GUTHPICTURES.EU
-            </AMono>
+            <ALabel size={px(17)}>
+              {cs ? 'Více info v biu' : 'More info in bio'} · guthpictures.eu
+            </ALabel>
           </div>
-
-          <AGrain />
         </>
       )}
 
@@ -148,13 +136,8 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
           position: 'absolute', inset: 0, zIndex: 10,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <h1 style={{
-            margin: 0,
-            fontSize: px(216), fontWeight: 700, lineHeight: 0.9,
-            letterSpacing: '-0.04em', color: P.text,
-            textAlign: 'center', padding: `0 ${px(60)}px`,
-          }}>
-            {words[tick % words.length] || (cs ? 'Portréty.' : 'Portraits.')}
+          <h1 style={wordStyle(wordAt(tick))}>
+            <AccentEnd text={wordAt(tick)} />
           </h1>
         </div>
       )}
