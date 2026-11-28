@@ -44,6 +44,7 @@ export type QueueItem = {
   publishAt: string; // ISO
   status: "queued" | "published" | "failed";
   error?: string;
+  draft?: StoryDraft; // návrh, ze kterého video vzniklo — kvůli „Vrátit do návrhů“ (starší položky ho nemají)
 };
 
 export type UsedPhoto = { publicId: string; usedAt: string };

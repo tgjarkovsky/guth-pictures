@@ -50,6 +50,26 @@ export function mergeDrafts(newDrafts: StoryDraft[], existing: StoryDraft[], max
   return [...newDrafts, ...existing].slice(0, max);
 }
 
+/**
+ * Naplánovanou (nebo neúspěšnou) story vrátí mezi návrhy a odebere z fronty.
+ * Vrací chybu, když položka neexistuje, už je publikovaná nebo nemá uložený návrh.
+ */
+export function unscheduleQueueItem(
+  queue: QueueItem[],
+  drafts: StoryDraft[],
+  id: string,
+): { queue: QueueItem[]; drafts: StoryDraft[] } | { error: string; status: number } {
+  const item = queue.find(q => q.id === id);
+  if (!item) return { error: "Not found", status: 404 };
+  if (item.status === "published") return { error: "Story už je publikovaná", status: 409 };
+  if (!item.draft) return { error: "Návrh k tomuto videu se neuložil (naplánováno dřív, než to šlo vracet)", status: 409 };
+  const draft = item.draft;
+  return {
+    queue: queue.filter(q => q.id !== id),
+    drafts: [draft, ...drafts.filter(d => d.id !== draft.id)],
+  };
+}
+
 const usedCutoff = (now: Date) => new Date(now.getTime() - USED_WEEKS * 7 * 24 * 3600 * 1000);
 
 export async function markPhotosUsed(publicIds: string[], now = new Date()): Promise<void> {

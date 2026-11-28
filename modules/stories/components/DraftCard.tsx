@@ -24,6 +24,8 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
   const [paused, setPaused] = useState(false);
   const [chromePreview, setChromePreview] = useState(false);
   const [showSafeZone, setShowSafeZone] = useState(false);
+  const [saveState, setSaveState] = useState<{ kind: "idle" | "saving" | "saved" | "error"; msg?: string }>({ kind: "idle" });
+  const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const exportRef = useRef<HTMLDivElement>(null);
 
   const duration = d.durationMs ?? 2400;
@@ -45,13 +47,28 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
     useStoryExport(d, { publishAt, onChanged, exportRef, slideCount, duration });
 
   const templateProps = { draft: d, photos, duration, paused, lang } as const;
-  function patch(p: Partial<StoryDraft>) { setD(prev => ({ ...prev, ...p })); }
+  function patch(p: Partial<StoryDraft>) {
+    setD(prev => ({ ...prev, ...p }));
+    setSaveState(s => (s.kind === "saved" ? { kind: "idle" } : s));
+  }
 
   async function save() {
-    await fetch("/api/admin/stories/drafts", {
-      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ draft: d }),
-    });
-    await onChanged();
+    clearTimeout(savedTimer.current);
+    setSaveState({ kind: "saving" });
+    try {
+      const res = await fetch("/api/admin/stories/drafts", {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ draft: d }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `HTTP ${res.status}`);
+      }
+      setSaveState({ kind: "saved" });
+      savedTimer.current = setTimeout(() => setSaveState({ kind: "idle" }), 3000);
+      await onChanged();
+    } catch (err) {
+      setSaveState({ kind: "error", msg: err instanceof Error ? err.message : String(err) });
+    }
   }
 
   async function remove() {
@@ -158,7 +175,12 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
         <div className="flex items-center gap-3 pt-2 border-t border-white/10">
           <input type="datetime-local" value={publishAt} onChange={e => setPublishAt(e.target.value)}
             className="bg-zinc-900 border border-white/20 px-2 py-1" />
-          <button onClick={save} className="border border-white/20 px-3 py-1.5 hover:border-white/50">Uložit</button>
+          <button onClick={save} disabled={saveState.kind === "saving"}
+            className="border border-white/20 px-3 py-1.5 hover:border-white/50 disabled:opacity-50">
+            {saveState.kind === "saving" ? "Ukládám…" : "Uložit"}
+          </button>
+          {saveState.kind === "saved" && <span role="status" className="text-xs text-green-400">Uloženo ✓</span>}
+          {saveState.kind === "error" && <span role="alert" className="text-xs text-red-400">Uložení selhalo: {saveState.msg}</span>}
           <button onClick={downloadMp4} disabled={!canRender}
             className="border border-white/20 px-3 py-1.5 hover:border-white/50 disabled:opacity-30">
             ↓ MP4

@@ -8,8 +8,8 @@ vi.mock("@vercel/kv", () => ({
   },
 }));
 
-import { getDrafts, saveDrafts, markPhotosUsed, getUsedPhotoIds, mergeAiTexts } from "../store";
-import type { StoryDraft, StoryTextEntry } from "../types";
+import { getDrafts, saveDrafts, markPhotosUsed, getUsedPhotoIds, mergeAiTexts, unscheduleQueueItem } from "../store";
+import type { QueueItem, StoryDraft, StoryTextEntry } from "../types";
 
 const draft: StoryDraft = {
   id: "d1", template: "C", photos: [{ publicId: "portfolio/a", x: 50, y: 50 }],
@@ -71,5 +71,36 @@ describe("mergeAiTexts", () => {
   it("defaults to 10 pending AI texts", () => {
     const existing = Array.from({ length: 12 }, (_, i) => text(`p${i}`, "ai", false));
     expect(mergeAiTexts([], existing)).toHaveLength(10);
+  });
+});
+
+describe("unscheduleQueueItem", () => {
+  const item = (id: string, extra: Partial<QueueItem> = {}): QueueItem => ({
+    id, template: "C", videoPublicId: `stories/${id}`, publishAt: "2026-12-01T18:00:00.000Z", status: "queued", ...extra,
+  });
+  const other: StoryDraft = { ...draft, id: "d2" };
+
+  it("vrátí návrh na začátek seznamu a odebere položku z fronty", () => {
+    const res = unscheduleQueueItem([item("q1", { draft }), item("q2")], [other], "q1");
+    expect(res).toEqual({ queue: [item("q2")], drafts: [draft, other] });
+  });
+
+  it("nevytvoří duplicitní návrh se stejným id", () => {
+    const res = unscheduleQueueItem([item("q1", { draft })], [draft, other], "q1");
+    expect("drafts" in res && res.drafts.map(d => d.id)).toEqual(["d1", "d2"]);
+  });
+
+  it("jde vrátit i neúspěšnou položku", () => {
+    const res = unscheduleQueueItem([item("q1", { draft, status: "failed", error: "x" })], [], "q1");
+    expect("queue" in res && res.queue).toEqual([]);
+  });
+
+  it.each([
+    ["neexistuje", [item("q1", { draft })], "nope", 404],
+    ["publikovaná", [item("q1", { draft, status: "published" })], "q1", 409],
+    ["starší bez návrhu", [item("q1")], "q1", 409],
+  ] as const)("odmítne položku: %s", (_l, queue, id, status) => {
+    const res = unscheduleQueueItem([...queue], [], id);
+    expect("error" in res && res.status).toBe(status);
   });
 });

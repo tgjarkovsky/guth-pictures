@@ -67,6 +67,28 @@ describe("DraftCard", () => {
     expect(sent.photos.map((p: { publicId: string }) => p.publicId)).toEqual(["folder/second", "folder/first"]);
   });
 
+  it("po uložení ukáže Uloženo", async () => {
+    setup();
+    fireEvent.click(screen.getByText("Uložit"));
+    expect(await screen.findByText("Uloženo ✓")).toBeTruthy();
+  });
+
+  it("chyba serveru se ukáže a onChanged se nevolá", async () => {
+    global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: "KV not configured" }) }) as unknown as typeof fetch;
+    const { onChanged } = setup();
+    fireEvent.click(screen.getByText("Uložit"));
+    expect((await screen.findByRole("alert")).textContent).toBe("Uložení selhalo: KV not configured");
+    expect(onChanged).not.toHaveBeenCalled();
+    expect(screen.queryByText("Uloženo ✓")).toBeNull();
+  });
+
+  it("výpadek sítě se ukáže jako chyba", async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error("Failed to fetch")) as unknown as typeof fetch;
+    setup();
+    fireEvent.click(screen.getByText("Uložit"));
+    expect((await screen.findByRole("alert")).textContent).toBe("Uložení selhalo: Failed to fetch");
+  });
+
   it("šablona P: předloha vyplní texty, feed 4:5 nejde naplánovat jako story", () => {
     setup();
     fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "P" } });
