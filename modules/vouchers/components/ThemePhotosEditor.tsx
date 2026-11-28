@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cloudinaryUrl, type GalleryPhoto } from "@/lib/cloudinary-utils";
 import { CARD, THEME_CHOICES, type VoucherTheme } from "../lib/design";
 import type { ThemePhoto, VoucherSettings } from "../lib/types";
+import { CardFrontOverlay } from "./CardFrontOverlay";
 
 type Value = VoucherSettings["themePhotos"];
 
@@ -11,6 +12,12 @@ type Value = VoucherSettings["themePhotos"];
  * Admin → Poukazy → Nastavení: which portfolio photo goes on each card design.
  * The same photo is used in the PDF, on the order page and in the voucher ads (stories, template P).
  */
+/** The real rendered card front for the current (possibly unsaved) choice. */
+const cardPreviewUrl = (theme: VoucherTheme, photo?: ThemePhoto) => {
+  const q = new URLSearchParams(photo ? { theme, publicId: photo.publicId, x: String(photo.x), y: String(photo.y) } : { theme });
+  return `/api/admin/vouchers/card?${q}`;
+};
+
 export function ThemePhotosEditor({ value, onChange, galleryPhotos, savedAt }: {
   value: Value;
   onChange: (v: Value) => void;
@@ -42,13 +49,14 @@ export function ThemePhotosEditor({ value, onChange, galleryPhotos, savedAt }: {
                 <span className="font-medium">{name.cs}</span>
                 <span className="text-xs text-gray-500">{photo ? "z portfolia" : "původní fotka"}</span>
               </div>
-              <div className="relative bg-black overflow-hidden" style={{ aspectRatio: `${CARD.w} / ${CARD.h}` }}>
+              <div className="relative bg-black overflow-hidden" style={{ aspectRatio: `${CARD.w} / ${CARD.h}`, containerType: "inline-size" }}>
                 {photo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={cloudinaryUrl(photo.publicId, "c_limit,w_500,q_auto,f_auto")} alt=""
                     className="absolute inset-0 w-full h-full object-cover"
                     style={{ objectPosition: `${photo.x}% ${photo.y}%` }} />
-                ) : (
+                ) : null}
+                {photo ? <CardFrontOverlay /> : (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={`/api/vouchers/design/${id}?v=${savedAt}`} alt="" className="absolute inset-0 w-full h-full object-cover" />
                 )}
@@ -70,7 +78,8 @@ export function ThemePhotosEditor({ value, onChange, galleryPhotos, savedAt }: {
                 {photo && (
                   <button type="button" onClick={() => set(id, null)} className="text-gray-500 hover:text-red-400">Vrátit původní</button>
                 )}
-                <a href={`/api/vouchers/design/${id}?v=${savedAt}`} target="_blank" className="underline text-gray-400 ml-auto">Karta</a>
+                <a href={cardPreviewUrl(id, photo)} target="_blank" className="underline text-gray-400 ml-auto"
+                  title="Skutečná vykreslená karta s touhle fotkou a výřezem (i neuložené)">Karta</a>
               </div>
             </div>
           );
