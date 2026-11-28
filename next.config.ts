@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
       { source: "/:locale(cs|en)/portfolio", destination: "/:locale", permanent: true },
       { source: "/:locale(cs|en)/o-mne", destination: "/:locale", permanent: true },
       { source: "/:locale(cs|en)/sluzby/brandove-foceni", destination: "/:locale", permanent: true },
+      // Pages without a locale prefix aren't handled by the middleware (its matcher only covers / and /cs|en/...),
+      // so short links like guthpictures.eu/darkovy-poukaz from ads would 404 without these.
+      { source: "/darkovy-poukaz", destination: "/cs/darkovy-poukaz", permanent: false },
+      { source: "/darkovy-poukazy", destination: "/cs/darkovy-poukaz", permanent: false },
+      { source: "/darkovy-poukaz/:path*", destination: "/cs/darkovy-poukaz/:path*", permanent: false },
       // Short link printed on gift vouchers
       { source: "/poukaz", destination: "/cs/darkovy-poukaz/uplatnit", permanent: false },
       { source: "/:locale(cs|en)/poukaz", destination: "/:locale/darkovy-poukaz/uplatnit", permanent: false },
