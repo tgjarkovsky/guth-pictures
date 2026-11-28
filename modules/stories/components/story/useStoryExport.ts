@@ -94,6 +94,7 @@ export function useStoryExport(draft: StoryDraft, { publishAt, onChanged, export
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           draftId: draft.id,
+          draft,
           videoPublicId: uploaded.public_id,
           publishAt: new Date(publishAt).toISOString(),
         }),

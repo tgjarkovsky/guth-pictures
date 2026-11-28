@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readJson, requireAdmin } from "@/lib/admin-route";
-import { getQueue, saveQueue } from "@/modules/stories/lib/store";
+import { getDrafts, getQueue, saveDrafts, saveQueue, unscheduleQueueItem } from "@/modules/stories/lib/store";
 
 export async function GET() {
   const denied = await requireAdmin();
@@ -24,6 +24,22 @@ export async function PUT(req: NextRequest) {
       ? { ...item, status: "queued", error: undefined, publishAt: publishAt ?? item.publishAt }
       : item,
   ));
+  return NextResponse.json({ ok: true });
+}
+
+// zrušit plán: story zpět mezi návrhy (stav „uloženo, nenaplánováno“)
+export async function PATCH(req: NextRequest) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+  const body = await readJson(req);
+  if (body instanceof NextResponse) return body;
+  const { id } = body as { id?: string };
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  const result = unscheduleQueueItem(await getQueue(), await getDrafts(), id);
+  if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
+  // nejdřív návrhy, pak fronta — při pádu mezi zápisy zůstane story spíš dvakrát než vůbec
+  await saveDrafts(result.drafts);
+  await saveQueue(result.queue);
   return NextResponse.json({ ok: true });
 }
 

@@ -53,6 +53,19 @@ export function StoriesAdmin({ galleryPhotos }: { galleryPhotos: GalleryPhoto[] 
     await reload();
   }
 
+  async function unschedule(item: QueueItem) {
+    const res = await fetch("/api/admin/stories/queue", {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: item.id }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(`Vrácení selhalo: ${data.error ?? `HTTP ${res.status}`}`);
+      return;
+    }
+    await reload();
+    setTab("drafts");
+  }
+
   const tabBtn = (t: Tab, label: string) => (
     <button onClick={() => setTab(t)}
       className={`px-4 py-2 text-sm font-medium ${tab === t ? "bg-white text-black" : "text-gray-400 border border-white/10 hover:text-white"}`}>
@@ -93,7 +106,10 @@ export function StoriesAdmin({ galleryPhotos }: { galleryPhotos: GalleryPhoto[] 
           <tbody>
             {queue.map(item => (
               <tr key={item.id} className="border-t border-white/10">
-                <td className="py-2 font-mono text-xs">{item.videoPublicId}</td>
+                <td className="py-2">
+                  {item.draft && <div>{(item.draft.headline || item.draft.words.filter(Boolean).join(" ")).replace(/\n/g, " ") || "—"}</div>}
+                  <div className="font-mono text-xs text-gray-500">{item.videoPublicId}</div>
+                </td>
                 <td>{new Date(item.publishAt).toLocaleString("cs-CZ")}</td>
                 <td>
                   {item.status === "queued" && <span className="text-amber-400">ve frontě</span>}
@@ -101,6 +117,14 @@ export function StoriesAdmin({ galleryPhotos }: { galleryPhotos: GalleryPhoto[] 
                   {item.status === "failed" && <span className="text-red-400" title={item.error}>chyba: {item.error}</span>}
                 </td>
                 <td className="text-right space-x-2">
+                  {item.status !== "published" && (
+                    <button className="text-xs border border-white/20 px-2 py-1 disabled:opacity-30"
+                      disabled={!item.draft}
+                      title={item.draft ? "Zrušit plán a vrátit mezi uložené návrhy" : "Naplánováno dřív, než se návrh ukládal do fronty — nejde vrátit"}
+                      onClick={() => unschedule(item)}>
+                      Zpět do návrhů
+                    </button>
+                  )}
                   {item.status === "failed" && (
                     <button className="text-xs border border-white/20 px-2 py-1"
                       onClick={async () => {
