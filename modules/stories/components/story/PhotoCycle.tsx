@@ -51,10 +51,10 @@ export function PhotoCycle({ photos, duration, paused, onTick, forceIndex, isExp
     return (
       <div style={{
         position: 'absolute', inset: 0,
-        background: '#1E1E23',
+        background: '#1c1a19',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: 'rgba(242,240,235,0.30)',
-        fontFamily: 'var(--story-font-mono)',
+        fontFamily: 'var(--story-font-sans)',
         fontSize: 28,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',

@@ -37,7 +37,7 @@ function captureLayer(element: HTMLElement, width: number, height: number, trans
     useCORS: true,
     allowTaint: true,
     logging: false,
-    backgroundColor: transparent ? null : '#0A0A0B',
+    backgroundColor: transparent ? null : '#0e0d0c',
   })
 }
 
@@ -128,7 +128,7 @@ export function useExport() {
       const kbScale = 1.00 + 0.04 * ease(frameInSlide / Math.max(framesPerSlide - 1, 1))
 
       // Black base
-      ctx.fillStyle = '#0A0A0B'
+      ctx.fillStyle = '#0e0d0c'
       ctx.fillRect(0, 0, width, height)
 
       // Prev photo fading out at scale 1.04
