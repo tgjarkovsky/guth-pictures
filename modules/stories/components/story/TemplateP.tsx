@@ -73,8 +73,8 @@ export function TemplateP({
 
   // Rozložení: story drží text mimo horních ~13 % a spodních ~22 % (UI Instagramu a tlačítko reklamy).
   const L = feed
-    ? { side: 80, top: 84, bottom: 96, headline: 104, sub: 30, cardW: 400, cardTop: 150, price: 84 }
-    : { side: 80, top: 250, bottom: 440, headline: 132, sub: 34, cardW: 540, cardTop: 350, price: 104 }
+    ? { side: 80, top: 84, bottom: 96, headline: 116, sub: 30, cardW: 400, cardTop: 150, price: 92 }
+    : { side: 80, top: 250, bottom: 440, headline: 150, sub: 34, cardW: 540, cardTop: 350, price: 112 }
   const title = headline || t.headline
   const cardH = L.cardW * 874 / 620
 

@@ -70,7 +70,7 @@ export function TemplateC({ photos, duration, paused, lang, headline, sub, cta, 
             bottom: px(360),
             zIndex: 10,
           }}>
-            <h1 style={headlineStyle(px(fitHeadline(title, 920, 150)))}>
+            <h1 style={headlineStyle(px(fitHeadline(title, 920, 168)))}>
               <AccentEnd text={title} />
             </h1>
             <p style={{

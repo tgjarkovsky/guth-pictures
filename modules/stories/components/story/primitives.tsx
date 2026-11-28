@@ -3,7 +3,7 @@ import React, { type CSSProperties, type ReactNode } from 'react'
 
 /**
  * Vzhled stories podle současného webu (editorial): kostěný text na neutrální černé,
- * nadpisy v Syne, drobné texty v Epilogue verzálkami, červený akcent jen na linkách
+ * wordmark v Syne jako hlavička webu, nadpisy i drobné texty v Epilogue, červený akcent jen na linkách
  * a koncové interpunkci nadpisu (jako „Jiný pohled.“ na homepage).
  * Písma dodává stránka přes CSS proměnné --story-font-display a --story-font-sans.
  */
@@ -17,37 +17,37 @@ export const S = {
   sans: 'var(--story-font-sans)',
 } as const
 
-/** Nadpis v Syne jako na webu. */
+/** Nadpis v Epilogue 800 (Syne je ve videu přes fotku moc široké). */
 export const headlineStyle = (size: number): CSSProperties => ({
   margin: 0,
-  fontFamily: S.display,
+  fontFamily: S.sans,
   fontSize: size,
   fontWeight: 800,
-  lineHeight: 1, // Syne má vysokou diakritiku, při menším řádkování by se ř/ů dotýkaly řádku nad sebou
+  lineHeight: 0.95,
   letterSpacing: '-0.04em',
   color: S.ink,
   whiteSpace: 'pre-line',
 })
 
 /**
- * Šířky znaků Syne 800 při −0.04em (v em), naměřené v prohlížeči. Syne je hodně široké
- * a nerovnoměrné (m ≈ 1.6em, i ≈ 0.3em), proto tabulka místo průměru. Diakritika se měří
- * podle základního písmene, neznámý znak počítá jako 1em.
+ * Šířky znaků Epilogue 800 při −0.04em (v em), naměřené v prohlížeči. Písmena jsou
+ * nerovnoměrná (m ≈ 0.9em, i ≈ 0.23em), proto tabulka místo průměru. Diakritika se měří
+ * podle základního písmene, neznámý znak počítá jako 0.7em.
  */
-const SYNE_EM: Record<string, number> = {
-  a: 1.02, b: 1.06, c: 0.95, d: 1.06, e: 0.95, f: 0.63, g: 0.9, h: 0.97, i: 0.32, j: 0.32, k: 0.9, l: 0.32, m: 1.61,
-  n: 0.96, o: 0.98, p: 1.02, q: 1.06, r: 0.52, s: 0.8, t: 0.59, u: 0.96, v: 0.88, w: 1.42, x: 0.94, y: 0.89, z: 0.86,
-  A: 1.12, B: 1.1, C: 1.28, D: 1.26, E: 1.1, F: 1.09, G: 1.3, H: 1.24, I: 0.38, J: 0.96, K: 1.17, L: 0.9, M: 1.54,
-  N: 1.26, O: 1.29, P: 1.14, Q: 1.29, R: 1.19, S: 1.02, T: 1.06, U: 1.25, V: 1.12, W: 1.84, X: 1.1, Y: 1.03, Z: 1.16,
-  '0': 1.03, '1': 0.49, '2': 0.96, '3': 1.01, '4': 1.05, '5': 0.97, '6': 1.09, '7': 1.09, '8': 1.04, '9': 1.12,
-  ' ': 0.27, '.': 0.31, ',': 0.26, '!': 0.35, '?': 0.82, '-': 0.55, '–': 0.66, '&': 1.18, "'": 0.26, '’': 0.26,
-  '"': 0.56, '„': 0.57, '“': 0.57, ':': 0.31, ';': 0.31, '…': 1,
+const HEADLINE_EM: Record<string, number> = {
+  '0': 0.57, '1': 0.43, '2': 0.59, '3': 0.6, '4': 0.58, '5': 0.59, '6': 0.61, '7': 0.52, '8': 0.63, '9': 0.59,
+  a: 0.59, b: 0.63, c: 0.6, d: 0.63, e: 0.61, f: 0.41, g: 0.6, h: 0.62, i: 0.23, j: 0.24, k: 0.55, l: 0.26, m: 0.91,
+  n: 0.62, o: 0.61, p: 0.63, q: 0.63, r: 0.44, s: 0.53, t: 0.42, u: 0.61, v: 0.53, w: 0.8, x: 0.57, y: 0.54, z: 0.48,
+  A: 0.64, B: 0.61, C: 0.68, D: 0.65, E: 0.54, F: 0.53, G: 0.69, H: 0.68, I: 0.25, J: 0.56, K: 0.65, L: 0.5, M: 0.91,
+  N: 0.72, O: 0.72, P: 0.59, Q: 0.72, R: 0.61, S: 0.6, T: 0.56, U: 0.64, V: 0.63, W: 0.93, X: 0.65, Y: 0.62, Z: 0.56,
+  ' ': 0.21, '.': 0.26, ',': 0.27, '!': 0.27, '?': 0.53, '-': 0.42, '–': 0.46, '&': 0.71, "'": 0.15, '’': 0.23,
+  '"': 0.39, '„': 0.44, '“': 0.44, ':': 0.26, ';': 0.28, '…': 0.73,
 }
 
-/** Šířka řádku v em (Syne 800). */
-export function syneWidthEm(line: string): number {
+/** Šířka řádku nadpisu v em (Epilogue 800). */
+export function headlineWidthEm(line: string): number {
   let w = 0
-  for (const ch of line.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) w += SYNE_EM[ch] ?? 1
+  for (const ch of line.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) w += HEADLINE_EM[ch] ?? 0.7
   return w
 }
 
@@ -57,7 +57,7 @@ export function syneWidthEm(line: string): number {
  * aby se vešlo nejdelší slovo.
  */
 export function fitHeadline(text: string, width: number, max: number): number {
-  const fit = (parts: string[]) => Math.floor(width / (Math.max(...parts.map(syneWidthEm), 1) * 1.04))
+  const fit = (parts: string[]) => Math.floor(width / (Math.max(...parts.map(headlineWidthEm), 1) * 1.04))
   const byLines = Math.min(max, fit(text.split('\n')))
   const floor = Math.floor(max * 0.6)
   return byLines >= floor ? byLines : Math.min(floor, fit(text.split(/\s+/)))
@@ -138,7 +138,7 @@ export const StoryChrome = ({ count, tick, duration, px }: { count: number; tick
       ))}
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: px(14) }}>
-      <div style={{ width: px(56), height: px(56), borderRadius: 999, background: S.bg, border: `${px(1.5)}px solid rgba(255,255,255,0.4)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: S.ink, fontFamily: S.display, fontSize: px(22), fontWeight: 800 }}>G</div>
+      <div style={{ width: px(56), height: px(56), borderRadius: 999, background: S.bg, border: `${px(1.5)}px solid rgba(255,255,255,0.4)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: S.ink, fontFamily: S.display, fontSize: px(22), fontWeight: 700 }}>G</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: px(2) }}>
         <span style={{ color: S.ink, fontSize: px(20), fontWeight: 600 }}>guthpictures</span>
         <span style={{ color: 'rgba(240,239,235,0.7)', fontSize: px(16) }}>1h</span>

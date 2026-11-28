@@ -33,7 +33,7 @@ export function TemplateD({ photos, duration, paused, lang, words, subHeadline, 
   const bg = (exportLayer === 'overlay' || exportLayer === 'word') ? 'transparent' : S.bg
   const wordAt = (i: number) => words[i % words.length] || (cs ? 'Portréty.' : 'Portraits.')
   const wordStyle = (text: string) => ({
-    ...headlineStyle(px(fitHeadline(text, 940, 200))),
+    ...headlineStyle(px(fitHeadline(text, 940, 216))),
     textAlign: 'center' as const, padding: `0 ${px(60)}px`,
   })
 

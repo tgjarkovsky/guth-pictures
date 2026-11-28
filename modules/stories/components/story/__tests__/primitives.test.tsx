@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { AccentEnd, fitHeadline, syneWidthEm } from "../primitives";
+import { AccentEnd, fitHeadline, headlineWidthEm } from "../primitives";
 
 describe("fitHeadline", () => {
   it("diakritika se měří jako základní písmeno", () => {
-    expect(syneWidthEm("atmosféra.")).toBeCloseTo(syneWidthEm("atmosfera."));
+    expect(headlineWidthEm("atmosféra.")).toBeCloseTo(headlineWidthEm("atmosfera."));
   });
 
   it("nejdelší řádek se vejde do šířky", () => {
     const size = fitHeadline("Silná\natmosféra.", 920, 150);
-    expect(size * syneWidthEm("atmosféra.")).toBeLessThanOrEqual(920);
+    expect(size * headlineWidthEm("atmosféra.")).toBeLessThanOrEqual(920);
   });
 
   it("krátký nadpis drží maximum", () => {
