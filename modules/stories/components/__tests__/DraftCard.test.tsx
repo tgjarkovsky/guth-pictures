@@ -39,7 +39,7 @@ describe("DraftCard", () => {
     setup();
     expect(screen.getAllByTestId("tpl-C")).toHaveLength(2);
     expect(screen.queryByTestId("tpl-D")).toBeNull();
-    fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "D" } });
+    fireEvent.change(screen.getByDisplayValue("Šablona C"), { target: { value: "D" } });
     expect(screen.queryByTestId("tpl-C")).toBeNull();
     const d = screen.getAllByTestId("tpl-D");
     expect(d).toHaveLength(2);
@@ -89,11 +89,23 @@ describe("DraftCard", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("Uložení selhalo: Failed to fetch");
   });
 
+  it("safe zone pro Reels ukáže pásy, ve feedu 4:5 se vypne", () => {
+    setup();
+    const zone = screen.getByDisplayValue("vypnuto");
+    fireEvent.change(zone, { target: { value: "reels" } });
+    expect(screen.getByTestId("safe-zone-reels")).toBeTruthy();
+    fireEvent.change(screen.getByDisplayValue("Šablona C"), { target: { value: "P" } });
+    fireEvent.change(screen.getByDisplayValue("Story / Reels 9:16"), { target: { value: "feed" } });
+    expect(screen.queryByTestId("safe-zone-reels")).toBeNull();
+    expect(zone).toBeDisabled();
+  });
+
   it("šablona P: předloha vyplní texty, feed 4:5 nejde naplánovat jako story", () => {
     setup();
-    fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "P" } });
+    fireEvent.change(screen.getByDisplayValue("Šablona C"), { target: { value: "P" } });
     expect(screen.getAllByTestId("tpl-P")).toHaveLength(2);
-    const [format, , preset] = screen.getAllByRole("combobox").slice(2);
+    const format = screen.getByDisplayValue("Story / Reels 9:16");
+    const preset = screen.getByDisplayValue("Text podle předlohy…");
     fireEvent.change(preset, { target: { value: "1" } });
     expect(screen.getAllByTestId("tpl-P")[0].textContent).toBe("Ne další\nsvetr.|");
     fireEvent.change(format, { target: { value: "feed" } });

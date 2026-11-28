@@ -1,3 +1,4 @@
+## [2026-11-28] - Stories admin: safe zone v náhledu jde přepnout na Story, Reels (nahoře nadpis, dole popisek a zvuk, vpravo ikony) nebo Reels reklama (doporučení Meta: 14 % nahoře, 35 % dole, 6 % po stranách); u feedu 4:5 je vypnutá
 ## [2026-11-28] - Stories (šablony C, D i P) ve vzhledu současného webu: nadpisy v Epilogue 800 (Syne bylo ve videu moc široké) s koncovou tečkou v červené #c93a2b (jako „Jiný pohled.“), wordmark v Syne jako hlavička webu, drobné texty v Epilogue místo DM Mono, červené linky a podtržení místo měděných, neutrální černá bez měděné záře a zrna; velikost nadpisu se počítá podle naměřených šířek písmen, aby nepřetekl
 ## [2026-11-28] - Stories: Uložit ukazuje Uloženo ✓ nebo chybu; naplánovanou story jde ve frontě vrátit do návrhů (fronta si od teď pamatuje návrh)
 ## [2026-11-27] - Poukaz: místo focení (Praha) v řádku balíčku, věnování v barvě hlavního textu místo šedé
