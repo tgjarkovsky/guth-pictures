@@ -8,6 +8,7 @@ import { StoryTemplate } from "./story/StoryTemplate";
 import { useStoryExport } from "./story/useStoryExport";
 import { FORMAT_SIZE, voucherSlideCount } from "./story/TemplateP";
 import { VOUCHER_PRESETS } from "./story/voucherPresets";
+import { SAFE_ZONES, SafeZoneOverlay, type SafeZoneKind } from "./story/SafeZoneOverlay";
 import type { Photo } from "./story/types";
 
 const PREVIEW_H = 420;
@@ -23,7 +24,7 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
   const [publishAt, setPublishAt] = useState("");
   const [paused, setPaused] = useState(false);
   const [chromePreview, setChromePreview] = useState(false);
-  const [showSafeZone, setShowSafeZone] = useState(false);
+  const [safeZone, setSafeZone] = useState<SafeZoneKind | "">("");
   const [saveState, setSaveState] = useState<{ kind: "idle" | "saving" | "saved" | "error"; msg?: string }>({ kind: "idle" });
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const exportRef = useRef<HTMLDivElement>(null);
@@ -37,8 +38,8 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
     url: cloudinaryUrl(p.publicId, `w_${W},h_${H},c_fill,q_auto,f_jpg`),
     x: p.x, y: p.y,
   }));
-  // story: IG překrývá horních a spodních ~250 px; feed reklama nic
-  const safeBand = H === 1920 ? { position: "absolute", left: 0, right: 0, height: 250 * PREVIEW_SCALE, background: "rgba(255,60,60,0.22)" } as const : null;
+  // safe zone dává smysl jen pro 9:16; feed 4:5 Instagram nepřekrývá
+  const shownSafeZone = H === 1920 ? safeZone : "";
 
   const slideCount = isVoucher
     ? voucherSlideCount(d.photos.length)
@@ -84,16 +85,16 @@ export function DraftCard({ draft, galleryPhotos, onChanged }: {
           style={{ width: W * PREVIEW_SCALE, height: H * PREVIEW_SCALE }}
           onClick={() => setPaused(p => !p)} title="Kliknutím pauza/play">
           <StoryTemplate {...templateProps} chrome={chromePreview} scale={PREVIEW_SCALE} />
-          {showSafeZone && safeBand && (
-            <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 50 }}>
-              <div style={{ ...safeBand, top: 0, borderBottom: "1px solid rgba(255,80,80,0.7)" }} />
-              <div style={{ ...safeBand, bottom: 0, borderTop: "1px solid rgba(255,80,80,0.7)" }} />
-            </div>
-          )}
+          {shownSafeZone && <SafeZoneOverlay kind={shownSafeZone} scale={PREVIEW_SCALE} />}
         </div>
-        <label className="flex items-center gap-1 mt-2 text-xs text-gray-500 cursor-pointer">
-          <input type="checkbox" checked={showSafeZone} onChange={e => setShowSafeZone(e.target.checked)} />
+        <label className="flex items-center gap-2 mt-2 text-xs text-gray-500">
           safe zone
+          <select value={safeZone} onChange={e => setSafeZone(e.target.value as SafeZoneKind | "")}
+            disabled={H !== 1920} title={H !== 1920 ? "Feed 4:5 Instagram nepřekrývá" : undefined}
+            className="bg-zinc-900 border border-white/20 px-1 py-0.5 disabled:opacity-40">
+            <option value="">vypnuto</option>
+            {(Object.keys(SAFE_ZONES) as SafeZoneKind[]).map(k => <option key={k} value={k}>{SAFE_ZONES[k].label}</option>)}
+          </select>
         </label>
       </div>
 
